@@ -1,0 +1,3983 @@
+<HTML>
+<HEAD>
+<TITLE>Message Passing Interface (MPI)</TITLE>
+
+<SCRIPT LANGUAGE="JavaScript" SRC="../tutorials.js"></SCRIPT>
+<LINK REL=StyleSheet HREF="../tutorials.css" TYPE="text/css">
+<LINK REL="SHORTCUT ICON" HREF="http://www.llnl.gov/favicon.ico">
+
+<!-- BEGIN META TAGS -->
+<META NAME="LLNLRandR" CONTENT="UCRL-MI-133316">
+<META NAME="distribution" CONTENT="global">
+<META NAME="description" content="Livermore Computing Training">
+<META NAME="rating" CONTENT="general">
+<META HTTP-EQUIV="keywords" CONTENT="Lawrence Livermore
+National Laboratory, LLNL, High Performance Computing, parallel, programming, 
+HPC, training, workshops, tutorials, Blaise Barney">
+<META NAME="copyright" CONTENT="This document is copyrighted U.S.
+Department of Energy">
+<META NAME="Author" content="Blaise Barney">
+<META NAME="email" CONTENT="blaiseb@llnl.gov">
+<!-- END META TAGS -->
+</HEAD>
+
+<BODY>
+<BASEFONT SIZE=3>            <!-- default font size -->
+
+<!-- Begin Piwik Tracking Code  -->
+<script src="https://analytics.llnl.gov/piwik.js" type="text/javascript">
+</script>
+<script>
+var siteName = document.domain;
+var pkBaseURL = 'https://analytics.llnl.gov/';
+if (typeof jQuery=="undefined") {
+    document.write(unescape("%3Cscript src='" + pkBaseURL + "jquery.js' type='text/javascript'%3E%3C/script%3E"));
+}
+</script>
+<script>
+    try {
+        var LLNLTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+        LLNLTracker.trackPageView();
+        LLNLTracker.enableLinkTracking();
+        var localSiteTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 149);
+        localSiteTracker.trackPageView();
+        localSiteTracker.enableLinkTracking();
+    }
+    catch (err) {
+        console.log(err);
+    }
+</script><noscript><p><img src="https://analytics.llnl.gov/piwik.php?idsite=149" style="border:0" alt="" /></p></noscript>
+<!-- End Piwik Tracking Code -->
+
+<A NAME=top>  </A>
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH=100%>
+<TR><TD COLSPAN=2 BGCOLOR=#3F5098>
+  <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH=900>
+  <TR><TD BACKGROUND=../images/bg1.gif>
+  <A NAME=top> </A>
+  <SCRIPT LANGUAGE="JavaScript">addNavigation()</SCRIPT>
+  <P><BR>
+  <H1>Message Passing Interface (MPI)</H1>
+  <P>
+  </TD></TR></TABLE>
+</TD>
+</TR><TR VALIGN=top>
+<TD><I>Author: Blaise Barney, Lawrence Livermore National Laboratory</I></TD>
+<TD ALIGN=right><FONT SIZE=-1>UCRL-MI-133316</FONT></TD>
+</TR></TABLE>
+<P>
+
+<A NAME=TOC> </A>
+<H2>Table of Contents</H2>
+<OL>
+<LI><A HREF=#Abstract>Abstract</A>
+<LI><A HREF=#What>What is MPI?</A>
+<LI><A HREF=#LLNL>LLNL MPI Implementations and Compilers</A>
+<LI><A HREF=#Getting_Started>Getting Started</A>
+<LI><A HREF=#Environment_Management_Routines>Environment Management 
+    Routines</A>
+<LI><A HREF=#Exercise1>Exercise 1</A>
+<LI><A HREF=#Point_to_Point_Routines> Point to Point Communication 
+    Routines</A>
+    <OL>
+    <LI><A HREF=#Point_to_Point_Routines>General Concepts</A>
+    <LI><A HREF=#Routine_Arguments>MPI Message Passing Routine 
+        Arguments</A>
+    <LI><A HREF=#Blocking_Message_Passing_Routines>Blocking Message 
+        Passing Routines</A>
+    <LI><A HREF=#Non-Blocking_Message_Passing_Routines>Non-Blocking Message 
+        Passing Routines</A>
+    </OL>
+<LI><A HREF=#Exercise2>Exercise 2</A>
+<LI><A HREF=#Collective_Communication_Routines>Collective Communication 
+    Routines</A> 
+<LI><A HREF=#Derived_Data_Types>Derived Data Types</A>
+<LI><A HREF=#Group_Management_Routines>Group and Communicator Management 
+    Routines</A>
+<LI><A HREF=#Virtual_Topologies>Virtual Topologies</A>
+<LI><A HREF=#MPI2-3>A Brief Word on MPI-2 and MPI-3</A>
+<LI><A HREF=#Exercise3>Exercise 3</A>
+<LI><A HREF=#References>References and More Information</A>
+<LI><A HREF=#AppendixA>Appendix A: MPI-1 Routine Index</A>
+</OL>
+ 
+<!--------------------------------------------------------------------------->
+ 
+<A NAME=Abstract> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Abstract</SPAN>
+</TD></TR></TABLE>
+<P><BR>
+
+The Message Passing Interface Standard (MPI) is a message passing library
+standard based on the consensus of the MPI Forum, which has over 40
+participating organizations, including vendors, researchers, software library
+developers, and users. The goal of the Message Passing Interface is to
+establish a portable, efficient, and flexible standard for message passing
+that will be widely used for writing message passing programs. As such, MPI
+is the first standardized, vendor independent, message passing library. The
+advantages of developing message passing software using MPI closely match the
+design goals of portability, efficiency, and flexibility. MPI is not an
+IEEE or ISO standard, but has in fact, become the "industry standard" for
+writing message passing programs on HPC platforms.
+<P>
+The goal of this tutorial is to teach those unfamiliar with MPI how to
+develop and run parallel programs according to the MPI standard.  The primary 
+topics that are presented focus on those which are the most useful for 
+new MPI programmers. The tutorial begins with an introduction, background, 
+and basic information for getting started with MPI. This is followed by 
+a detailed look at the MPI routines that are most useful for new MPI 
+programmers, including MPI Environment Management, Point-to-Point 
+Communications, and Collective Communications routines.  Numerous examples 
+in both C and Fortran are provided, as well as a lab exercise.
+<P>
+The tutorial materials also include more advanced topics such as
+Derived Data Types, Group and Communicator Management Routines, and
+Virtual Topologies. However, these are not actually presented during the
+lecture, but are meant to serve as "further reading" for those who are
+interested. 
+<P>
+<I>Level/Prerequisites:</I> This tutorial is one of the eight tutorials in the 4+ day "Using LLNL's Supercomputers" workshop. It is ideal for those who are new to parallel programming with MPI. A basic understanding of parallel programming in C or Fortran is required. For those who are unfamiliar with Parallel Programming in general, the material covered in 
+<A HREF=../parallel_comp TARGET=p1>EC3500: Introduction To Parallel 
+Computing</A> would be helpful.
+<BR><BR>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=What> <BR><BR> </A> 
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>What is MPI?</SPAN></TD>
+</TD></TR></TABLE>
+<P><BR>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>An Interface Specification:</SPAN>
+<IMG SRC=images/MPIlogo2.gif WIDTH=300 ALIGN=right HSPACE=20
+ALT='MPI Logo'>
+<UL>
+<P>
+<LI><B><FONT COLOR=0056a8 SIZE=+1>M P I</FONT></B> = 
+<B><FONT COLOR=0056a8 SIZE=+1>M</FONT>essage 
+<FONT COLOR=0056a8 SIZE=+1>P</FONT>assing 
+<FONT COLOR=0056a8 SIZE=+1>I</FONT>nterface</B>
+<P>
+<LI>MPI is a <SPAN CLASS=emphasis>specification</SPAN>
+    for the developers and users of message passing
+    libraries.  By itself, it is NOT a library - but rather the specification 
+    of what such a library should be. 
+<P>
+<LI>MPI primarily addresses the message-passing parallel programming model: 
+    data is moved from the address space of one process to
+    that of another process through cooperative operations on each process.
+<P>
+<LI>Simply stated, the goal of the Message Passing Interface is to provide a
+    widely used standard for writing message passing programs. The interface 
+    attempts to be:
+    <UL>
+    <LI>Practical
+    <LI>Portable
+    <LI>Efficient
+    <LI>Flexible
+    </UL>
+<P>
+<LI>The MPI standard has gone through a number of revisions, with the most
+    recent version being MPI-3.
+<P>
+<LI>Interface specifications have been defined for C and Fortran90 language 
+    bindings: 
+    <UL>
+    <LI>C++ bindings from MPI-1 are removed in MPI-3
+    <LI>MPI-3 also provides support for Fortran 2003 and 2008 features
+    </UL>
+<P>
+<LI>Actual MPI library implementations differ in which version and features 
+    of the MPI standard they support. Developers/users will need to be aware
+    of this.
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Programming Model:</SPAN>
+<UL>
+<P>
+<LI>Originally, MPI was designed for distributed memory architectures, which
+    were becoming increasingly popular at that time (1980s - early 1990s).
+<P>
+<IMG SRC=images/distributed_mem.gif WIDTH=484 HEIGHT=196 BORDER=0>
+<P>
+<LI>As architecture trends changed, shared memory SMPs were combined over
+    networks creating hybrid distributed memory / shared memory systems. 
+<P>
+<LI>MPI implementors adapted their libraries to handle both types of underlying
+    memory architectures seamlessly.  They also adapted/developed ways of 
+    handling different interconnects and protocols.
+<P>
+<IMG SRC=images/hybrid_mem.gif WIDTH=484 HEIGHT=196 BORDER=0>
+<P>
+<P>    
+<LI>Today, MPI runs on virtually any hardware platform:
+    <UL>
+    <LI>Distributed Memory
+    <LI>Shared Memory
+    <LI>Hybrid
+    </UL>  
+<P>
+<LI>The programming model <U>clearly remains a distributed memory model</U> 
+    however, regardless of the underlying physical architecture of the machine.
+<P>
+<LI>All parallelism is explicit: the programmer is responsible for
+    correctly identifying parallelism and implementing parallel 
+    algorithms using MPI constructs.
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Reasons for Using MPI:</SPAN>
+<UL>
+<P>
+<LI><B>Standardization</B>
+    - MPI is the only message passing library
+    which can be considered a standard. It is supported on
+    virtually all HPC platforms. Practically, it has replaced
+    all previous message passing libraries.
+<P>
+<LI><B>Portability</B>
+    - There is little or no need to modify your source code
+    when you port your application to a different platform that supports
+    (and is compliant with) the MPI standard.
+<P>
+<LI><B>Performance Opportunities</B>
+    - Vendor implementations should be able to exploit native hardware features to 
+    optimize performance. Any implementation is free to develop optimized
+    algorithms.
+<P>
+<LI><B>Functionality</B>
+    - There are over 430 routines defined in MPI-3, which includes the majority
+    of those in MPI-2 and MPI-1.
+<P>
+<LI><B>Availability</B>
+    - A variety of implementations are available, both vendor and 
+    public domain.
+</UL>
+<P>
+
+<P>
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>History and Evolution:</SPAN> (for those interested)
+<UL>
+<P>
+<LI>MPI has resulted from the efforts of numerous individuals and groups
+    that began in 1992. Some history:
+<P>
+<LI><B>1980s - early 1990s:</B> Distributed memory, parallel computing
+    develops, as do a number of incompatible software tools for
+    writing such programs - usually with tradeoffs between portability,
+    performance, functionality and price.  Recognition of the need
+    for a standard arose.
+<P>
+<IMG SRC=images/MPIevolution.gif WIDTH=438 HEIGHT=320 BORDER=1 ALIGN=right
+HSPACE=20 ALT='MPI Evolution'>
+<P>
+<LI><B>Apr 1992:</B> Workshop on Standards for Message Passing in a 
+    Distributed Memory Environment, sponsored by the Center for 
+    Research on Parallel Computing, Williamsburg, Virginia.
+    The basic features essential to a standard message passing 
+    interface were discussed, and a working group established to
+    continue the standardization process.  Preliminary draft proposal
+    developed subsequently.
+<P>
+<LI><B>Nov 1992:</B> Working group meets in Minneapolis.  MPI draft 
+    proposal (MPI1) from ORNL presented.  Group adopts procedures 
+    and organization to form the 
+    <A HREF=mpi.forum.html TARGET=_blank>MPI Forum.</A> 
+    It eventually comprised of about 175 individuals from 
+    40 organizations including parallel computer vendors, software 
+    writers, academia and application scientists.  
+<P>
+<LI><B>Nov 1993:</B> Supercomputing 93 conference - draft MPI standard 
+    presented. 
+<P>
+<LI><B>May 1994:</B> Final version of MPI-1.0 released
+<P>
+<LI>MPI-1.0 was followed by versions MPI-1.1 (Jun 1995), MPI-1.2 (Jul 1997)
+    and MPI-1.3 (May 2008).
+<P>
+<LI>MPI-2 picked up where the first MPI specification left off, and addressed
+    topics which went far beyond the MPI-1 specification.  Was finalized in 1996.
+<P>
+<LI>MPI-2.1 (Sep 2008), and MPI-2.2 (Sep 2009) followed
+<P>
+<LI><B>Sep 2012:</B> The MPI-3.0 standard was approved. 
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Documentation:</SPAN>
+<UL>
+<P>
+<LI>Documentation for all versions of the MPI standard is available at: 
+    <A HREF=http://www.mpi-forum.org/docs/ TARGET=_blank>
+    http://www.mpi-forum.org/docs/</A>.
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=LLNL> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>LLNL MPI Implementations and Compilers</SPAN></TD>
+</TD></TR></TABLE>
+<P><BR>
+
+Although the MPI programming interface has been standardized, actual library implementations will differ in which version and features of the standard they 
+support. The way MPI programs are compiled and run on different platforms will also
+vary.
+<P>
+A summary of LC's MPI environment is provided here, along with links to additional
+detailed information.
+<P>
+
+<H2>MVAPICH</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>General Info:</SPAN>
+<UL>
+<LI>MVAPICH MPI from Ohio State University is the default MPI library on all of LC's
+    Linux clusters.
+<P>
+<LI>As of June 2015, LC's default version is MVAPICH 1.2
+    <UL>
+    <LI>MPI-1 implementation that includes support for MPI-I/O, 
+        but not for MPI one-sided communication.
+    <LI>Based on MPICH-1.2.7 MPI library from Argonne National Laboratory
+    <LI>Not thread-safe. All MPI calls should be made by the master thread in 
+        a multi-threaded MPI program.
+    <LI>See <SPAN CLASS=file>/usr/local/docs/mpi.mvapich.basics</SPAN> for LC 
+        usage details.
+    </UL>
+<P>
+<LI>MVAPICH2 is also available on LC Linux clusters
+    <UL>
+    <LI>MPI-2 implementation based on MPICH2 MPI library from Argonne National 
+        Laboratory
+    <LI>Not currently the default - requires the "use" command to load the 
+        selected dotkit - see 
+        <A HREF=https://computing.llnl.gov/?set=jobs&page=dotkit TARGET=dotkit>
+        https://computing.llnl.gov/?set=jobs&page=dotkit</A> for details.
+    <LI>Thread-safe
+    <LI>See <SPAN CLASS=file>/usr/local/docs/mpi.mvapich2.basics</SPAN> for LC 
+        usage details.
+    <LI>MVAPICH2 versions 1.9 and later implement MPI-3 according to the 
+        developer's documentation.
+    </UL>
+<P>
+<LI>A code compiled with MVAPICH on one LC Linux cluster should run on any
+    LC Linux cluster.
+    <UL>
+    <LI>Clusters with an interconnect - message passing is done in shared 
+        memory on-node and over the switch inter-node
+    <LI>Clusters without an interconnect - message passing is done in shared 
+        memory on-node only.
+    </UL>
+<P>
+<LI>More information:
+    <UL>
+    <LI><SPAN CLASS=file>/usr/local/docs</SPAN> on LC's clusters:
+    <TT><UL>
+        <LI><SPAN CLASS=file>mpi.basics</SPAN>
+        <LI><SPAN CLASS=file>mpi.mvapich.basics</SPAN>
+        <LI><SPAN CLASS=file>mpi.mvapich2.basics</SPAN>
+        </UL>
+    </TT>
+    <LI>MVAPICH 1.2 User Guide available <A HREF=../linux_clusters/mvapich_user_guide_1.2.pdf 
+        TARGET=_blank>HERE</A>
+    <LI>MVAPICH2 1.7 User Guide available <A HREF=../linux_clusters/mvapich2_user_guide_1.7.pdf
+        TARGET=_blank>HERE</A>
+    <LI>MVAPICH home page:
+        <A HREF=http://mvapich.cse.ohio-state.edu/ TARGET=mvapich>
+        mvapich.cse.ohio-state.edu/</A>
+    <LI>MPICH1 home page:
+        <A HREF=http://www.mcs.anl.gov/research/projects/mpi/mpich1-old/
+        TARGET=mpich1>www.mcs.anl.gov/research/projects/mpi/mpich1-old/</A>.
+    <LI>MPICH2 home page:
+        <A HREF=http://www.mcs.anl.gov/research/projects/mpich2/
+        TARGET=mpich2>www.mcs.anl.gov/research/projects/mpich2/</A>.
+    </UL>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>MPI Build Scripts:</SPAN>
+<UL>
+<LI>MPI compiler wrapper scripts are used to compile MPI programs - 
+    these should all be in your default $PATH unless you have 
+    changed it. These scripts mimic the familiar MPICH scripts in their 
+    functionality, meaning, they automatically include the appropriate MPI 
+    include files and link to the necessary MPI libraries and pass switches 
+    to the underlying compiler.
+<P>
+<LI>Available scripts are listed below:
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=3>
+<TR>
+<TH>Language</TH>
+<TH>Script Name</TH>
+<TH>Underlying Compiler</TH>
+</TR><TR>
+<TD ROWSPAN=4><B>C</B></TD>
+<TD><TT><B>mpicc</B></TT></TD> <TD>gcc</TD>
+</TR><TR>
+<TD><TT><B>mpigcc</B></TT></TD> <TD>gcc</TD>
+</TR><TR>
+<TD><TT><B>mpiicc</B></TT></TD> <TD>icc</TD>
+</TR><TR>
+<TD><TT><B>mpipgcc</B></TT></TD> <TD>pgcc</TD>
+</TR><TR>
+<TD ROWSPAN=4><B>C++</B></TD>
+<TD><TT><B>mpiCC</B></TT></TD> <TD>g++</TD>
+</TR><TR>
+<TD><TT><B>mpig++</B></TT></TD> <TD>g++</TD>
+</TR><TR>
+<TD><TT><B>mpiicpc</B></TT></TD> <TD>icpc</TD>
+</TR><TR>
+<TD><TT><B>mpipgCC</B></TT></TD> <TD>pgCC</TD>
+</TR><TR>
+<TD ROWSPAN=5><B>Fortran</B></TD>
+<TD><TT><B>mpif77</B></TT></TD> <TD>g77</TD>
+</TR><TR>
+<TD><TT><B>mpigfortran</B></TT></TD> <TD>gfortran</TD>
+</TR><TR>
+<TD><TT><B>mpiifort</B></TT></TD> <TD>ifort</TD>
+</TR><TR>
+<TD><TT><B>mpipgf77</B></TT></TD> <TD>pgf77</TD>
+</TR><TR>
+<TD><TT><B>mpipgf90</B></TT></TD> <TD>pgf90</TD>
+</TR></TABLE>
+<P>
+<LI>For additional information:
+    <UL>
+    <LI>See the man page (if it exists)
+    <LI>Issue the script name with the <TT>-help</TT> option (almost useless)
+    <LI>View the script yourself directly 
+    </UL>
+<P>
+<LI>By default, the scripts point to the default version of their underlying
+    compiler and the default MPI library. 
+    <UL>
+    <LI>If you need to build with a different compiler version, you can use
+        use LC's dotkit tool to query what's available and then load it. The
+        MPI build script will then point to that. For example:
+<PRE><SPAN CLASS=cmd>use -l</SPAN>           <I>(to list available compilers)</I>
+<SPAN CLASS=cmd>use ic-13.1.163</SPAN>  <I>(use the package of interest)</I></PRE>
+<P>
+    <LI>If you need to build with a different version of the MPI library, 
+        see <SPAN CLASS=file>/usr/local/docs/linux.basics</SPAN> for advice.
+    </UL> 
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Running MVAPICH MPI Jobs:</SPAN>
+<UL>
+<LI>MPI executables are launched using the SLURM <SPAN CLASS=cmd>srun</SPAN> command
+    with the appropriate options. For example, to launch an 8-process MPI job
+    split across two different nodes in the <TT>pdebug</TT> pool:
+<PRE><SPAN CLASS=cmd>srun -N2 -n8 -ppdebug a.out</SPAN></PRE>
+<P>
+<LI>The <SPAN CLASS=cmd>srun</SPAN> command is discussed in detail in the 
+    <A HREF=../linux_clusters/index.html#Running TARGET=running>Running Jobs</A>
+    section of the Linux Clusters Overview tutorial.
+</UL>
+
+<P><HR><P>
+
+<H2>Open MPI</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>General Information:</SPAN>
+<UL>
+<LI>Open MPI is a thread-safe, open source MPI-2 implementation that is
+    developed and maintained by a consortium of academic, research, and 
+    industry partners. 
+<P>
+<LI>Open MPI is available on most LC Linux clusters. You'll need to 
+    load the desired dotkit package using the <SPAN CLASS=cmd>use</SPAN>
+    command.  For example:
+<PRE><SPAN CLASS=cmd>use -l</SPAN>                   <I>(list available packages)</I>
+<SPAN CLASS=cmd>use openmpi-gnu-1.4.3</SPAN>  <I>(use the package of interest)</I></PRE>
+<P>
+<LI>This ensures that LC's MPI wrapper scripts point to the desired version
+    of Open MPI.
+<P>
+<LI>Compiler commands are the same as shown above for MVAPICH.
+<P>
+<LI>Launching an Open MPI job is done differently
+    than with MVAPICH MPI - the <SPAN CLASS=cmd>mpiexec</SPAN> command
+    is required.
+<P>
+<LI>Detailed usage information for LC clusters can be found in the
+    <SPAN CLASS=file>/usr/local/docs/mpi.openmpi.basics</SPAN> file.
+<P>
+<LI>More info about Open MPI in general: 
+    <A HREF=http://www.open-mpi.org/ TARGET=openmpi>www.open-mpi.org</A>
+    </UL>
+</UL>
+
+<P><HR><P>
+
+<H2>IBM BG/Q Clusters:</H2>
+<UL>
+<P>
+<LI>The IBM MPI library is the only supported library on these platforms. 
+<P>
+<LI>This is an IBM implementation based on MPICH2. Includes MPI-2
+    functionality minus Dynamic Processes.
+<P>
+<LI>Thread-safe
+<P>
+<LI>C, C++, Fortran77/90/95 are supported
+<P>
+<LI>Compiling and running MPI programs, see the
+    BG/Q Tutorial: <A HREF=https://computing.llnl.gov/tutorials/bgq/
+    TARGET=_blank>computing.llnl.gov/tutorials/bgq/</A>
+</UL>
+
+<P><HR><P>
+
+<H2>Level of Thread Support</H2>
+<UL>
+<LI>MPI libraries vary in their level of thread support:
+    <UL>
+    <P>
+    <LI><TT>MPI_THREAD_SINGLE</TT> - Level 0: Only one thread will execute. 
+    <P>
+    <LI><TT>MPI_THREAD_FUNNELED</TT> - Level 1: 
+        The process may be multi-threaded, but only
+        the main thread will make MPI calls - all MPI calls are funneled 
+        to the main thread.
+    <P>
+    <LI><TT>MPI_THREAD_SERIALIZED</TT> - Level 2:
+        The process may be multi-threaded, and 
+        multiple threads may make MPI calls, but only one at a time. That is, 
+        calls are not made concurrently from two distinct threads as all MPI calls
+        are serialized. 
+    <P>
+    <LI><TT>MPI_THREAD_MULTIPLE</TT> - Level 3: 
+        Multiple threads may call MPI with no restrictions.
+    </UL>
+<P>
+<LI>Consult the <A HREF=man/mpi_init_thread.txt TARGET=_blank>
+    <TT>MPI_Init_thread()</TT> man page</A> for details.
+<P>
+<LI>A simple C language example for determining thread level support is shown below.
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR VALIGN=top>
+<TD><PRE>
+#include "mpi.h"
+#include &LT;stdio.h&GT;
+ 
+int main( int argc, char *argv[] )
+{
+    int provided, claimed;
+ 
+/*** Select one of the following
+    MPI_Init_thread( 0, 0, MPI_THREAD_SINGLE, &provided );
+    MPI_Init_thread( 0, 0, MPI_THREAD_FUNNELED, &provided );
+    MPI_Init_thread( 0, 0, MPI_THREAD_SERIALIZED, &provided );
+    MPI_Init_thread( 0, 0, MPI_THREAD_MULTIPLE, &provided );
+***/ 
+
+    MPI_Init_thread(0, 0, MPI_THREAD_MULTIPLE, &provided );
+    MPI_Query_thread( &claimed );
+        printf( "Query thread level= %d  Init_thread level= %d\n", claimed, provided );
+ 
+    MPI_Finalize();
+}
+
+</PRE>
+Sample output:
+<PRE>
+Query thread level= 3  Init_thread level= 3
+
+</PRE></TD>
+</TR></TABLE>
+</UL>
+<P>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--------------------------------------------------------------------------->
+
+<A NAME="Getting_Started"> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Getting Started</SPAN></TD>
+</TD></TR></TABLE>
+<P><BR>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>General MPI Program Structure:</SPAN>
+<UL>
+<P>
+
+<TABLE BORDER=1 CELLPADDING=10 CELLSPACING=0>
+<TR><TD>
+<IMG SRC=images/prog_structure.gif BORDER=0 WIDTH=444 HEIGHT=505
+ALT='General MPI Program Structure'>
+</TD></TR></TABLE>
+</UL>
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Header File:</SPAN>
+<UL>
+<P> 
+<LI>Required for all programs that make MPI library calls.
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5>
+<TR ALIGN=CENTER>
+<TH>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C include file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TH>
+<TH>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fortran include file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TH>
+<TR>
+<TD><TT><B>#include  "mpi.h"         
+<TD><TT><B>include   'mpif.h' </TD>   
+</TABLE>
+<P>
+<LI>With MPI-3 Fortran, the <TT><B>USE mpi_f08</B></TT> module is
+    preferred over using the include file shown above.
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Format of MPI Calls:</SPAN>
+<UL>
+<P> 
+<LI>C names are case sensitive; Fortran names are not.
+<P>
+<LI>Programs must not declare variables or functions with names beginning with 
+    the prefix MPI_ or PMPI_ (profiling interface).
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5>
+<TR ALIGN=CENTER>
+<TH COLSPAN=2>C Binding</TH>
+<TR>
+<TD BGCOLOR=#FOF5FE><B>Format:
+<TD><TT><B><NOBR>
+    rc = MPI_Xxxxx(parameter, ... ) 
+<TR>
+<TD BGCOLOR=#FOF5FE><B>Example:
+<TD><TT><B><NOBR>
+    rc =  MPI_Bsend(&buf,count,type,dest,tag,comm)
+<TR>
+<TD BGCOLOR=#FOF5FE><B>Error code:
+<TD>Returned as "rc". MPI_SUCCESS if successful
+<TR ALIGN=CENTER>
+<TH COLSPAN=2>Fortran Binding</TH>
+<TR>
+<TD BGCOLOR=#FOF5FE><B>Format:
+<TD><TT><B><NOBR>
+    CALL MPI_XXXXX(parameter,..., ierr)<BR> 
+    call mpi_xxxxx(parameter,..., ierr) 
+<TR>
+<TD BGCOLOR=#FOF5FE><B>Example:
+<TD><TT><B><NOBR>
+    CALL MPI_BSEND(buf,count,type,dest,tag,comm,ierr)
+<TR>
+<TD BGCOLOR=#FOF5FE><B>Error code:
+<TD>Returned as "ierr" parameter. MPI_SUCCESS if successful
+</TABLE>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Communicators and Groups:</SPAN>
+<UL>
+<P> 
+<LI>MPI uses objects called communicators and groups to define which
+    collection of processes may communicate with each other.
+<P>
+<LI>Most MPI routines require you to specify a communicator as an argument. 
+<P>
+<LI>Communicators and groups will be covered in more detail later.  For now,
+    simply use <B>MPI_COMM_WORLD</B> whenever a communicator is required - 
+    it is the predefined communicator that includes all of your MPI processes. 
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5><TR><TD>
+<IMG SRC=images/comm_world.gif WIDTH=500 HEIGHT=303 BORDER=0></TABLE>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Rank:</SPAN>
+<UL>
+<P> 
+<LI>Within a communicator, every process has its own unique, integer 
+    identifier assigned by the system when the process initializes.  A rank 
+    is sometimes also called a "task ID".  Ranks are contiguous and begin 
+    at zero.
+<P>
+<LI>Used by the programmer to specify the source and destination of
+    messages.  Often used conditionally by the application to control
+    program execution (if rank=0 do this / if rank=1 do that).
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Error Handling:</SPAN>
+<UL>
+<P> 
+<LI>Most MPI routines include a return/error code parameter, as described
+    in the "Format of MPI Calls" section above.
+<P>
+<LI>However, according to the MPI standard, the default behavior of an MPI call is
+    to abort if there is an error. This means you will probably not be able to 
+    capture a return/error code other than MPI_SUCCESS (zero).
+<P>
+<LI>The standard does provide a means to override this default error handler. 
+    A discussion on how to do this is available <A HREF=errorHandlers.pdf
+    TARGET=errors>HERE</A>. You can also consult the error handling section of the
+    relevant MPI Standard documentation located at 
+    <A HREF=http://www.mpi-forum.org/docs/
+    TARGET=_blank>http://www.mpi-forum.org/docs/</A>.
+<P>
+<LI>The types of errors displayed to the user are implementation dependent.
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME="Environment_Management_Routines"> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Environment Management Routines</SPAN></TD>
+</TD></TR></TABLE>
+<P><BR>
+
+This group of routines is used for interrogating and setting the MPI execution 
+environment, and covers an assortment of purposes, such as initializing and terminating the MPI environment, querying a rank's identity, querying the MPI
+library's version, etc. Most of the commonly used ones are described below.
+<P>
+<DL>
+<DT><B><A HREF=man/MPI_Init.txt TARGET=_blank> 
+MPI_Init</A></B> 
+<P>
+<DD>Initializes the MPI execution environment.  This function must be called
+    in every MPI program, must be called before any other MPI functions
+    and must be called only once in an MPI program.  For C programs, MPI_Init 
+    may be used to pass the command line arguments to all processes,
+    although this is not required by the standard and is implementation
+    dependent.
+    <P><NOBR><TT><B> 
+    MPI_Init (&amp;argc,&amp;argv) <BR>
+    MPI_INIT (ierr)
+    </B></TT></NOBR><P>
+    
+<DT><B><A HREF=man/MPI_Comm_size.txt TARGET=_blank> 
+MPI_Comm_size</A></B>
+<P>
+<DD>Returns the total number of MPI processes in the specified 
+    communicator, such as MPI_COMM_WORLD. If the communicator is
+    MPI_COMM_WORLD, then it represents the number of MPI tasks
+    available to your application.
+    <P><NOBR><TT><B> 
+    MPI_Comm_size (comm,&amp;size) <BR>
+    MPI_COMM_SIZE (comm,size,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Comm_rank.txt TARGET=_blank> 
+MPI_Comm_rank</A></B>
+<P>
+<DD>Returns the rank of the calling MPI process within the specified communicator.  
+    Initially, each process will be assigned a unique integer rank
+    between 0 and number of tasks - 1 within the communicator
+    MPI_COMM_WORLD.  This rank is often referred to as a task ID.  
+    If a process becomes associated with other communicators, it will have
+    a unique rank within each of these as well.
+    <P><NOBR><TT><B>
+    MPI_Comm_rank (comm,&amp;rank) <BR>
+    MPI_COMM_RANK (comm,rank,ierr) 
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Abort.txt TARGET=_blank> 
+MPI_Abort</A></B>
+<P>
+<DD>Terminates all MPI processes associated with the communicator.  In
+    most MPI implementations it terminates ALL processes regardless of
+    the communicator specified.
+    <P><NOBR><TT><B>
+    MPI_Abort (comm,errorcode)<BR>
+    MPI_ABORT (comm,errorcode,ierr) 
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Get_processor_name.txt TARGET=_blank> 
+MPI_Get_processor_name</A></B> 
+<P>
+<DD>Returns the processor name. Also
+    returns the length of the name.  The buffer for "name" must be at
+    least MPI_MAX_PROCESSOR_NAME characters in size.  What is returned into
+    "name" is implementation dependent - may not be the same as the output
+    of the "hostname" or "host" shell commands.
+    <P><NOBR><TT><B>
+    MPI_Get_processor_name (&amp;name,&amp;resultlength)<BR> 
+    MPI_GET_PROCESSOR_NAME (name,resultlength,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Get_version.txt TARGET=_blank> 
+MPI_Get_version</A></B> 
+<P>
+<DD>Returns the version and subversion of the MPI standard that's 
+    implemented by the library.
+    <P><NOBR><TT><B>
+    MPI_Get_version (&amp;version,&amp;subversion)<BR> 
+    MPI_GET_VERSION (version,subversion,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Initialized.txt TARGET=_blank> 
+MPI_Initialized</A></B> 
+<P>
+<DD>Indicates whether MPI_Init has been called - returns flag as either
+    logical true (1) or false(0).  MPI requires that MPI_Init
+    be called once and only once by each process.  This may pose a problem
+    for modules that want to use MPI and are prepared to call MPI_Init
+    if necessary.  MPI_Initialized solves this problem.
+    <P><NOBR><TT><B>
+    MPI_Initialized (&amp;flag) <BR>
+    MPI_INITIALIZED (flag,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Wtime.txt TARGET=_blank> 
+MPI_Wtime</A></B>
+<P>
+<DD>Returns an elapsed wall clock time in seconds (double precision) on the 
+    calling processor.
+    <P><NOBR><TT><B>
+    MPI_Wtime ()<BR>
+    MPI_WTIME ()
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Wtick.txt TARGET=_blank> 
+MPI_Wtick</A></B> 
+<P>
+<DD>Returns the resolution in seconds (double precision) of MPI_Wtime.
+    <P><NOBR><TT><B>
+    MPI_Wtick ()<BR>
+    MPI_WTICK ()
+    </B></TT></NOBR><P>
+<P>
+<DT><B><A HREF=man/MPI_Finalize.txt TARGET=_blank> 
+MPI_Finalize</A></B>
+<P>
+<DD>Terminates the MPI execution environment.  This function should be
+    the last MPI routine called in every MPI program - no other MPI
+    routines may be called after it.
+    <P><NOBR><TT><B>
+    MPI_Finalize ()<BR>
+    MPI_FINALIZE (ierr)
+    </B></TT></NOBR><P>
+</DL>
+
+<P><HR><P>
+
+<H2>Examples: Environment Management Routines</H2>
+
+<UL>
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>
+C Language - Environment Management Routines Example</SPAN>
+<HR>
+<PRE>
+   #include <FONT COLOR=#FF0000>"mpi.h"</FONT>
+   #include &lt;stdio.h&gt;
+
+   int main(int argc, char *argv[]) {
+   int  numtasks, rank, len, rc; 
+   char hostname[MPI_MAX_PROCESSOR_NAME];
+
+   rc = <FONT COLOR=#FF0000>MPI_Init</FONT>(&argc,&argv);
+   if (rc != <FONT COLOR=#FF0000>MPI_SUCCESS</FONT>) {
+     printf ("Error starting MPI program. Terminating.\n");
+     <FONT COLOR=#FF0000>MPI_Abort</FONT>(MPI_COMM_WORLD, rc);
+     }
+
+   <FONT COLOR=#FF0000>MPI_Comm_size</FONT>(MPI_COMM_WORLD,&numtasks);
+   <FONT COLOR=#FF0000>MPI_Comm_rank</FONT>(MPI_COMM_WORLD,&rank);
+   <FONT COLOR=#FF0000>MPI_Get_processor_name</FONT>(hostname, &len);
+   printf ("Number of tasks= %d My rank= %d Running on %s\n", numtasks,rank,hostname);
+
+   /*******  do some work *******/
+
+   <FONT COLOR=#FF0000>MPI_Finalize();</FONT>
+   }
+</PRE> </TD>
+</TR></TABLE>
+
+
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>
+Fortran  - Environment Management Routines Example
+</SPAN>
+<HR>
+<PRE>
+   program simple
+   include <FONT COLOR=#FF0000>'mpif.h'</FONT>
+
+   integer numtasks, rank, len, ierr  
+   character(MPI_MAX_PROCESSOR_NAME) hostname
+
+   call <FONT COLOR=#FF0000>MPI_INIT</FONT>(ierr)
+   if (ierr .ne. <FONT COLOR=#FF0000>MPI_SUCCESS</FONT>) then
+      print *,'Error starting MPI program. Terminating.'
+      <FONT COLOR=#FF0000>call MPI_ABORT</FONT>(MPI_COMM_WORLD, rc, ierr)
+   end if
+
+   call <FONT COLOR=#FF0000>MPI_COMM_RANK</FONT>(MPI_COMM_WORLD, rank, ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_SIZE</FONT>(MPI_COMM_WORLD, numtasks, ierr)
+   call <FONT COLOR=#FF0000>MPI_GET_PROCESSOR_NAME</FONT>(hostname, len, ierr)
+   print *, 'Number of tasks=',numtasks,' My rank=',rank,
+  &         ' Running on=',hostname
+
+C ****** do some work ******
+
+   call <FONT COLOR=#FF0000>MPI_FINALIZE</FONT>(ierr)
+
+   end
+</PRE> </TD>
+</TR></TABLE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Exercise1> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>MPI Exercise 1</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Getting Started</H2>
+
+<DD>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR VALIGN=top><TD BGCOLOR=#FOF5FE HEIGHT=400>
+<B><U>Overview:</U>
+<UL>
+<LI>Login to an LC cluster using your workshop username and OTP token
+<LI>Copy the exercise files to your home directory
+<LI>Familiarize yourself with LC's MPI environment
+<LI>Write a simple "Hello World" MPI program using several MPI
+    Environment Management routines
+<LI>Successfully compile your program
+<LI>Successfully run your program - several different ways
+<LI>Familiarize yourself with LC's MPI documentation sources
+</UL>
+<P>
+<IMG SRC=../images/point02.jpg WIDTH=100 HEIGTH=45 BORDER=0>
+<A HREF=exercise.html TARGET=_blank>GO TO THE EXERCISE HERE</A>
+</B>
+</TD></TR></TABLE>
+</DD>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Point_to_Point_Routines> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Point to Point Communication Routines</SPAN></TD>
+</TD></TR></TABLE>
+<H2>General Concepts</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>First, a Simple Example:</SPAN>
+<P>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>
+<TR VALIGN=top>
+<TD><UL>
+<P>
+<LI>The value of PI can be calculated in a number of ways. Consider the 
+    following method of approximating PI</A>
+    <OL>
+    <LI>Inscribe a circle in a square
+    <LI>Randomly generate points in the square
+    <LI>Determine the number of points in the square that are also in the circle
+    <LI>Let r be the number of points in the circle divided by the number of
+        points in the square
+    <LI>PI ~ 4 r
+    <LI>Note that the more points generated, the better the approximation
+    </OL>
+<P>
+<LI>Serial pseudo code for this procedure:
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0>
+<TR><TD><PRE><B>npoints = 10000
+circle_count = 0
+
+do j = 1,npoints
+  generate 2 random numbers between 0 and 1
+  xcoordinate = random1
+  ycoordinate = random2
+  if (xcoordinate, ycoordinate) inside circle
+  then circle_count = circle_count + 1
+end do
+
+PI = 4.0*circle_count/npoints
+</B></PRE>
+</TD></TR></TABLE>
+<P>
+<LI>Leads to an "embarassingly parallel" solution: 
+    <UL>
+    <LI>Break the loop iterations into chunks that can be executed by different
+        tasks simultaneously.
+    <LI>Each task executes its portion of the loop a number of times.
+    <LI>Each task can do its work without requiring any information
+        from the other tasks (there are no data dependencies). 
+    <LI>Master task recieves results from other tasks <B>using send/receive
+        point-to-point operations</B>.
+    </UL>
+<P>
+<LI>Pseudo code solution:
+    <FONT COLOR=red><B>red</B></FONT COLOR> highlights changes for 
+    parallelism.
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0>
+<TR><TD><PRE><B>npoints = 10000
+circle_count = 0
+<FONT COLOR=red>
+p = number of tasks
+num = npoints/p
+
+find out if I am MASTER or WORKER </FONT COLOR>
+
+do j = 1,<FONT COLOR=red>num </FONT COLOR>
+  generate 2 random numbers between 0 and 1
+  xcoordinate = random1
+  ycoordinate = random2
+  if (xcoordinate, ycoordinate) inside circle
+  then circle_count = circle_count + 1
+end do
+<FONT COLOR=red>
+if I am MASTER
+  receive from WORKERS their circle_counts
+  compute PI (use MASTER and WORKER calculations)
+else if I am WORKER
+  send to MASTER circle_count
+endif</FONT></B></PRE>
+<P>
+<P>
+Example MPI Program in C: &nbsp;
+<A HREF=../mpi/samples/C/mpi_pi_reduce.c TARGET=pic>mpi_pi_reduce.c</A>
+<BR>
+Example MPI Program in Fortran: &nbsp;
+<A HREF=../mpi/samples/Fortran/mpi_pi_reduce.f TARGET=pif>mpi_pi_reduce.f</A>
+</TD></TR></TABLE>
+<P>
+<LI><FONT STYLE="background-color: yellow"><B>Key Concept:</B> Divide work between 
+    available tasks which communicate data via point-to-point message passing 
+    calls.</FONT>
+</UL>
+</TD>
+
+<TD>
+<IMG SRC=images/pi1.gif WIDTH=400 HEIGHT=517 BORDER=0 HSPACE=20
+ALT='One method of determining PI'>
+<P>
+<IMG SRC=images/pi2.gif WIDTH=400 HEIGHT=475 BORDER=0 HSPACE=20
+ALT='One method of determining PI'>
+</TD></TR></TABLE>
+
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Types of Point-to-Point Operations:</SPAN>
+<UL>
+<LI>MPI point-to-point operations typically involve message passing between
+    two, and only two, different MPI tasks. One task is performing a send 
+    operation and the other task is performing a matching receive operation.
+<P>
+<LI>There are different types of send and receive routines used for 
+    different purposes. For example:
+    <UL>
+    <LI>Synchronous send
+    <LI>Blocking send / blocking receive
+    <LI>Non-blocking send / non-blocking receive
+    <LI>Buffered send
+    <LI>Combined send/receive
+    <LI>"Ready" send
+    </UL>
+<P>
+<LI>Any type of send routine can be paired with any type of receive routine.
+<P>
+<LI>MPI also provides several routines associated with send - receive
+    operations, such as those used to wait for a message's arrival or
+    probe to find out if a message has arrived.
+</UL>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Buffering:</SPAN>
+<UL>
+<LI>In a perfect world, every send operation would be perfectly
+    synchronized with its matching receive. This is rarely the case.
+    Somehow or other, the MPI implementation must be able to deal with
+    storing data when the two tasks are out of sync.
+<P>
+<LI>Consider the following two cases:
+    <UL>
+    <LI>A send operation occurs 5 seconds before the receive is ready -
+        where is the message while the receive is pending?
+    <LI>Multiple sends arrive at the same receiving task which can only
+        accept one send at a time - what happens to the messages that are
+        "backing up"?
+    </UL>
+<P>
+<LI>The MPI implementation (not the MPI standard) decides what happens to
+    data in these types of cases.  Typically, a <B>system buffer</B> area
+    is reserved to hold data in transit.  For example:
+<P>
+<IMG SRC=images/buffer_recv.gif WIDTH=608 HEIGHT=384 BORDER=0
+ALT='System buffering example'>
+<P>
+<LI>System buffer space is:
+    <UL>
+    <LI>Opaque to the programmer and managed entirely by the MPI library
+    <LI>A finite resource that can be easy to exhaust
+    <LI>Often mysterious and not well documented
+    <LI>Able to exist on the sending side, the receiving side, or both
+    <LI>Something that may improve program performance because it allows
+        send - receive operations to be asynchronous.
+    </UL>
+<P>
+<LI>User managed address space (i.e. your program variables) is called 
+    the <B>application buffer</B>. MPI also provides for a user managed
+    send buffer.
+</UL>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Blocking vs. Non-blocking:</SPAN>
+<UL>
+<LI>Most of the MPI point-to-point routines can be used in either blocking
+    or non-blocking mode.
+<P>
+<LI>Blocking:
+    <UL>
+    <LI>A blocking send routine will only "return" after it is safe to modify
+        the application buffer (your send data) for reuse. Safe means that
+        modifications will not affect the data intended for the receive task.
+        Safe does not imply that the data was actually received - it may
+        very well be sitting in a system buffer.
+    <LI>A blocking send can be synchronous which means there is handshaking
+        occurring with the receive task to confirm a safe send.
+    <LI>A blocking send can be asynchronous if a system buffer is used to
+        hold the data for eventual delivery to the receive.
+    <LI>A blocking receive only "returns" after the data has arrived and
+        is ready for use by the program.
+    </UL>
+<P>
+<LI>Non-blocking:
+    <UL>
+    <LI>Non-blocking send and receive routines behave similarly - they will
+        return almost immediately. They do not wait for any communication
+        events to complete, such as message copying from user memory to 
+        system buffer space or the actual arrival of message. 
+    <LI>Non-blocking operations simply "request" the MPI library to perform
+        the operation when it is able.  The user can not predict when that
+        will happen. 
+    <LI>It is unsafe to modify the application buffer (your
+        variable space) until you know for a fact the requested 
+        non-blocking operation was actually performed by the library.
+        There are "wait" routines used to do this.
+    <LI>Non-blocking communications are primarily used to overlap computation
+        with communication and exploit possible performance gains.
+    </UL>
+</UL>
+<P>
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Order and Fairness:</SPAN>
+<UL>
+<LI>Order:
+    <UL>
+    <LI>MPI guarantees that messages will not overtake each other.
+    <LI>If a sender sends two messages (Message 1 and Message 2) in succession 
+        to the same destination, and both match the same receive, the receive
+        operation will receive Message 1 before Message 2.
+    <LI>If a receiver posts two receives (Receive 1 and Receive 2), in 
+        succession, and both are looking for the same message, Receive 1 will
+        receive the message before Receive 2.
+    <LI>Order rules do not apply if there are multiple threads participating
+        in the communication operations. 
+    </UL>
+<P>
+<LI>Fairness:
+    <UL>
+    <LI>MPI does not guarantee fairness - it's up to the programmer to
+        prevent "operation starvation".
+    <LI>Example: task 0 sends a message to task 2. However, task 1 sends
+        a competing message that matches task 2's receive. Only one of the
+        sends will complete.
+    <P>
+    <IMG SRC=images/fairness.gif WIDTH=400 HEIGHT=292 BORDER=0
+    ALT='MPI does not guarantee fairness'>
+    </UL>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Routine_Arguments> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Point to Point Communication Routines</SPAN></TD>
+</TD></TR></TABLE>
+<H2>MPI Message Passing Routine Arguments</H2>
+
+MPI point-to-point communication routines generally have an argument list 
+that takes one of the following formats:
+<P>
+<UL>
+<TABLE BORDER=1 CELLSPACING=0  CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE><B>Blocking sends
+    <TD><TT><B><NOBR>
+    MPI_Send(buffer,count,type,dest,tag,comm) 
+<TR><TD BGCOLOR=#FOF5FE><B>Non-blocking sends
+    <TD><TT><B><NOBR>
+    MPI_Isend(buffer,count,type,dest,tag,comm,request) 
+<TR><TD BGCOLOR=#FOF5FE><B>Blocking receive
+    <TD><TT><B><NOBR>
+    MPI_Recv(buffer,count,type,source,tag,comm,status) 
+<TR><TD BGCOLOR=#FOF5FE><B>Non-blocking receive
+    <TD><TT><B><NOBR>
+    MPI_Irecv(buffer,count,type,source,tag,comm,request) </TD>
+</TABLE>
+</UL>
+
+<DL>
+<DT><B>Buffer</B>
+<P>
+<DD>Program (application) address space that references the data that is 
+    to be sent or received.  In most cases, this is simply the variable
+    name that is be sent/received.  For C programs, this argument is 
+    passed by reference and usually must be prepended with an ampersand:  
+    <TT><B> &amp;var1 </B></TT>
+<P>
+<DT><B>Data Count</B>
+<P>
+<DD>Indicates the number of data elements of a particular type to be sent.  
+<P>
+<DT><B>Data Type</B>
+<P>
+<DD>For reasons of portability, MPI predefines its elementary data types.
+    The table below lists those required by the standard. 
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TH COLSPAN=2>C Data Types</TH>
+    <TH COLSPAN=2>Fortran Data Types</TH>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_CHAR</TD>
+    <TD>signed char</TD>
+    <TD BGCOLOR=#FOF5FE><TT><B>MPI_CHARACTER</TD>
+    <TD>character(1)</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_WCHAR</TD>
+    <TD>wchar_t - wide character</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_SHORT</TD>
+    <TD>signed short int</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_INT</TD>
+    <TD>signed int</TD>
+    <TD BGCOLOR=#FOF5FE><TT><B>MPI_INTEGER<BR><FONT COLOR=gray>MPI_INTEGER1
+    <BR>MPI_INTEGER2<BR>MPI_INTEGER4</FONT></TD>
+    <TD>integer<BR>integer*1<BR>integer*2<BR>integer*4</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_LONG</TD>
+    <TD>signed long int</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_LONG_LONG_INT
+    <BR>MPI_LONG_LONG</TD>
+    <TD>signed long long int</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_SIGNED_CHAR</TD>
+    <TD>signed char</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_UNSIGNED_CHAR</TD>
+    <TD>unsigned char</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_UNSIGNED_SHORT</TD>
+    <TD>unsigned short int</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_UNSIGNED</TD>
+    <TD>unsigned int</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_UNSIGNED_LONG</TD>
+    <TD>unsigned long int</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_UNSIGNED_LONG_LONG</TD>
+    <TD>unsigned long long int</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_FLOAT</TD>
+    <TD>float</TD>
+    <TD BGCOLOR=#FOF5FE><TT><B>MPI_REAL<BR><FONT COLOR=gray>MPI_REAL2
+    <BR>MPI_REAL4<BR>MPI_REAL8</FONT>
+    <TD>real<BR>real*2<BR>real*4<BR>real*8</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_DOUBLE</TD>
+    <TD>double</TD>
+    <TD BGCOLOR=#FOF5FE><TT><B>MPI_DOUBLE_PRECISION</TD>
+    <TD>double precision</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_LONG_DOUBLE</TD>
+    <TD>long double</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_C_COMPLEX<BR>MPI_C_FLOAT_COMPLEX</TD>
+    <TD>float _Complex</TD>
+    <TD BGCOLOR=#FOF5FE><TT><B>MPI_COMPLEX</TD>
+    <TD>complex</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_C_DOUBLE_COMPLEX</TD>
+    <TD>double _Complex</TD>
+    <TD BGCOLOR=#FOF5FE><TT><B><FONT COLOR=gray>MPI_DOUBLE_COMPLEX</FONT></TD>
+    <TD>double complex</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_C_LONG_DOUBLE_COMPLEX</TD>
+    <TD>long double _Complex</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_C_BOOL</TD>
+    <TD>_Bool</TD>
+    <TD BGCOLOR=#FOF5FE><TT><B>MPI_LOGICAL</TD>
+    <TD>logical</TD>
+
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_C_LONG_DOUBLE_COMPLEX</TD>
+    <TD>long double _Complex</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_INT8_T 
+<BR>MPI_INT16_T<BR>MPI_INT32_T <BR>MPI_INT64_T</TD>
+    <TD>int8_t<BR>int16_t<BR>int32_t <BR>int64_t</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_UINT8_T 
+<BR>MPI_UINT16_T <BR>MPI_UINT32_T <BR>MPI_UINT64_T </TD>
+    <TD>uint8_t<BR>uint16_t<BR>uint32_t<BR>uint64_t</TD>
+    <TD BGCOLOR=#FOF5FE>&nbsp;</TD>
+    <TD>&nbsp;</TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_BYTE</TD>
+    <TD>8 binary digits </TD>
+    <TD BGCOLOR=#FOF5FE><TT><B>MPI_BYTE</TD>        
+    <TD>8 binary digits </TD>
+</TR><TR><TD BGCOLOR=#FOF5FE><TT><B>MPI_PACKED</TD>
+    <TD>data packed or unpacked with MPI_Pack()/
+        MPI_Unpack</TD>
+    <TD BGCOLOR=#FOF5FE><TT><B>MPI_PACKED</TD>
+    <TD>data packed or unpacked with MPI_Pack()/
+        MPI_Unpack</TD>
+</TR></TABLE>
+<P>
+<B>Notes:</B>
+    <UL>
+    <LI>Programmers may also create their own data types 
+        (see <A HREF=#Derived_Data_Types>Derived Data Types</A>).
+    <LI>MPI_BYTE and MPI_PACKED do not correspond to standard C or
+        Fortran types.
+    <LI>Types shown in <FONT COLOR=gray><B>GRAY FONT</B></FONT> are recommended if
+        possible.  
+    <LI>Some implementations may include additional elementary data
+        types (MPI_LOGICAL2, MPI_COMPLEX32, etc.). Check the MPI header file.
+    </UL>
+<P>
+<DT><B>Destination</B>
+<P>
+<DD>An argument to send routines that indicates the process where a 
+    message should be delivered.  Specified as the rank of the receiving 
+    process.
+<P>
+<DT><B>Source</B>
+<P>
+<DD>An argument to receive routines that indicates the originating process
+    of the message.  Specified as the rank of the sending process.  This may 
+    be set to the wild card MPI_ANY_SOURCE to receive a message from any task.
+<P>
+<DT><B>Tag</B>
+<P>
+<DD>Arbitrary non-negative integer assigned by the programmer to uniquely 
+    identify a message.  Send and receive operations should match message 
+    tags.  For a receive operation, the wild card MPI_ANY_TAG can be used 
+    to receive any message regardless of its tag.  The MPI standard guarantees 
+    that integers 0-32767 can be used as tags, but most implementations allow 
+    a much larger range than this.
+<P>
+<DT><B>Communicator</B>
+<P>
+<DD>Indicates the communication context, or set of processes for which the
+    source or destination fields are valid.  Unless the programmer is 
+    explicitly creating new communicators, the predefined communicator
+    MPI_COMM_WORLD is usually used.
+<P>
+<DT><B>Status</B>
+<P>
+<DD>For a receive operation, indicates the source of the message and the 
+    tag of the message.  In C, this argument is a pointer to a predefined 
+    structure MPI_Status (ex. stat.MPI_SOURCE stat.MPI_TAG).
+    In Fortran, it is an integer array of size MPI_STATUS_SIZE (ex.
+    stat(MPI_SOURCE) stat(MPI_TAG)).  Additionally, the actual number of
+    bytes received is obtainable from Status via the MPI_Get_count
+    routine.
+<P>
+<DT><B>Request</B>
+<P>
+<DD>Used by non-blocking send and receive operations.  Since non-blocking
+    operations may return before the requested system buffer space is
+    obtained, the system issues a unique "request number".  The programmer
+    uses this system assigned "handle" later (in a WAIT type routine)
+    to determine completion of the non-blocking operation.  In C, this 
+    argument is a pointer to a predefined structure MPI_Request. In Fortran, 
+    it is an integer. 
+</DL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Blocking_Message_Passing_Routines> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Point to Point Communication Routines</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Blocking Message Passing Routines</H2>
+
+The more commonly used MPI blocking message passing routines are described
+below.
+<P>
+<DL>
+<DT><B><A HREF=man/MPI_Send.txt TARGET=_blank> 
+MPI_Send</A></B>
+<P>
+<DD>Basic blocking send operation.  Routine returns only after the 
+    application buffer in the sending task is free for reuse.  Note that
+    this routine may be implemented differently on different systems.  The 
+    MPI standard permits the use of a system buffer but does not require it.  
+    Some implementations may actually use a synchronous send (discussed
+    below) to implement the basic blocking send. 
+    <P><NOBR><TT><B>
+    MPI_Send (&amp;buf,count,datatype,dest,tag,comm)  <BR>
+    MPI_SEND (buf,count,datatype,dest,tag,comm,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Recv.txt TARGET=_blank> 
+MPI_Recv</A></B> 
+<P>
+<DD>Receive a message and block until the requested data is available in 
+    the application buffer in the receiving task.
+    <P><NOBR><TT><B>
+    MPI_Recv (&amp;buf,count,datatype,source,tag,comm,&amp;status) <BR> 
+    MPI_RECV (buf,count,datatype,source,tag,comm,status,ierr) 
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Ssend.txt TARGET=_blank> 
+MPI_Ssend</A></B> 
+<P>
+<DD>Synchronous blocking send: Send a message and block until the
+    application buffer in the sending task is free for reuse and the
+    destination process has started to receive the message.
+    <P><NOBR><TT><B>
+    MPI_Ssend (&amp;buf,count,datatype,dest,tag,comm)  <BR>
+    MPI_SSEND (buf,count,datatype,dest,tag,comm,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Bsend.txt TARGET=_blank> 
+MPI_Bsend</A></B> 
+<P>
+<DD>Buffered blocking send: permits the programmer to allocate the required
+    amount of buffer space into which data can be copied until it is 
+    delivered.  Insulates against the problems associated with insufficient
+    system buffer space.  Routine returns after the data has been copied
+    from application buffer space to the allocated send buffer.  Must be
+    used with the MPI_Buffer_attach routine.
+    <P><NOBR><TT><B>
+    MPI_Bsend (&amp;buf,count,datatype,dest,tag,comm)  <BR>
+    MPI_BSEND (buf,count,datatype,dest,tag,comm,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Buffer_attach.txt TARGET=_blank> 
+MPI_Buffer_attach</A> <BR> 
+<A HREF=man/MPI_Buffer_detach.txt TARGET=_blank> 
+MPI_Buffer_detach</A></B>
+<P>
+<DD>Used by programmer to allocate/deallocate message buffer space to be 
+    used by the MPI_Bsend routine.  The size argument is specified in 
+    actual data bytes - not a count of data elements.
+    Only one buffer can be attached to a process at a time.
+    <P><NOBR><TT><B>
+    MPI_Buffer_attach (&amp;buffer,size)  <BR>
+    MPI_Buffer_detach (&amp;buffer,size)  <BR>
+    MPI_BUFFER_ATTACH (buffer,size,ierr)  <BR>
+    MPI_BUFFER_DETACH (buffer,size,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Rsend.txt TARGET=_blank> 
+MPI_Rsend</A></B> 
+<P>
+<DD>Blocking ready send.  Should only be used if the programmer is certain 
+    that the matching receive has already been posted. Often simply implemented as
+    an MPI_Send routine.
+    <P><NOBR><TT><B>
+    MPI_Rsend (&amp;buf,count,datatype,dest,tag,comm) <BR> 
+    MPI_RSEND (buf,count,datatype,dest,tag,comm,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Sendrecv.txt TARGET=_blank> 
+MPI_Sendrecv</A></B> 
+<P>
+<DD>Send a message and post a receive before blocking.  Will block until
+    the sending application buffer is free for reuse and until the receiving
+    application buffer contains the received message.
+    <P><NOBR><TT><B>
+    MPI_Sendrecv (&amp;sendbuf,sendcount,sendtype,dest,sendtag,  <BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                 &amp;recvbuf,recvcount,recvtype,source,recvtag,   <BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                 comm,&amp;status)   <BR>
+    MPI_SENDRECV (sendbuf,sendcount,sendtype,dest,sendtag,  <BR> 
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                 recvbuf,recvcount,recvtype,source,recvtag,  <BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                 comm,status,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Wait.txt TARGET=_blank>MPI_Wait</A><BR>
+<A HREF=man/MPI_Waitany.txt TARGET=_blank>MPI_Waitany</A><BR>
+<A HREF=man/MPI_Waitall.txt TARGET=_blank>MPI_Waitall</A><BR>
+<A HREF=man/MPI_Waitsome.txt TARGET=_blank> MPI_Waitsome</A></B>
+<P>
+<DD>MPI_Wait blocks until a specified non-blocking send or receive
+    operation has completed.  For multiple non-blocking operations, the
+    programmer can specify any, all or some completions.
+    <P><NOBR><TT><B>
+    MPI_Wait     (&amp;request,&amp;status)  <BR>
+    MPI_Waitany  (count,&amp;array_of_requests,&amp;index,&amp;status)  <BR>
+    MPI_Waitall  (count,&amp;array_of_requests,&amp;array_of_statuses)  <BR>
+    MPI_Waitsome (incount,&amp;array_of_requests,&amp;outcount,  <BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+        &amp;array_of_offsets, &amp;array_of_statuses)  <BR>
+    MPI_WAIT     (request,status,ierr)  <BR>
+    MPI_WAITANY  (count,array_of_requests,index,status,ierr)  <BR>
+    MPI_WAITALL  (count,array_of_requests,array_of_statuses,  <BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                 ierr)  <BR>
+    MPI_WAITSOME (incount,array_of_requests,outcount,  <BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                 array_of_offsets, array_of_statuses,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Probe.txt TARGET=_blank> 
+MPI_Probe</A></B>
+<P>
+<DD>Performs a blocking test for a message. The "wildcards"  MPI_ANY_SOURCE 
+    and MPI_ANY_TAG may be used to test for a message from any source or
+    with any tag.  For the C routine, the actual source and tag will be
+    returned in the status structure as status.MPI_SOURCE and
+    status.MPI_TAG.  For the Fortran routine, they will be returned in
+    the integer array status(MPI_SOURCE) and status(MPI_TAG).
+    <P><NOBR><TT><B>
+    MPI_Probe (source,tag,comm,&amp;status)  <BR>
+    MPI_PROBE (source,tag,comm,status,ierr)
+    </B></TT></NOBR><P>
+</DL>
+
+<P><HR><P>
+
+<H2>Examples: Blocking Message Passing Routines</H2>
+
+<UL>
+<P>
+Task 0 pings task 1 and awaits return ping
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>C Language - Blocking Message Passing 
+Routines Example</SPAN>
+<HR>
+<PRE>
+#include <FONT COLOR=#FF0000>"mpi.h"</FONT>
+#include &lt;stdio.h&gt;
+
+main(int argc, char *argv[])  {
+int numtasks, rank, dest, source, rc, count, tag=1;  
+char inmsg, outmsg='x';
+<FONT COLOR=#FF0000>MPI_Status Stat</FONT>;
+
+<FONT COLOR=#FF0000>MPI_Init</FONT>(&argc,&argv);
+<FONT COLOR=#FF0000>MPI_Comm_size</FONT>(MPI_COMM_WORLD, &numtasks);
+<FONT COLOR=#FF0000>MPI_Comm_rank</FONT>(MPI_COMM_WORLD, &rank);
+
+if (rank == 0) {
+  dest = 1;
+  source = 1;
+  rc = <FONT COLOR=#FF0000>MPI_Send</FONT>(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
+  rc = <FONT COLOR=#FF0000>MPI_Recv</FONT>(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
+  } 
+
+else if (rank == 1) {
+  dest = 0;
+  source = 0;
+  rc = <FONT COLOR=#FF0000>MPI_Recv</FONT>(&inmsg, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, &Stat);
+  rc = <FONT COLOR=#FF0000>MPI_Send</FONT>(&outmsg, 1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
+  }
+
+rc = <FONT COLOR=#FF0000>MPI_Get_count</FONT>(&Stat, MPI_CHAR, &count);
+printf("Task %d: Received %d char(s) from task %d with tag %d \n",
+       rank, count, Stat.MPI_SOURCE, Stat.MPI_TAG);
+
+
+<FONT COLOR=#FF0000>MPI_Finalize</FONT>();
+}
+</PRE> </TD>
+</TABLE>
+
+
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>Fortran - Blocking Message Passing 
+Routines Example</SPAN>
+<HR>
+<PRE>
+   program ping
+   include <FONT COLOR=#FF0000>'mpif.h'</FONT>
+
+   integer numtasks, rank, dest, source, count, tag, ierr
+   integer <FONT COLOR=#FF0000>stat(MPI_STATUS_SIZE)</FONT>
+   character inmsg, outmsg
+   outmsg = 'x'
+   tag = 1
+
+   call <FONT COLOR=#FF0000>MPI_INIT</FONT>(ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_RANK</FONT>(MPI_COMM_WORLD, rank, ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_SIZE</FONT>(MPI_COMM_WORLD, numtasks, ierr)
+
+   if (rank .eq. 0) then
+      dest = 1
+      source = 1
+      call <FONT COLOR=#FF0000>MPI_SEND</FONT>(outmsg, 1, MPI_CHARACTER, dest, tag, 
+ &            MPI_COMM_WORLD, ierr)
+      call <FONT COLOR=#FF0000>MPI_RECV</FONT>(inmsg, 1, MPI_CHARACTER, source, tag, 
+ &            MPI_COMM_WORLD, stat, ierr)
+
+   else if (rank .eq. 1) then
+      dest = 0
+      source = 0
+      call <FONT COLOR=#FF0000>MPI_RECV</FONT>(inmsg, 1, MPI_CHARACTER, source, tag, 
+ &       MPI_COMM_WORLD, stat, err)
+      call <FONT COLOR=#FF0000>MPI_SEND</FONT>(outmsg, 1, MPI_CHARACTER, dest, tag, 
+ &       MPI_COMM_WORLD, err)
+   endif
+
+   call <FONT COLOR=#FF0000>MPI_GET_COUNT</FONT>(stat, MPI_CHARACTER, count, ierr)
+   print *, 'Task ',rank,': Received', count, 'char(s) from task',
+  &         stat(MPI_SOURCE), 'with tag',stat(MPI_TAG)
+
+   call <FONT COLOR=#FF0000>MPI_FINALIZE</FONT>(ierr)
+
+   end
+</PRE></TD>
+</TABLE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Non-Blocking_Message_Passing_Routines> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Point to Point Communication Routines</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Non-Blocking Message Passing Routines</H2>
+
+The more commonly used MPI non-blocking message passing routines are described
+below.
+<P>
+<DL>
+<DT><B><A HREF=man/MPI_Isend.txt TARGET=_blank> 
+MPI_Isend</A></B> 
+<P>
+<DD>Identifies an area in memory to serve as a send buffer.  Processing 
+    continues immediately without waiting for the message to be copied out 
+    from the application buffer.  A communication request handle is 
+    returned for handling the pending message status.  The program should 
+    not modify the application buffer until subsequent calls to MPI_Wait
+    or MPI_Test indicate that the non-blocking send has completed. 
+    <P><NOBR><TT><B>
+    MPI_Isend (&amp;buf,count,datatype,dest,tag,comm,&amp;request) <BR>
+    MPI_ISEND (buf,count,datatype,dest,tag,comm,request,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Irecv.txt TARGET=_blank> 
+MPI_Irecv</A></B>
+<P>
+<DD>Identifies an area in memory to serve as a receive buffer.  Processing
+    continues immediately without actually waiting for the message to be
+    received and copied into the the application buffer.  A communication
+    request handle is returned for handling the pending message status.
+    The program must use calls to MPI_Wait or MPI_Test to determine when the
+    non-blocking receive operation completes and the requested message is
+    available in the application buffer.
+    <P><NOBR><TT><B>
+    MPI_Irecv (&amp;buf,count,datatype,source,tag,comm,&amp;request) <BR>
+    MPI_IRECV (buf,count,datatype,source,tag,comm,request,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Issend.txt TARGET=_blank> 
+MPI_Issend</A></B> 
+<P>
+<DD>Non-blocking synchronous send.  Similar to MPI_Isend(), except 
+    MPI_Wait() or MPI_Test() indicates when the destination process has 
+    received the message.
+    <P><NOBR><TT><B>
+    MPI_Issend (&amp;buf,count,datatype,dest,tag,comm,&amp;request) <BR>
+    MPI_ISSEND (buf,count,datatype,dest,tag,comm,request,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Ibsend.txt TARGET=_blank> 
+MPI_Ibsend</A></B> 
+<P>
+<DD>Non-blocking buffered send.  Similar to MPI_Bsend() except MPI_Wait() 
+    or MPI_Test() indicates when the destination process has received the 
+    message.  Must be used with the MPI_Buffer_attach routine.
+    <P><NOBR><TT><B>
+    MPI_Ibsend (&amp;buf,count,datatype,dest,tag,comm,&amp;request) <BR>
+    MPI_IBSEND (buf,count,datatype,dest,tag,comm,request,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Irsend.txt TARGET=_blank> 
+MPI_Irsend</A></B>
+<P>
+<DD>Non-blocking ready send.  Similar to MPI_Rsend() except MPI_Wait()
+    or MPI_Test() indicates when the destination process has received the 
+    message.  Should only be used if the programmer is certain that the 
+    matching receive has already been posted.
+    <P><NOBR><TT><B>
+    MPI_Irsend (&amp;buf,count,datatype,dest,tag,comm,&amp;request) <BR>
+    MPI_IRSEND (buf,count,datatype,dest,tag,comm,request,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Test.txt TARGET=_blank> MPI_Test</A> 
+<BR><A HREF=man/MPI_Testany.txt TARGET=_blank> MPI_Testany</A> 
+<BR><A HREF=man/MPI_Testall.txt TARGET=_blank> MPI_Testall</A> 
+<BR><A HREF=man/MPI_Testsome.txt TARGET=_blank> MPI_Testsome</A>
+</B>
+<P>
+<DD>MPI_Test checks the status of a specified non-blocking send or receive 
+    operation. The "flag" parameter is returned logical true (1) if the
+    operation has completed, and logical false (0) if not.  For multiple
+    non-blocking operations, the programmer can specify any, all or some 
+    completions.
+    <P><NOBR><TT><B>
+    MPI_Test     (&amp;request,&amp;flag,&amp;status) <BR>
+    MPI_Testany  (count,&amp;array_of_requests,&amp;index,&amp;flag,&amp;status)<BR>
+    MPI_Testall  (count,&amp;array_of_requests,&amp;flag,&amp;array_of_statuses)<BR>
+    MPI_Testsome (incount,&amp;array_of_requests,&amp;outcount,<BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                 &amp;array_of_offsets, &amp;array_of_statuses)<BR>
+    MPI_TEST     (request,flag,status,ierr)<BR>
+    MPI_TESTANY  (count,array_of_requests,index,flag,status,ierr)<BR>
+    MPI_TESTALL  (count,array_of_requests,flag,array_of_statuses,ierr)<BR>
+    MPI_TESTSOME (incount,array_of_requests,outcount,<BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                 array_of_offsets, array_of_statuses,ierr)<BR>
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Iprobe.txt TARGET=_blank> 
+MPI_Iprobe</A></B>
+<P>
+<DD>Performs a non-blocking test for a message. The "wildcards"  
+    MPI_ANY_SOURCE and MPI_ANY_TAG may be used to test for a message 
+    from any source or with any tag.  The integer "flag" parameter is returned
+    logical true (1) if a message has arrived, and logical false (0) if not.
+    For the C routine, the actual source and tag will be
+    returned in the status structure as status.MPI_SOURCE and
+    status.MPI_TAG.  For the Fortran routine, they will be returned in
+    the integer array status(MPI_SOURCE) and status(MPI_TAG).
+    <P><NOBR><TT><B>
+    MPI_Iprobe (source,tag,comm,&amp;flag,&amp;status)<BR>
+    MPI_IPROBE (source,tag,comm,flag,status,ierr)
+    </B></TT></NOBR><P>
+
+</DL>
+
+
+<P><HR><P>
+
+<H2>Examples: Non-Blocking Message Passing Routines</H2>
+
+<UL>
+<P>
+Nearest neighbor exchange in a ring topology 
+<P>
+<IMG SRC=images/ringtopo.gif WIDTH=583 HEIGHT=79 BORDER=0>
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3> C Language - Non-Blocking Message 
+Passing Routines Example</SPAN>
+<HR>
+<PRE>
+#include <FONT COLOR=#FF0000>"mpi.h"</FONT>
+#include &lt;stdio.h&gt;
+
+main(int argc, char *argv[])  {
+int numtasks, rank, next, prev, buf[2], tag1=1, tag2=2;
+<FONT COLOR=#FF0000>MPI_Request reqs[4]</FONT>;
+<FONT COLOR=#FF0000>MPI_Status stats[4]</FONT>;
+
+<FONT COLOR=#FF0000>MPI_Init</FONT>(&argc,&argv);
+<FONT COLOR=#FF0000>MPI_Comm_size</FONT>(MPI_COMM_WORLD, &numtasks);
+<FONT COLOR=#FF0000>MPI_Comm_rank</FONT>(MPI_COMM_WORLD, &rank);
+
+prev = rank-1;
+next = rank+1;
+if (rank == 0)  prev = numtasks - 1;
+if (rank == (numtasks - 1))  next = 0;
+
+<FONT COLOR=#FF0000>MPI_Irecv</FONT>(&buf[0], 1, MPI_INT, prev, tag1, MPI_COMM_WORLD, &reqs[0]);
+<FONT COLOR=#FF0000>MPI_Irecv</FONT>(&buf[1], 1, MPI_INT, next, tag2, MPI_COMM_WORLD, &reqs[1]);
+
+<FONT COLOR=#FF0000>MPI_Isend</FONT>(&rank, 1, MPI_INT, prev, tag2, MPI_COMM_WORLD, &reqs[2]);
+<FONT COLOR=#FF0000>MPI_Isend</FONT>(&rank, 1, MPI_INT, next, tag1, MPI_COMM_WORLD, &reqs[3]);
+  
+      {  do some work  }
+
+<FONT COLOR=#FF0000>MPI_Waitall</FONT>(4, reqs, stats);
+
+<FONT COLOR=#FF0000>MPI_Finalize</FONT>();
+}
+</PRE> </TD>
+</TABLE>
+
+
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>Fortran - Non-Blocking Message 
+Passing Routines Example</SPAN> 
+<HR>
+<PRE>
+   program ringtopo
+   include <FONT COLOR=#FF0000>'mpif.h'</FONT>
+
+   integer numtasks, rank, next, prev, buf(2), tag1, tag2, ierr
+   integer <FONT COLOR=#FF0000>stats(MPI_STATUS_SIZE,4), reqs(4)</FONT>
+   tag1 = 1
+   tag2 = 2
+
+   call <FONT COLOR=#FF0000>MPI_INIT</FONT>(ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_RANK</FONT>(MPI_COMM_WORLD, rank, ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_SIZE</FONT>(MPI_COMM_WORLD, numtasks, ierr)
+
+   prev = rank - 1
+   next = rank + 1
+   if (rank .eq. 0) then
+      prev = numtasks - 1
+   endif
+   if (rank .eq. numtasks - 1) then
+      next = 0
+   endif
+
+   call <FONT COLOR=#FF0000>MPI_IRECV</FONT>(buf(1), 1, MPI_INTEGER, prev, tag1, 
+ &     MPI_COMM_WORLD, reqs(1), ierr)
+   call <FONT COLOR=#FF0000>MPI_IRECV</FONT>(buf(2), 1, MPI_INTEGER, next, tag2, 
+ &     MPI_COMM_WORLD, reqs(2), ierr)
+
+   call <FONT COLOR=#FF0000>MPI_ISEND</FONT>(rank, 1, MPI_INTEGER, prev, tag2,
+ &     MPI_COMM_WORLD, reqs(3), ierr)
+   call <FONT COLOR=#FF0000>MPI_ISEND</FONT>(rank, 1, MPI_INTEGER, next, tag1,
+ &     MPI_COMM_WORLD, reqs(4), ierr)
+
+C        do some work
+
+   call <FONT COLOR=#FF0000>MPI_WAITALL</FONT>(4, reqs, stats, ierr);
+
+   call <FONT COLOR=#FF0000>MPI_FINALIZE</FONT>(ierr)
+
+   end
+</PRE> </TD>
+</TABLE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Exercise2> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>MPI Exercise 2</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Point-to-Point Message Passing</H2>
+
+<DD>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR VALIGN=top><TD BGCOLOR=#FOF5FE HEIGHT=400>
+<B><U>Overview:</U>
+<UL>
+<LI>Login to the LC workshop cluster, if you are not already logged in
+<LI>Using your "Hello World" MPI program from Exercise 1, add
+    MPI blocking point-to-point routines to send and receive messages
+<LI>Successfully compile your program
+<LI>Successfully run your program - several different ways
+<LI>Try the same thing with nonblocking send/receive routines
+</UL>
+<P>
+<IMG SRC=../images/point02.jpg WIDTH=100 HEIGTH=45 BORDER=0>
+<A HREF=exercise.html#Exercise2 TARGET=_blank>GO TO THE EXERCISE HERE</A>
+</B>
+</TD></TR></TABLE>
+</DD>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME="Collective_Communication_Routines"> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Collective Communication Routines</SPAN></TD>
+</TD></TR></TABLE>
+<P><BR>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Scope:</SPAN>
+<UL>
+<P>
+<LI>Collective communication routines must involve <B>all</B> processes 
+    within the scope of a communicator.  
+    <UL>
+    <LI>All processes are by default, members in the communicator MPI_COMM_WORLD.
+    <LI>Additional communicators can be defined by the programmer. See the
+        <A HREF=#Group_Management_Routines>Group and Communicator Management
+        Routines</A> section for details.
+    </UL>
+<P>
+<LI>Unexpected behavior, including program failure, can occur if even one
+    task in the communicator doesn't participate.
+<P>
+<LI>It is the programmer's responsibility to ensure that all processes 
+    within a communicator participate in any collective operations.
+</UL>
+<P>
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Types of Collective Operations:</SPAN>
+<IMG SRC=images/collective_comm.gif WIDTH=400 HEIGHT=317 BORDER=0 HSPACE=20
+ALT='Collective Communications' ALIGN=right>
+<UL>
+<P>
+<LI><B>Synchronization</B> - processes wait until all members of the group 
+    have reached the synchronization point.
+<P>
+<LI><B>Data Movement</B> - broadcast, scatter/gather, all to all. 
+<P>
+<LI><B>Collective Computation</B> (reductions) - one member of the group 
+    collects data from the other members and performs an operation 
+    (min, max, add, multiply, etc.) on that data. 
+</UL>
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Programming Considerations and Restrictions:</SPAN>
+<UL>
+<P>
+<LI>Collective communication routines do not take message tag arguments. 
+<P>
+<LI>Collective operations within subsets of processes are accomplished 
+    by first partitioning the subsets into new groups and then
+    attaching the new groups to new communicators (discussed in the
+    <A HREF=#Group_Management_Routines>Group and Communicator 
+    Management Routines</A> section).
+<P>
+<LI>Can only be used with MPI predefined datatypes - not with MPI
+    <A HREF=#Derived_Data_Types>Derived Data Types</A>.
+<P>
+<LI>MPI-2 extended most collective operations to allow data movement
+    between intercommunicators (not covered here).
+<P>
+<LI>With MPI-3, collective operations can be blocking or non-blocking. Only 
+    blocking operations are covered in this tutorial. 
+</UL>
+
+<P><HR><P>
+
+<H2>Collective Communication Routines</H2>
+<P>
+
+<DL>
+<DT><B><A HREF=man/MPI_Barrier.txt TARGET=_blank> 
+MPI_Barrier</A></B>
+<P>
+<DD>Synchronization operation. Creates a barrier synchronization in a group.  
+    Each task, when reaching the MPI_Barrier call, blocks until all tasks in the 
+    group reach the same MPI_Barrier call.  Then all tasks are free to proceed.
+    <P><NOBR><TT><B>
+    MPI_Barrier (comm)<BR>
+    MPI_BARRIER (comm,ierr)
+    </B></TT></NOBR><P>
+</DD>
+<FORM>
+<DT><B><A HREF=man/MPI_Bcast.txt TARGET=_blank> 
+MPI_Bcast</A></B>
+<P>
+<DD>Data movement operation.
+    Broadcasts (sends) a message from the process with rank "root" to all 
+    other processes in the group.  
+    <BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+    onclick="popUp('images/MPI_Bcast.gif')"> </B></FONT>
+    <!--                                                  
+    <A HREF="images/MPI_Bcast.gif" TARGET=_blank> Diagram here.</A>  
+    -->
+    <P><NOBR><TT><B>
+    MPI_Bcast (&amp;buffer,count,datatype,root,comm)   <BR>
+    MPI_BCAST (buffer,count,datatype,root,comm,ierr)
+    </B></TT></NOBR><P>
+ 
+<DT><B><A HREF=man/MPI_Scatter.txt TARGET=_blank> 
+MPI_Scatter</A></B>
+<P>
+<DD>Data movement operation.
+    Distributes distinct messages from a single source task to each task in
+    the group.  
+    <BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+    onclick="popUp('images/MPI_Scatter.gif')"> </B></FONT>
+    <!--                                                  
+    <A HREF="images/MPI_Scatter.gif" TARGET=_blank> Diagram here.</A>  
+    -->
+    <P><NOBR><TT><B>
+    MPI_Scatter (&amp;sendbuf,sendcnt,sendtype,&amp;recvbuf,   <BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                recvcnt,recvtype,root,comm)  <BR>
+    MPI_SCATTER (sendbuf,sendcnt,sendtype,recvbuf,  <BR> 
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                recvcnt,recvtype,root,comm,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Gather.txt TARGET=_blank> 
+MPI_Gather</A></B>
+<P>
+<DD>Data movement operation.
+    Gathers distinct messages from each task in the group to a single
+    destination task.  This routine is the reverse operation of MPI_Scatter.
+    <BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+    onclick="popUp('images/MPI_Gather.gif')"> </B></FONT>
+    <!--                                                  
+    <A HREF="images/MPI_Gather.gif" TARGET=_blank> Diagram here.</A>
+    -->
+    <P><NOBR><TT><B>
+    MPI_Gather (&amp;sendbuf,sendcnt,sendtype,&amp;recvbuf,  <BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+               recvcount,recvtype,root,comm)  <BR>
+    MPI_GATHER (sendbuf,sendcnt,sendtype,recvbuf,  <BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+               recvcount,recvtype,root,comm,ierr)  
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Allgather.txt TARGET=_blank> 
+MPI_Allgather</A></B>
+<P>
+<DD>Data movement operation.
+    Concatenation of data to all tasks in a group.  Each task in the group,
+    in effect, performs a one-to-all broadcasting operation within the
+    group.
+    <BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+    onclick="popUp('images/MPI_Allgather.gif')"> </B></FONT>
+    <!--                                                  
+    <A HREF="images/MPI_Allgather.gif" TARGET=_blank> Diagram here.</A>
+    -->
+    <P><NOBR><TT><B>
+    MPI_Allgather (&amp;sendbuf,sendcount,sendtype,&amp;recvbuf,  <BR>
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                  recvcount,recvtype,comm) <BR>
+    MPI_ALLGATHER (sendbuf,sendcount,sendtype,recvbuf, <BR> 
+        <FONT COLOR=#FFFFFF>......</FONT> 
+                  recvcount,recvtype,comm,info)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Reduce.txt TARGET=_blank> 
+MPI_Reduce</A></B>
+<P>
+<DD>Collective computation operation.
+    Applies a reduction operation on all tasks in the group and places the
+    result in one task.  
+    <BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+    onclick="popUp('images/MPI_Reduce.gif')"> </B></FONT>
+    <!--                                                  
+    <A HREF="images/MPI_Reduce.gif" TARGET=_blank> Diagram here.</A>
+    -->
+    <P><NOBR><TT><B>
+    MPI_Reduce (&amp;sendbuf,&amp;recvbuf,count,datatype,op,root,comm) <BR>
+    MPI_REDUCE (sendbuf,recvbuf,count,datatype,op,root,comm,ierr)
+    </B></TT></NOBR><P>
+
+    The predefined MPI reduction operations appear below.  Users can also 
+    define their own reduction functions by using the
+    <A HREF=man/MPI_Op_create.txt TARGET=_blank>
+    MPI_Op_create</A> routine.
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR VALIGN=TOP>
+<TH COLSPAN=2>MPI Reduction Operation</TH> 
+<TH>C Data Types</TH>
+<TH>Fortran Data Type</TH>
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B> MPI_MAX    
+<TD>maximum       
+<TD>integer, float      
+<TD>integer, real, complex  
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B>MPI_MIN    
+<TD>minimum       
+<TD>integer, float      
+<TD>integer, real, complex  
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B>MPI_SUM    
+<TD>sum          
+<TD>integer, float      
+<TD>integer, real, complex  
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B>MPI_PROD    
+<TD>product      
+<TD>integer, float      
+<TD>integer, real, complex  
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B>MPI_LAND    
+<TD>logical AND   
+<TD>integer           
+<TD>logical                 
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B>MPI_BAND    
+<TD>bit-wise AND  
+<TD>integer, MPI_BYTE   
+<TD>integer, MPI_BYTE      
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B>MPI_LOR    
+<TD>logical OR    
+<TD>integer            
+<TD>logical                 
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B>MPI_BOR    
+<TD>bit-wise OR   
+<TD>integer, MPI_BYTE   
+<TD>integer, MPI_BYTE       
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B>MPI_LXOR    
+<TD>logical XOR   
+<TD>integer           
+<TD>logical                 
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B>MPI_BXOR    
+<TD>bit-wise XOR  
+<TD>integer, MPI_BYTE   
+<TD>integer, MPI_BYTE      
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B>MPI_MAXLOC  
+<TD>max value and location
+<TD>float, double and long double         
+<TD>real, complex,double precision        
+<TR VALIGN=TOP>
+<TD BGCOLOR=#FOF5FE><TT><B>MPI_MINLOC  
+<TD>min value and location 
+<TD>float, double and long double         
+<TD>real, complex, double precision        
+</TABLE>
+<P>
+
+<DT><B><A HREF=man/MPI_Allreduce.txt TARGET=_blank> 
+MPI_Allreduce</A></B>
+<P>
+<DD>Collective computation operation + data movement.
+    Applies a reduction operation and places the result in all tasks in the
+    group.  This is equivalent to an MPI_Reduce followed by an MPI_Bcast.
+    <BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+    onclick="popUp('images/MPI_Allreduce.gif')"> </B></FONT>
+    <!--                                                  
+    <A HREF="images/MPI_Allreduce.gif" TARGET=_blank> Diagram here.</A>
+    -->
+    <P><NOBR><TT><B>
+    MPI_Allreduce (&amp;sendbuf,&amp;recvbuf,count,datatype,op,comm) <BR>
+    MPI_ALLREDUCE (sendbuf,recvbuf,count,datatype,op,comm,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Reduce_scatter.txt TARGET=_blank> 
+MPI_Reduce_scatter</A></B>
+<P>
+<DD>Collective computation operation + data movement.
+    First does an element-wise reduction on a vector across all tasks in the
+    group.  Next, the result vector is split into disjoint segments and
+    distributed across the tasks.  This is equivalent to an MPI_Reduce 
+    followed by an MPI_Scatter operation.
+    <BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+    onclick="popUp('images/MPI_Reduce_scatter.gif')"> </B></FONT>
+    <!--                                                  
+    <A HREF="images/MPI_Reduce_scatter.gif" TARGET=_blank> Diagram here.</A>
+    -->
+    <P><NOBR><TT><B>
+    MPI_Reduce_scatter (&amp;sendbuf,&amp;recvbuf,recvcount,datatype, <BR>
+        <FONT COLOR=#FFFFFF>......</FONT>
+         op,comm) <BR>
+    MPI_REDUCE_SCATTER (sendbuf,recvbuf,recvcount,datatype, <BR>
+        <FONT COLOR=#FFFFFF>......</FONT>
+         op,comm,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Alltoall.txt TARGET=_blank> 
+MPI_Alltoall</A></B>
+<P>
+<DD>Data movement operation.
+    Each task in a group performs a scatter operation, sending a distinct
+    message to all the tasks in the group in order by index.
+    <BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+    onclick="popUp('images/MPI_Alltoall.gif')"> </B></FONT>
+    <!--                                                  
+    <A HREF="images/MPI_Alltoall.gif" TARGET=_blank>Diagram here.</A>
+    -->
+    <P><NOBR><TT><B>
+    MPI_Alltoall (&amp;sendbuf,sendcount,sendtype,&amp;recvbuf, <BR>
+        <FONT COLOR=#FFFFFF>......</FONT>
+                 recvcnt,recvtype,comm) <BR>
+    MPI_ALLTOALL (sendbuf,sendcount,sendtype,recvbuf, <BR>
+        <FONT COLOR=#FFFFFF>......</FONT>
+                 recvcnt,recvtype,comm,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Scan.txt TARGET=_blank> 
+MPI_Scan</A></B>
+<P>
+<DD>Performs a scan operation with respect to a reduction operation across
+    a task group.
+    <BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+    onclick="popUp('images/MPI_Scan.gif')"> </B></FONT>
+    <!--                                                  
+    <A HREF="images/MPI_Scan.gif"TARGET=_blank>Diagram here.</A>
+    -->
+    <P><NOBR><TT><B>
+    MPI_Scan (&amp;sendbuf,&amp;recvbuf,count,datatype,op,comm) <BR>
+    MPI_SCAN (sendbuf,recvbuf,count,datatype,op,comm,ierr)
+    </B></TT></NOBR><P>
+</DL>
+
+<P><HR><P>
+
+<H2>Examples: Collective Communications</H2>
+
+<UL>
+<P>
+Perform a scatter operation on the rows of an array
+<P>
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3> C Language - Collective Communications
+Example</SPAN>
+<HR>
+<PRE>
+#include <FONT COLOR=#FF0000>"mpi.h"</FONT>
+#include &lt;stdio.h&gt;
+#define SIZE 4
+
+main(int argc, char *argv[])  {
+int numtasks, rank, sendcount, recvcount, source;
+float sendbuf[SIZE][SIZE] = {
+  {1.0, 2.0, 3.0, 4.0},
+  {5.0, 6.0, 7.0, 8.0},
+  {9.0, 10.0, 11.0, 12.0},
+  {13.0, 14.0, 15.0, 16.0}  };
+float recvbuf[SIZE];
+
+<FONT COLOR=#FF0000>MPI_Init</FONT>(&argc,&argv);
+<FONT COLOR=#FF0000>MPI_Comm_rank</FONT>(MPI_COMM_WORLD, &rank);
+<FONT COLOR=#FF0000>MPI_Comm_size</FONT>(MPI_COMM_WORLD, &numtasks);
+
+if (numtasks == SIZE) {
+  source = 1;
+  sendcount = SIZE;
+  recvcount = SIZE;
+  <FONT COLOR=#FF0000>MPI_Scatter</FONT>(sendbuf,sendcount,MPI_FLOAT,recvbuf,recvcount,
+             MPI_FLOAT,source,MPI_COMM_WORLD);
+
+  printf("rank= %d  Results: %f %f %f %f\n",rank,recvbuf[0],
+         recvbuf[1],recvbuf[2],recvbuf[3]);
+  }
+else
+  printf("Must specify %d processors. Terminating.\n",SIZE);
+
+<FONT COLOR=#FF0000>MPI_Finalize</FONT>();
+}
+</PRE> </TD>
+</TABLE>
+
+
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>Fortran - Collective Communications
+Example</SPAN>
+<HR>
+<PRE>
+   program scatter
+   include <FONT COLOR=#FF0000>'mpif.h'</FONT>
+
+   integer SIZE
+   parameter(SIZE=4)
+   integer numtasks, rank, sendcount, recvcount, source, ierr
+   real*4 sendbuf(SIZE,SIZE), recvbuf(SIZE)
+
+C  Fortran stores this array in column major order, so the 
+C  scatter will actually scatter columns, not rows.
+   data sendbuf /1.0, 2.0, 3.0, 4.0, 
+ &         5.0, 6.0, 7.0, 8.0,
+ &         9.0, 10.0, 11.0, 12.0, 
+ &         13.0, 14.0, 15.0, 16.0 /
+
+   call <FONT COLOR=#FF0000>MPI_INIT</FONT>(ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_RANK</FONT>(MPI_COMM_WORLD, rank, ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_SIZE</FONT>(MPI_COMM_WORLD, numtasks, ierr)
+
+   if (numtasks .eq. SIZE) then
+      source = 1
+      sendcount = SIZE
+      recvcount = SIZE
+      call <FONT COLOR=#FF0000>MPI_SCATTER</FONT>(sendbuf, sendcount, MPI_REAL, recvbuf, 
+ &   recvcount, MPI_REAL, source, MPI_COMM_WORLD, ierr)
+      print *, 'rank= ',rank,' Results: ',recvbuf 
+   else
+      print *, 'Must specify',SIZE,' processors.  Terminating.' 
+   endif
+
+   call <FONT COLOR=#FF0000>MPI_FINALIZE</FONT>(ierr)
+
+   end
+</PRE> </TD>
+</TABLE>
+
+<BR><BR>
+Sample program output:
+<PRE>
+rank= 0  Results: 1.000000 2.000000 3.000000 4.000000
+rank= 1  Results: 5.000000 6.000000 7.000000 8.000000
+rank= 2  Results: 9.000000 10.000000 11.000000 12.000000
+rank= 3  Results: 13.000000 14.000000 15.000000 16.000000
+</PRE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME="Derived_Data_Types"> <BR><BR>  </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Derived Data Types</SPAN></TD>
+</TD></TR></TABLE>
+<BR>
+
+<UL>
+<P>
+<LI>As <A HREF=#Routine_Arguments>previously mentioned</A>, MPI 
+    predefines its primitive data types:
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TH COLSPAN=2>C Data Types</TH>
+<TH>Fortran Data Types</TH>
+</TR><TR VALIGN=top>
+<TD WIDTH=33%><PRE>
+MPI_CHAR
+MPI_WCHAR
+MPI_SHORT
+MPI_INT
+MPI_LONG
+MPI_LONG_LONG_INT 
+MPI_LONG_LONG	 	 
+MPI_SIGNED_CHAR
+MPI_UNSIGNED_CHAR
+MPI_UNSIGNED_SHORT
+MPI_UNSIGNED_LONG
+MPI_UNSIGNED
+MPI_FLOAT
+MPI_DOUBLE
+MPI_LONG_DOUBLE
+</PRE></TD>
+<TD WIDTH=33%><PRE>
+MPI_C_COMPLEX
+MPI_C_FLOAT_COMPLEX
+MPI_C_DOUBLE_COMPLEX
+MPI_C_LONG_DOUBLE_COMPLEX	 	 
+MPI_C_BOOL
+MPI_LOGICAL
+MPI_C_LONG_DOUBLE_COMPLEX 	 
+MPI_INT8_T 
+MPI_INT16_T
+MPI_INT32_T 
+MPI_INT64_T	 	 
+MPI_UINT8_T 
+MPI_UINT16_T 
+MPI_UINT32_T 
+MPI_UINT64_T
+MPI_BYTE
+MPI_PACKED
+</PRE></TD>
+<TD WIDTH=33%><PRE>
+MPI_CHARACTER
+MPI_INTEGER
+MPI_INTEGER1 
+MPI_INTEGER2
+MPI_INTEGER4
+MPI_REAL
+MPI_REAL2 
+MPI_REAL4
+MPI_REAL8
+MPI_DOUBLE_PRECISION
+MPI_COMPLEX
+MPI_DOUBLE_COMPLEX
+MPI_LOGICAL
+MPI_BYTE
+MPI_PACKED
+</PRE></TD>
+</TR></TABLE>
+<P>
+<LI>MPI also provides facilities for you to define your own data structures 
+    based upon sequences of the MPI primitive data types. Such user defined 
+    structures are called derived data types. 
+<P>
+<LI>Primitive data types are contiguous. Derived data types allow you to 
+    specify non-contiguous data in a convenient manner and to treat it as 
+    though it was contiguous.
+<P>
+<LI>MPI provides several methods for constructing derived data types:
+    <UL>
+    <LI>Contiguous
+    <LI>Vector
+    <LI>Indexed
+    <LI>Struct
+    </UL>
+</UL>
+
+<P><HR><P>
+
+<H2>Derived Data Type Routines</H2>
+<P>
+
+<DL>
+<DT><B><A HREF=man/MPI_Type_contiguous.txt TARGET=_blank> 
+MPI_Type_contiguous</A></B>
+<P>
+<DD>The simplest constructor. Produces a new data type by making count 
+    copies of an existing data type. 
+    <P><NOBR><TT><B>
+    MPI_Type_contiguous (count,oldtype,&amp;newtype) <BR>
+    MPI_TYPE_CONTIGUOUS (count,oldtype,newtype,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Type_vector.txt TARGET=_blank> 
+MPI_Type_vector</A> 
+<BR><A HREF=man/MPI_Type_hvector.txt TARGET=_blank> 
+MPI_Type_hvector</A></B>
+<P>
+<DD>Similar to contiguous, but allows for regular gaps (stride) in the 
+    displacements.  MPI_Type_hvector is identical to
+    MPI_Type_vector except that stride is specified in bytes.
+    <P><NOBR><TT><B>
+    MPI_Type_vector (count,blocklength,stride,oldtype,&amp;newtype)<BR> 
+    MPI_TYPE_VECTOR (count,blocklength,stride,oldtype,newtype,ierr)
+    </B></TT></NOBR><P>
+    
+<DT><B><A HREF=man/MPI_Type_indexed.txt TARGET=_blank> 
+MPI_Type_indexed</A> 
+<BR><A HREF=man/MPI_Type_hindexed.txt TARGET=_blank> 
+MPI_Type_hindexed</A></B>
+<P>
+<DD>An array of displacements of the input data type is provided as the map 
+    for the new data type.  MPI_Type_hindexed is identical to 
+    MPI_Type_indexed except that offsets are specified in bytes.
+    <P><NOBR><TT><B>
+    MPI_Type_indexed (count,blocklens[],offsets[],old_type,&amp;newtype)<BR>
+    MPI_TYPE_INDEXED (count,blocklens(),offsets(),old_type,newtype,ierr)
+    </B></TT></NOBR><P>
+    
+<DT><B><A HREF=man/MPI_Type_struct.txt TARGET=_blank> 
+MPI_Type_struct</A></B>
+<P>
+<DD>The new data type is formed according to completely defined map of the 
+    component data types.
+<BR><B>NOTE:</B> This function is deprecated in MPI-2.0 and replaced by
+    MPI_Type_create_struct in MPI-3.0
+    <P><NOBR><TT><B>
+    MPI_Type_struct (count,blocklens[],offsets[],old_types,&amp;newtype)<BR>
+    MPI_TYPE_STRUCT (count,blocklens(),offsets(),old_types,newtype,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Type_extent.txt TARGET=_blank> 
+MPI_Type_extent</A></B>
+<P>
+<DD>Returns the size in bytes of the specified data type. Useful for
+    the MPI subroutines that require specification of offsets in bytes.
+<BR><B>NOTE:</B> This function is deprecated in MPI-2.0 and replaced by
+    MPI_Type_get_extent in MPI-3.0
+    <P><NOBR><TT><B>
+    MPI_Type_extent (datatype,&amp;extent)<BR>
+    MPI_TYPE_EXTENT (datatype,extent,ierr)
+    </B></TT></NOBR><P>
+
+<DT><B><A HREF=man/MPI_Type_commit.txt TARGET=_blank> 
+MPI_Type_commit</A></B>
+<P>
+<DD>Commits new datatype to the system. Required for all user constructed
+    (derived) datatypes.
+    <P><NOBR><TT><B>
+    MPI_Type_commit (&amp;datatype)<BR>
+    MPI_TYPE_COMMIT (datatype,ierr)
+    </B></TT></NOBR><P>
+<DT><B><A HREF=man/MPI_Type_free.txt TARGET=_blank>
+MPI_Type_free</A></B>
+<P>
+<DD>Deallocates the specified datatype object. Use of this routine is
+    especially important to prevent memory exhaustion if many datatype 
+    objects are created, as in a loop.
+    <P><NOBR><TT><B>
+    MPI_Type_free (&amp;datatype)<BR>
+    MPI_TYPE_FREE (datatype,ierr)
+    </B></TT></NOBR><P>
+</DL>
+
+
+<P><HR><P>
+
+<H2>Examples: Contiguous Derived Data Type</H2>
+
+<UL>
+<P>
+Create a data type representing a row of an array and distribute a
+different row to all processes.
+<BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+onclick="popUp('images/MPI_Type_contiguous.gif')"> </B></FONT>
+<!--
+<A HREF=images/MPI_Type_contiguous.gif TARGET=_blank>Diagram 
+here.</A>
+-->
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>C Language - Contiguous Derived Data Type
+Example</SPAN>
+<HR>
+<PRE>
+#include <FONT COLOR=#FF0000>"mpi.h"</FONT>
+#include &lt;stdio.h&gt;
+#define SIZE 4
+
+main(int argc, char *argv[])  {
+int numtasks, rank, source=0, dest, tag=1, i;
+float a[SIZE][SIZE] =
+  {1.0, 2.0, 3.0, 4.0,
+   5.0, 6.0, 7.0, 8.0,
+   9.0, 10.0, 11.0, 12.0,
+   13.0, 14.0, 15.0, 16.0};
+float b[SIZE];
+
+<FONT COLOR=#FF0000>MPI_Status stat</FONT>;
+<FONT COLOR=#FF0000>MPI_Datatype rowtype</FONT>;
+
+<FONT COLOR=#FF0000>MPI_Init</FONT>(&argc,&argv);
+<FONT COLOR=#FF0000>MPI_Comm_rank</FONT>(MPI_COMM_WORLD, &rank);
+<FONT COLOR=#FF0000>MPI_Comm_size</FONT>(MPI_COMM_WORLD, &numtasks);
+
+<FONT COLOR=#FF0000>MPI_Type_contiguous</FONT>(SIZE, MPI_FLOAT, &rowtype);
+<FONT COLOR=#FF0000>MPI_Type_commit</FONT>(&rowtype);
+
+if (numtasks == SIZE) {
+  if (rank == 0) {
+     for (i=0; i&lt;numtasks; i++)
+       <FONT COLOR=#FF0000>MPI_Send</FONT>(&a[i][0], 1, rowtype, i, tag, MPI_COMM_WORLD);
+     }
+
+  <FONT COLOR=#FF0000>MPI_Recv</FONT>(b, SIZE, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &stat);
+  printf("rank= %d  b= %3.1f %3.1f %3.1f %3.1f\n",
+         rank,b[0],b[1],b[2],b[3]);
+  }
+else
+  printf("Must specify %d processors. Terminating.\n",SIZE);
+
+<FONT COLOR=#FF0000>MPI_Type_free</FONT>(&rowtype);
+<FONT COLOR=#FF0000>MPI_Finalize</FONT>();
+}
+</PRE></TD>
+</TABLE>
+
+
+
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>Fortran - Contiguous Derived Data Type
+Example</SPAN>
+<HR>
+<PRE>
+   program contiguous
+   include <FONT COLOR=#FF0000>'mpif.h'</FONT>
+
+   integer SIZE
+   parameter(SIZE=4)
+   integer numtasks, rank, source, dest, tag, i,  ierr
+   real*4 a(0:SIZE-1,0:SIZE-1), b(0:SIZE-1)
+   integer <FONT COLOR=#FF0000>stat(MPI_STATUS_SIZE), columntype</FONT>
+
+C  Fortran stores this array in column major order
+   data a  /1.0, 2.0, 3.0, 4.0, 
+  &         5.0, 6.0, 7.0, 8.0,
+  &         9.0, 10.0, 11.0, 12.0, 
+  &         13.0, 14.0, 15.0, 16.0 /
+
+   call <FONT COLOR=#FF0000>MPI_INIT</FONT>(ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_RANK</FONT>(MPI_COMM_WORLD, rank, ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_SIZE</FONT>(MPI_COMM_WORLD, numtasks, ierr)
+
+   call <FONT COLOR=#FF0000>MPI_TYPE_CONTIGUOUS</FONT>(SIZE, MPI_REAL, columntype, ierr)
+   call <FONT COLOR=#FF0000>MPI_TYPE_COMMIT</FONT>(columntype, ierr)
+  
+   tag = 1
+   if (numtasks .eq. SIZE) then
+      if (rank .eq. 0) then
+         do 10 i=0, numtasks-1
+         call <FONT COLOR=#FF0000>MPI_SEND</FONT>(a(0,i), 1, columntype, i, tag,
+  &                    MPI_COMM_WORLD,ierr)
+ 10      continue
+      endif
+
+      source = 0
+      call <FONT COLOR=#FF0000>MPI_RECV</FONT>(b, SIZE, MPI_REAL, source, tag, 
+  &                MPI_COMM_WORLD, stat, ierr)
+         print *, 'rank= ',rank,' b= ',b
+
+   else
+      print *, 'Must specify',SIZE,' processors.  Terminating.' 
+   endif
+
+   call <FONT COLOR=#FF0000>MPI_TYPE_FREE</FONT>(columntype, ierr)
+   call <FONT COLOR=#FF0000>MPI_FINALIZE</FONT>(ierr)
+
+   end
+</PRE></TD>
+</TABLE>
+
+
+<BR><BR>
+Sample program output:
+<PRE>
+rank= 0  b= 1.0 2.0 3.0 4.0
+rank= 1  b= 5.0 6.0 7.0 8.0
+rank= 2  b= 9.0 10.0 11.0 12.0
+rank= 3  b= 13.0 14.0 15.0 16.0
+</PRE>
+</UL>
+
+
+
+<P><HR><P>
+
+<H2>Examples: Vector Derived Data Type</H2>
+
+<UL>
+<P>
+Create a data type representing a column of an array and distribute
+different columns to all processes.
+<BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+onclick="popUp('images/MPI_Type_vector.gif')"> </B></FONT>
+<!--
+<A HREF=images/MPI_Type_vector.gif TARGET=_blank>Diagram here.</A>
+-->
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>C Language - Vector Derived Data Type
+Example</SPAN>
+<HR>
+<PRE>
+#include <FONT COLOR=#FF0000>"mpi.h"</FONT>
+#include &LT;stdio.h&GT
+#define SIZE 4
+
+main(int argc, char *argv[])  {
+int numtasks, rank, source=0, dest, tag=1, i;
+float a[SIZE][SIZE] = 
+  {1.0, 2.0, 3.0, 4.0,  
+   5.0, 6.0, 7.0, 8.0, 
+   9.0, 10.0, 11.0, 12.0,
+  13.0, 14.0, 15.0, 16.0};
+float b[SIZE]; 
+
+<FONT COLOR=#FF0000>MPI_Status stat</FONT>;
+<FONT COLOR=#FF0000>MPI_Datatype columntype</FONT>;
+
+<FONT COLOR=#FF0000>MPI_Init</FONT>(&argc,&argv);
+<FONT COLOR=#FF0000>MPI_Comm_rank</FONT>(MPI_COMM_WORLD, &rank);
+<FONT COLOR=#FF0000>MPI_Comm_size</FONT>(MPI_COMM_WORLD, &numtasks);
+   
+<FONT COLOR=#FF0000>MPI_Type_vector</FONT>(SIZE, 1, SIZE, MPI_FLOAT, &columntype);
+<FONT COLOR=#FF0000>MPI_Type_commit</FONT>(&columntype);
+
+if (numtasks == SIZE) {
+  if (rank == 0) {
+     for (i=0; i&lt;numtasks; i++) 
+       <FONT COLOR=#FF0000>MPI_Send</FONT>(&a[0][i], 1, columntype, i, tag, MPI_COMM_WORLD);
+        }
+ 
+  <FONT COLOR=#FF0000>MPI_Recv</FONT>(b, SIZE, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &stat);
+  printf("rank= %d  b= %3.1f %3.1f %3.1f %3.1f\n",
+        rank,b[0],b[1],b[2],b[3]);
+  }
+else
+  printf("Must specify %d processors. Terminating.\n",SIZE);
+   
+<FONT COLOR=#FF0000>MPI_Type_free</FONT>(&columntype);
+<FONT COLOR=#FF0000>MPI_Finalize</FONT>();
+}
+</PRE></TD>
+</TABLE>
+
+
+
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>Fortran - Vector Derived Data Type
+Example</SPAN>
+<HR>
+<PRE>
+   program vector
+   include <FONT COLOR=#FF0000>'mpif.h'</FONT>
+
+   integer SIZE
+   parameter(SIZE=4)
+   integer numtasks, rank, source, dest, tag, i,  ierr
+   real*4 a(0:SIZE-1,0:SIZE-1), b(0:SIZE-1)
+   integer <FONT COLOR=#FF0000>stat(MPI_STATUS_SIZE), rowtype</FONT>
+
+C  Fortran stores this array in column major order
+   data a  /1.0, 2.0, 3.0, 4.0, 
+  &         5.0, 6.0, 7.0, 8.0,
+  &         9.0, 10.0, 11.0, 12.0, 
+  &         13.0, 14.0, 15.0, 16.0 /
+
+   call <FONT COLOR=#FF0000>MPI_INIT</FONT>(ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_RANK</FONT>(MPI_COMM_WORLD, rank, ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_SIZE</FONT>(MPI_COMM_WORLD, numtasks, ierr)
+
+   call <FONT COLOR=#FF0000>MPI_TYPE_VECTOR</FONT>(SIZE, 1, SIZE, MPI_REAL, rowtype, ierr)
+   call <FONT COLOR=#FF0000>MPI_TYPE_COMMIT</FONT>(rowtype, ierr)
+  
+   tag = 1
+   if (numtasks .eq. SIZE) then
+      if (rank .eq. 0) then
+         do 10 i=0, numtasks-1
+         call <FONT COLOR=#FF0000>MPI_SEND</FONT>(a(i,0), 1, rowtype, i, tag,
+  &                    MPI_COMM_WORLD, ierr)
+ 10      continue
+      endif
+
+      source = 0
+      call <FONT COLOR=#FF0000>MPI_RECV</FONT>(b, SIZE, MPI_REAL, source, tag, 
+  &                MPI_COMM_WORLD, stat, ierr)
+      print *, 'rank= ',rank,' b= ',b
+
+   else
+      print *, 'Must specify',SIZE,' processors.  Terminating.' 
+   endif
+
+   call <FONT COLOR=#FF0000>MPI_TYPE_FREE</FONT>(rowtype, ierr)
+   call <FONT COLOR=#FF0000>MPI_FINALIZE</FONT>(ierr)
+
+   end
+</PRE></TD>
+</TABLE>
+
+
+<BR><BR>
+Sample program output:
+<PRE>
+rank= 0  b= 1.0 5.0 9.0 13.0
+rank= 1  b= 2.0 6.0 10.0 14.0
+rank= 2  b= 3.0 7.0 11.0 15.0
+rank= 3  b= 4.0 8.0 12.0 16.0
+</PRE>
+</UL>
+
+
+
+<P><HR><P>
+
+<H2>Examples: Indexed Derived Data Type</H2>
+
+<UL>
+<P>
+Create a datatype by extracting variable portions of an array and distribute
+to all tasks.  
+<BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+onclick="popUp('images/MPI_Type_indexed.gif')"> </B></FONT>
+<!--
+<A HREF=images/MPI_Type_indexed.gif TARGET=_blank>Diagram here.</A>
+-->
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>C Language - Indexed Derived Data Type
+Example</SPAN>
+<HR>
+<PRE>
+#include <FONT COLOR=#FF0000>"mpi.h"</FONT>
+#include &LT;stdio.h&GT;
+#define NELEMENTS 6
+
+main(int argc, char *argv[])  {
+int numtasks, rank, source=0, dest, tag=1, i;
+int blocklengths[2], displacements[2];
+float a[16] = 
+  {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 
+   9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0};
+float b[NELEMENTS]; 
+
+<FONT COLOR=#FF0000>MPI_Status stat</FONT>;
+<FONT COLOR=#FF0000>MPI_Datatype indextype</FONT>;
+
+<FONT COLOR=#FF0000>MPI_Init</FONT>(&argc,&argv);
+<FONT COLOR=#FF0000>MPI_Comm_rank</FONT>(MPI_COMM_WORLD, &rank);
+<FONT COLOR=#FF0000>MPI_Comm_size</FONT>(MPI_COMM_WORLD, &numtasks);
+
+blocklengths[0] = 4;
+blocklengths[1] = 2;
+displacements[0] = 5;
+displacements[1] = 12;
+   
+<FONT COLOR=#FF0000>MPI_Type_indexed</FONT>(2, blocklengths, displacements, MPI_FLOAT, &indextype);
+<FONT COLOR=#FF0000>MPI_Type_commit</FONT>(&indextype);
+
+if (rank == 0) {
+  for (i=0; i&lt;numtasks; i++) 
+     <FONT COLOR=#FF0000>MPI_Send</FONT>(a, 1, indextype, i, tag, MPI_COMM_WORLD);
+  }
+ 
+<FONT COLOR=#FF0000>MPI_Recv</FONT>(b, NELEMENTS, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &stat);
+printf("rank= %d  b= %3.1f %3.1f %3.1f %3.1f %3.1f %3.1f\n",
+     rank,b[0],b[1],b[2],b[3],b[4],b[5]);
+   
+<FONT COLOR=#FF0000>MPI_Type_free</FONT>(&indextype);
+<FONT COLOR=#FF0000>MPI_Finalize</FONT>();
+}
+</PRE></TD>
+</TABLE>
+
+
+
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>Fortran - Indexed Derived Data Type
+Example</SPAN>
+<HR>
+<PRE>
+   program indexed
+   include <FONT COLOR=#FF0000>'mpif.h'</FONT>
+
+   integer NELEMENTS
+   parameter(NELEMENTS=6)
+   integer numtasks, rank, source, dest, tag, i,  ierr
+   integer blocklengths(0:1), displacements(0:1)
+   real*4 a(0:15), b(0:NELEMENTS-1)
+   integer <FONT COLOR=#FF0000>stat(MPI_STATUS_SIZE), indextype</FONT>
+
+   data a  /1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0,
+  &         9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0 /
+
+   call <FONT COLOR=#FF0000>MPI_INIT</FONT>(ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_RANK</FONT>(MPI_COMM_WORLD, rank, ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_SIZE</FONT>(MPI_COMM_WORLD, numtasks, ierr)
+
+   blocklengths(0) = 4
+   blocklengths(1) = 2
+   displacements(0) = 5
+   displacements(1) = 12
+
+   call <FONT COLOR=#FF0000>MPI_TYPE_INDEXED</FONT>(2, blocklengths, displacements, MPI_REAL, 
+  &                      indextype, ierr)
+   call <FONT COLOR=#FF0000>MPI_TYPE_COMMIT</FONT>(indextype, ierr)
+  
+   tag = 1
+   if (rank .eq. 0) then
+      do 10 i=0, numtasks-1
+      call <FONT COLOR=#FF0000>MPI_SEND</FONT>(a, 1, indextype, i, tag, MPI_COMM_WORLD, ierr)
+ 10   continue
+   endif
+
+   source = 0
+   call <FONT COLOR=#FF0000>MPI_RECV</FONT>(b, NELEMENTS, MPI_REAL, source, tag, MPI_COMM_WORLD, 
+  &              stat, ierr)
+   print *, 'rank= ',rank,' b= ',b
+
+   call <FONT COLOR=#FF0000>MPI_TYPE_FREE</FONT>(indextype, ierr)
+   call <FONT COLOR=#FF0000>MPI_FINALIZE</FONT>(ierr)
+
+   end
+</PRE></TD>
+</TABLE>
+
+
+<BR><BR>
+Sample program output:
+<PRE>
+rank= 0  b= 6.0 7.0 8.0 9.0 13.0 14.0
+rank= 1  b= 6.0 7.0 8.0 9.0 13.0 14.0
+rank= 2  b= 6.0 7.0 8.0 9.0 13.0 14.0
+rank= 3  b= 6.0 7.0 8.0 9.0 13.0 14.0
+</PRE>
+</UL>
+
+
+
+<P><HR><P>
+
+<H2>Examples: Struct Derived Data Type</H2>
+
+<UL>
+<P>
+Create a data type that represents a particle and distribute an array
+of such particles to all processes.
+<BR><FONT SIZE=-1><B><INPUT TYPE=button VALUE="Diagram Here"
+onclick="popUp('images/MPI_Type_struct.gif')"> </B></FONT>
+<!--
+<A HREF=images/MPI_Type_struct.gif TARGET=_blank>Diagram here.</A>
+-->
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>C Language - Struct Derived Data Type
+Example</SPAN>
+<HR>
+<PRE>
+#include <FONT COLOR=#FF0000>"mpi.h"</FONT>
+#include &lt;stdio.h&gt;
+#define NELEM 25
+
+main(int argc, char *argv[])  {
+int numtasks, rank, source=0, dest, tag=1, i;
+
+typedef struct {
+  float x, y, z;
+  float velocity;
+  int  n, type;
+  }          Particle;
+Particle     p[NELEM], particles[NELEM];
+<FONT COLOR=#FF0000>MPI_Datatype particletype, oldtypes[2]</FONT>; 
+int          blockcounts[2];
+
+/* MPI_Aint type used to be consistent with syntax of */
+/* MPI_Type_extent routine */
+<FONT COLOR=#FF0000>MPI_Aint    offsets[2], extent</FONT>;
+
+<FONT COLOR=#FF0000>MPI_Status stat</FONT>;
+
+<FONT COLOR=#FF0000>MPI_Init</FONT>(&argc,&argv);
+<FONT COLOR=#FF0000>MPI_Comm_rank</FONT>(MPI_COMM_WORLD, &rank);
+<FONT COLOR=#FF0000>MPI_Comm_size</FONT>(MPI_COMM_WORLD, &numtasks);
+ 
+/* Setup description of the 4 MPI_FLOAT fields x, y, z, velocity */
+offsets[0] = 0;
+oldtypes[0] = MPI_FLOAT;
+blockcounts[0] = 4;
+
+/* Setup description of the 2 MPI_INT fields n, type */
+/* Need to first figure offset by getting size of MPI_FLOAT */
+<FONT COLOR=#FF0000>MPI_Type_extent</FONT>(MPI_FLOAT, &extent);
+offsets[1] = 4 * extent;
+oldtypes[1] = MPI_INT;
+blockcounts[1] = 2;
+
+/* Now define structured type and commit it */
+<FONT COLOR=#FF0000>MPI_Type_struct</FONT>(2, blockcounts, offsets, oldtypes, &particletype);
+<FONT COLOR=#FF0000>MPI_Type_commit</FONT>(&particletype);
+
+/* Initialize the particle array and then send it to each task */
+if (rank == 0) {
+  for (i=0; i&lt;NELEM; i++) {
+     particles[i].x = i * 1.0;
+     particles[i].y = i * -1.0;
+     particles[i].z = i * 1.0; 
+     particles[i].velocity = 0.25;
+     particles[i].n = i;
+     particles[i].type = i % 2; 
+     }
+  for (i=0; i&lt;numtasks; i++) 
+     <FONT COLOR=#FF0000>MPI_Send</FONT>(particles, NELEM, particletype, i, tag, MPI_COMM_WORLD);
+  }
+ 
+<FONT COLOR=#FF0000>MPI_Recv</FONT>(p, NELEM, particletype, source, tag, MPI_COMM_WORLD, &stat);
+
+/* Print a sample of what was received */
+printf("rank= %d   %3.2f %3.2f %3.2f %3.2f %d %d\n", rank,p[3].x,
+     p[3].y,p[3].z,p[3].velocity,p[3].n,p[3].type);
+   
+<FONT COLOR=#FF0000>MPI_Type_free</FONT>(&particletype);
+<FONT COLOR=#FF0000>MPI_Finalize</FONT>();
+}
+</PRE></TD>
+</TABLE>
+
+
+
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>Fortran - Struct Derived Data Type
+Example</SPAN>
+<HR>
+<PRE>
+   program struct
+   include <FONT COLOR=#FF0000>'mpif.h'</FONT>
+
+   integer NELEM
+   parameter(NELEM=25)
+   integer numtasks, rank, source, dest, tag, i,  ierr
+   integer <FONT COLOR=#FF0000>stat(MPI_STATUS_SIZE)</FONT>
+
+   type Particle
+   sequence
+   real*4 x, y, z, velocity
+   integer n, type
+   end type Particle
+
+   type (Particle) p(NELEM), particles(NELEM)
+   integer <FONT COLOR=#FF0000>particletype, oldtypes(0:1)</FONT>, blockcounts(0:1), 
+  &        offsets(0:1), extent
+
+   call <FONT COLOR=#FF0000>MPI_INIT</FONT>(ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_RANK</FONT>(MPI_COMM_WORLD, rank, ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_SIZE</FONT>(MPI_COMM_WORLD, numtasks, ierr)
+
+C  Setup description of the 4 MPI_REAL fields x, y, z, velocity 
+   offsets(0) = 0
+   oldtypes(0) = MPI_REAL
+   blockcounts(0) = 4
+
+C  Setup description of the 2 MPI_INTEGER fields n, type 
+C  Need to first figure offset by getting size of MPI_REAL
+   call <FONT COLOR=#FF0000>MPI_TYPE_EXTENT</FONT>(MPI_REAL, extent, ierr)
+   offsets(1) = 4 * extent
+   oldtypes(1) = MPI_INTEGER
+   blockcounts(1) = 2
+
+C  Now define structured type and commit it 
+   call <FONT COLOR=#FF0000>MPI_TYPE_STRUCT</FONT>(2, blockcounts, offsets, oldtypes, 
+  &                     particletype, ierr)
+   call <FONT COLOR=#FF0000>MPI_TYPE_COMMIT</FONT>(particletype, ierr)
+  
+C  Initialize the particle array and then send it to each task
+   tag = 1
+   if (rank .eq. 0) then
+      do 10 i=0, NELEM-1
+      particles(i) = Particle ( 1.0*i, -1.0*i, 1.0*i, 
+  &                  0.25, i, mod(i,2) )
+ 10   continue
+
+      do 20 i=0, numtasks-1
+      call <FONT COLOR=#FF0000>MPI_SEND</FONT>(particles, NELEM, particletype, i, tag, 
+  &                 MPI_COMM_WORLD, ierr)
+ 20   continue
+   endif
+
+   source = 0
+   call <FONT COLOR=#FF0000>MPI_RECV</FONT>(p, NELEM, particletype, source, tag, 
+  &              MPI_COMM_WORLD, stat, ierr)
+
+   print *, 'rank= ',rank,' p(3)= ',p(3)
+   call <FONT COLOR=#FF0000>MPI_TYPE_FREE</FONT>(particletype, ierr)
+   call <FONT COLOR=#FF0000>MPI_FINALIZE</FONT>(ierr)
+   end
+</PRE></TD>
+</TABLE>
+
+
+<BR><BR>
+Sample program output:
+<PRE>
+rank= 0   3.00 -3.00 3.00 0.25 3 1
+rank= 2   3.00 -3.00 3.00 0.25 3 1
+rank= 1   3.00 -3.00 3.00 0.25 3 1
+rank= 3   3.00 -3.00 3.00 0.25 3 1
+</PRE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME="Group_Management_Routines"> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Group and Communicator Management Routines</SPAN></TD>
+</TD></TR></TABLE>
+<P><BR>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Groups vs. Communicators:</SPAN>
+<UL>
+<P>
+<LI>A group is an ordered set of processes. Each process in a group is 
+    associated with a unique integer rank. Rank values start at zero and go 
+    to N-1, where N is the number of processes in the group. 
+    In MPI, a group is represented within system memory as an object.
+    It is accessible to the programmer only by a "handle". A group is always 
+    associated with a communicator object. 
+<P>
+<LI>A communicator encompasses a group of processes that may communicate with
+    each other.  All MPI messages must specify a communicator.  In the
+    simplest sense, the communicator is an extra "tag" that must be included
+    with MPI calls.
+    Like groups, communicators are represented within system memory as 
+    objects and are accessible to the programmer only by "handles". 
+    For example, the handle for the communicator that comprises all tasks
+    is MPI_COMM_WORLD.
+<P>
+<LI>From the programmer's perspective, a group and a communicator are one.
+    The group routines are primarily used to specify which processes should
+    be used to construct a communicator.  
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Primary Purposes of Group and Communicator Objects:</SPAN>
+<OL>
+<P>
+<LI>Allow you to organize tasks, based upon function, into task groups.
+<P>
+<LI>Enable Collective Communications operations across a subset of 
+    related tasks. 
+<P>
+<LI>Provide basis for implementing user defined virtual topologies
+<P>
+<LI>Provide for safe communications
+</OL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Programming Considerations and Restrictions:</SPAN>
+<UL>
+<P>
+<LI>Groups/communicators are dynamic - they can be created and destroyed
+    during program execution.
+<P>
+<LI>Processes may be in more than one group/communicator.  They will have
+    a unique rank within each group/communicator.
+<P>
+<LI>MPI provides over 40 routines related to groups, communicators, 
+    and virtual topologies.  
+<P>
+<LI>Typical usage:
+    <OL>
+    <LI>Extract handle of global group from MPI_COMM_WORLD using MPI_Comm_group
+    <LI>Form new group as a subset of global group using MPI_Group_incl
+    <LI>Create new communicator for new group using MPI_Comm_create
+    <LI>Determine new rank in new communicator using MPI_Comm_rank
+    <LI>Conduct communications using any MPI message passing routine
+    <LI>When finished, free up new communicator and group (optional) using 
+        MPI_Comm_free and MPI_Group_free
+    </OL>
+<P>
+<IMG SRC=images/comm_group600pix.gif WIDTH=511 HEIGHT=600 BORDER=0>
+</UL>
+
+<P><HR><P>
+
+<H2>Group and Communicator Management Routines</H2>
+
+<UL>
+<P>
+Create two different process groups for separate collective communications
+exchange.  Requires creating new communicators also.
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>C Language - Group and Communicator 
+Routines Example</SPAN>
+<HR>
+<PRE>
+#include <FONT COLOR=FF0000>"mpi.h"</FONT>
+#include &lt;stdio.h&gt;
+#define NPROCS 8
+
+main(int argc, char *argv[])  {
+int        rank, new_rank, sendbuf, recvbuf, numtasks,
+           ranks1[4]={0,1,2,3}, ranks2[4]={4,5,6,7};
+<FONT COLOR=FF0000>MPI_Group  orig_group, new_group</FONT>;
+<FONT COLOR=FF0000>MPI_Comm   new_comm</FONT>;
+
+<FONT COLOR=FF0000>MPI_Init</FONT>(&argc,&argv);
+<FONT COLOR=FF0000>MPI_Comm_rank</FONT>(MPI_COMM_WORLD, &rank);
+<FONT COLOR=FF0000>MPI_Comm_size</FONT>(MPI_COMM_WORLD, &numtasks);
+
+if (numtasks != NPROCS) {
+  printf("Must specify MP_PROCS= %d. Terminating.\n",NPROCS);
+  <FONT COLOR=FF0000>MPI_Finalize</FONT>();
+  exit(0);
+  }
+
+sendbuf = rank;
+
+/* Extract the original group handle */
+<FONT COLOR=FF0000>MPI_Comm_group</FONT>(MPI_COMM_WORLD, &orig_group);
+
+/* Divide tasks into two distinct groups based upon rank */
+if (rank &lt; NPROCS/2) {
+  <FONT COLOR=FF0000>MPI_Group_incl</FONT>(orig_group, NPROCS/2, ranks1, &new_group);
+  }
+else {
+  <FONT COLOR=FF0000>MPI_Group_incl</FONT>(orig_group, NPROCS/2, ranks2, &new_group);
+  }
+
+/* Create new new communicator and then perform collective communications */
+<FONT COLOR=FF0000>MPI_Comm_create</FONT>(MPI_COMM_WORLD, new_group, &new_comm);
+<FONT COLOR=FF0000>MPI_Allreduce</FONT>(&sendbuf, &recvbuf, 1, MPI_INT, MPI_SUM, new_comm);
+
+<FONT COLOR=FF0000>MPI_Group_rank</FONT> (new_group, &new_rank);
+printf("rank= %d newrank= %d recvbuf= %d\n",rank,new_rank,recvbuf);
+
+<FONT COLOR=FF0000>MPI_Finalize</FONT>();
+}
+</PRE>
+</TABLE>
+
+
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>Fortran - Group and Communicator 
+Routines Example</SPAN>
+<HR>
+<PRE>
+   program group
+   include <FONT COLOR=FF0000>'mpif.h'</FONT>
+
+   integer NPROCS
+   parameter(NPROCS=8)
+   integer rank, new_rank, sendbuf, recvbuf, numtasks
+   integer ranks1(4), ranks2(4), ierr
+   integer <FONT COLOR=FF0000>orig_group, new_group, new_comm</FONT>
+   data ranks1 /0, 1, 2, 3/, ranks2 /4, 5, 6, 7/
+
+   call <FONT COLOR=FF0000>MPI_INIT</FONT>(ierr)
+   call <FONT COLOR=FF0000>MPI_COMM_RANK</FONT>(MPI_COMM_WORLD, rank, ierr)
+   call <FONT COLOR=FF0000>MPI_COMM_SIZE</FONT>(MPI_COMM_WORLD, numtasks, ierr)
+
+   if (numtasks .ne. NPROCS) then
+     print *, 'Must specify NPROCS= ',NPROCS,' Terminating.'
+     call <FONT COLOR=FF0000>MPI_FINALIZE</FONT>(ierr)
+     stop
+   endif
+
+   sendbuf = rank
+
+C  Extract the original group handle
+   call <FONT COLOR=FF0000>MPI_COMM_GROUP</FONT>(MPI_COMM_WORLD, orig_group, ierr)
+
+C  Divide tasks into two distinct groups based upon rank
+   if (rank .lt. NPROCS/2) then
+      call <FONT COLOR=FF0000>MPI_GROUP_INCL</FONT>(orig_group, NPROCS/2, ranks1, 
+ &                  new_group, ierr)
+   else 
+      call <FONT COLOR=FF0000>MPI_GROUP_INCL</FONT>(orig_group, NPROCS/2, ranks2, 
+ &                  new_group, ierr)
+   endif
+
+   call <FONT COLOR=FF0000>MPI_COMM_CREATE</FONT>(MPI_COMM_WORLD, new_group, 
+ &                  new_comm, ierr)
+   call <FONT COLOR=FF0000>MPI_ALLREDUCE</FONT>(sendbuf, recvbuf, 1, MPI_INTEGER,
+ &                  MPI_SUM, new_comm, ierr)
+
+   call <FONT COLOR=FF0000>MPI_GROUP_RANK</FONT>(new_group, new_rank, ierr)
+   print *, 'rank= ',rank,' newrank= ',new_rank,' recvbuf= ',
+ &     recvbuf
+
+   call <FONT COLOR=FF0000>MPI_FINALIZE</FONT>(ierr)
+   end
+</PRE></TD>
+</TABLE>
+
+
+<BR><BR>
+Sample program output:
+<PRE>
+rank= 7 newrank= 3 recvbuf= 22
+rank= 0 newrank= 0 recvbuf= 6
+rank= 1 newrank= 1 recvbuf= 6
+rank= 2 newrank= 2 recvbuf= 6
+rank= 6 newrank= 2 recvbuf= 22
+rank= 3 newrank= 3 recvbuf= 6
+rank= 4 newrank= 0 recvbuf= 22
+rank= 5 newrank= 1 recvbuf= 22
+</PRE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME="Virtual_Topologies"> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Virtual Topologies</SPAN></TD>
+</TD></TR></TABLE>
+<P><BR>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>What Are They?</SPAN>
+<UL>
+<P>
+<LI>In terms of MPI, a virtual topology describes a mapping/ordering of 
+    MPI processes into a geometric "shape".
+<P>
+<LI>The two main types of topologies supported by MPI are Cartesian (grid) 
+    and Graph.
+<P>
+<LI>MPI topologies are virtual - there may be no relation between the 
+    physical structure of the parallel machine and the process topology.
+<P>
+<LI>Virtual topologies are built upon MPI communicators and groups.
+<P>
+<LI>Must be "programmed" by the application developer.
+</UL>
+
+<P>
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Why Use Them?</SPAN>
+<UL>
+<P>
+<LI>Convenience
+    <UL>
+    <LI>Virtual topologies may be useful for applications with specific 
+        communication patterns - patterns that match an MPI topology structure.
+    <LI>For example, a Cartesian topology might prove convenient for an
+        application that requires 4-way nearest neighbor communications
+        for grid based data.
+    </UL>
+<P>
+<LI>Communication Efficiency 
+    <UL>
+    <LI>Some hardware architectures may impose penalties for communications
+        between successively distant "nodes".
+    <LI>A particular implementation may optimize process mapping based upon the 
+        physical characteristics of a given parallel machine. 
+    <LI>The mapping of processes into an MPI virtual topology is dependent upon
+        the MPI implementation, and may be totally ignored.  
+    </UL>
+</UL>
+
+<P>
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Example:</SPAN>
+<UL>
+<P>A simplified mapping of processes into a Cartesian virtual topology
+    appears below:
+<P>
+<IMG SRC=images/Cartesian_topology.gif WIDTH=303 HEIGHT=295 BORDER=0>
+</UL>
+
+
+<P><HR><P>
+
+<H2>Virtual Topology Routines</H2>
+
+<UL>
+<P>
+Create a 4 x 4 Cartesian topology from 16 processors and have each process 
+exchange its rank with four neighbors.
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>C Language - Cartesian Virtual Topology 
+Example</SPAN>
+<HR>
+<PRE>
+#include <FONT COLOR=#FF0000>"mpi.h"</FONT>
+#include &lt;stdio.h&gt;
+#define SIZE 16
+#define UP    0
+#define DOWN  1
+#define LEFT  2
+#define RIGHT 3
+
+main(int argc, char *argv[])  {
+int numtasks, rank, source, dest, outbuf, i, tag=1, 
+   inbuf[4]={MPI_PROC_NULL,MPI_PROC_NULL,MPI_PROC_NULL,MPI_PROC_NULL,}, 
+   nbrs[4], dims[2]={4,4}, 
+   periods[2]={0,0}, reorder=0, coords[2];
+
+<FONT COLOR=#FF0000>MPI_Request reqs[8]</FONT>;
+<FONT COLOR=#FF0000>MPI_Status stats[8]</FONT>;
+<FONT COLOR=#FF0000>MPI_Comm cartcomm</FONT>;
+
+<FONT COLOR=#FF0000>MPI_Init</FONT>(&argc,&argv);
+<FONT COLOR=#FF0000>MPI_Comm_size</FONT>(MPI_COMM_WORLD, &numtasks);
+
+if (numtasks == SIZE) {
+  <FONT COLOR=#FF0000>MPI_Cart_create</FONT>(MPI_COMM_WORLD, 2, dims, periods, reorder, &cartcomm);
+  <FONT COLOR=#FF0000>MPI_Comm_rank</FONT>(cartcomm, &rank);
+  <FONT COLOR=#FF0000>MPI_Cart_coords</FONT>(cartcomm, rank, 2, coords);
+  <FONT COLOR=#FF0000>MPI_Cart_shift</FONT>(cartcomm, 0, 1, &nbrs[UP], &nbrs[DOWN]);
+  <FONT COLOR=#FF0000>MPI_Cart_shift</FONT>(cartcomm, 1, 1, &nbrs[LEFT], &nbrs[RIGHT]);
+
+  printf("rank= %d coords= %d %d  neighbors(u,d,l,r)= %d %d %d %d\n",
+         rank,coords[0],coords[1],nbrs[UP],nbrs[DOWN],nbrs[LEFT],
+         nbrs[RIGHT]);
+
+  outbuf = rank;
+
+  for (i=0; i&lt;4; i++) {
+     dest = nbrs[i];
+     source = nbrs[i];
+     <FONT COLOR=#FF0000>MPI_Isend</FONT>(&outbuf, 1, MPI_INT, dest, tag, 
+               MPI_COMM_WORLD, &reqs[i]);
+     <FONT COLOR=#FF0000>MPI_Irecv</FONT>(&inbuf[i], 1, MPI_INT, source, tag, 
+               MPI_COMM_WORLD, &reqs[i+4]);
+     }
+
+  <FONT COLOR=#FF0000>MPI_Waitall</FONT>(8, reqs, stats);
+   
+  printf("rank= %d                  inbuf(u,d,l,r)= %d %d %d %d\n",
+         rank,inbuf[UP],inbuf[DOWN],inbuf[LEFT],inbuf[RIGHT]);  }
+else
+  printf("Must specify %d processors. Terminating.\n",SIZE);
+   
+<FONT COLOR=#FF0000>MPI_Finalize</FONT>();
+}
+</PRE>
+</TABLE>
+
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>Fortran - Cartesian Virtual Topology 
+Example</SPAN>
+<HR>
+<PRE>
+   program cartesian
+   include <FONT COLOR=#FF0000>'mpif.h'</FONT>
+
+   integer SIZE, UP, DOWN, LEFT, RIGHT
+   parameter(SIZE=16)
+   parameter(UP=1)
+   parameter(DOWN=2)
+   parameter(LEFT=3)
+   parameter(RIGHT=4)
+   integer numtasks, rank, source, dest, outbuf, i, tag, ierr,
+  &        inbuf(4), nbrs(4), dims(2), coords(2),
+  &        <FONT COLOR=#FF0000>stats(MPI_STATUS_SIZE, 8), reqs(8), cartcomm</FONT>,
+  &        periods(2), reorder
+   data inbuf /MPI_PROC_NULL,MPI_PROC_NULL,MPI_PROC_NULL,
+  &     MPI_PROC_NULL/,  dims /4,4/, tag /1/, 
+  &     periods /0,0/, reorder /0/ 
+
+   call <FONT COLOR=#FF0000>MPI_INIT</FONT>(ierr)
+   call <FONT COLOR=#FF0000>MPI_COMM_SIZE</FONT>(MPI_COMM_WORLD, numtasks, ierr)
+  
+   if (numtasks .eq. SIZE) then
+      call <FONT COLOR=#FF0000>MPI_CART_CREATE</FONT>(MPI_COMM_WORLD, 2, dims, periods, reorder,
+  &                        cartcomm, ierr)
+      call <FONT COLOR=#FF0000>MPI_COMM_RANK</FONT>(cartcomm, rank, ierr)
+      call <FONT COLOR=#FF0000>MPI_CART_COORDS</FONT>(cartcomm, rank, 2, coords, ierr)
+      call <FONT COLOR=#FF0000>MPI_CART_SHIFT</FONT>(cartcomm, 0, 1, nbrs(UP), nbrs(DOWN), ierr)
+      call <FONT COLOR=#FF0000>MPI_CART_SHIFT</FONT>(cartcomm, 1, 1, nbrs(LEFT), nbrs(RIGHT), 
+  &                       ierr)
+
+      write(*,20) rank,coords(1),coords(2),nbrs(UP),nbrs(DOWN),
+  &               nbrs(LEFT),nbrs(RIGHT)
+
+      outbuf = rank
+      do i=1,4
+         dest = nbrs(i)
+         source = nbrs(i)
+         call <FONT COLOR=#FF0000>MPI_ISEND</FONT>(outbuf, 1, MPI_INTEGER, dest, tag,
+  &                    MPI_COMM_WORLD, reqs(i), ierr)
+         call <FONT COLOR=#FF0000>MPI_IRECV</FONT>(inbuf(i), 1, MPI_INTEGER, source, tag,
+  &                    MPI_COMM_WORLD, reqs(i+4), ierr)
+      enddo
+
+      call <FONT COLOR=#FF0000>MPI_WAITALL</FONT>(8, reqs, stats, ierr)
+
+      write(*,30) rank,inbuf
+
+   else
+     print *, 'Must specify',SIZE,' processors.  Terminating.' 
+   endif
+   call <FONT COLOR=#FF0000>MPI_FINALIZE</FONT>(ierr)
+
+20 format('rank= ',I3,' coords= ',I2,I2,
+  &       ' neighbors(u,d,l,r)= ',I3,I3,I3,I3 )
+30 format('rank= ',I3,'                 ',
+  &       ' inbuf(u,d,l,r)= ',I3,I3,I3,I3 )
+
+   end
+</PRE></TD>
+</TABLE>
+
+<BR><BR>
+Sample program output: (partial)
+<PRE>
+rank=   0 coords=  0 0 neighbors(u,d,l,r)=  -1  4 -1  1
+rank=   0                  inbuf(u,d,l,r)=  -1  4 -1  1
+rank=   8 coords=  2 0 neighbors(u,d,l,r)=   4 12 -1  9
+rank=   8                  inbuf(u,d,l,r)=   4 12 -1  9
+rank=   1 coords=  0 1 neighbors(u,d,l,r)=  -1  5  0  2
+rank=   1                  inbuf(u,d,l,r)=  -1  5  0  2
+rank=  13 coords=  3 1 neighbors(u,d,l,r)=   9 -1 12 14
+rank=  13                  inbuf(u,d,l,r)=   9 -1 12 14
+...
+...
+rank=   3 coords=  0 3 neighbors(u,d,l,r)=  -1  7  2 -1
+rank=   3                  inbuf(u,d,l,r)=  -1  7  2 -1
+rank=  11 coords=  2 3 neighbors(u,d,l,r)=   7 15 10 -1
+rank=  11                  inbuf(u,d,l,r)=   7 15 10 -1
+rank=  10 coords=  2 2 neighbors(u,d,l,r)=   6 14  9 11
+rank=  10                  inbuf(u,d,l,r)=   6 14  9 11
+rank=   9 coords=  2 1 neighbors(u,d,l,r)=   5 13  8 10
+rank=   9                  inbuf(u,d,l,r)=   5 13  8 10
+</PRE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME="MPI2-3"> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>A Brief Word on MPI-2 and MPI-3</SPAN></TD>
+</TD></TR></TABLE>
+<P><BR>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>MPI-2:</SPAN>
+<UL>
+<P>
+<LI>Intentionally, the MPI-1 specification did not address several
+    "difficult" issues.  For reasons of expediency, these issues
+    were deferred to a second specification, called MPI-2 in 1997.
+<P>
+<LI>MPI-2 was a major revision to MPI-1 adding new functionality and
+    corrections.
+<P>
+<LI>Key areas of new functionality in MPI-2:
+<UL>
+<P>
+<LI><B>Dynamic Processes</B> - extensions that remove the static process model
+    of MPI.  Provides routines to create new processes after job startup.
+<P>
+<LI><B>One-Sided Communications</B> - provides routines for one directional 
+    communications.  Include shared memory operations (put/get) and
+    remote accumulate operations.
+<P>
+<LI><B>Extended Collective Operations</B> - allows for the
+    application of collective operations to inter-communicators
+<P>
+<LI><B>External Interfaces</B> - defines routines that allow developers to
+    layer on top of MPI, such as for debuggers and profilers.
+<P>
+<LI><B>Additional Language Bindings</B> - describes C++ bindings and discusses
+    Fortran-90 issues.
+<P>
+<LI><B>Parallel I/O</B> - describes MPI support for parallel I/O.
+</UL>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>MPI-3:</SPAN>
+<UL>
+<P>
+<LI>The MPI-3 standard was adopted in 2012, and contains significant extensions to 
+    MPI-1 and MPI-2 functionality including: 
+<UL>
+<P>
+<LI><B>Nonblocking Collective Operations</B> - permits tasks in a collective to
+    perform operations without blocking, possibly offering performance improvements.
+<P>
+<LI><B>New One-sided Communication Operations</B> - to better handle different
+    memory models.
+<P>
+<LI><B>Neighborhood Collectives</B> - Extends the distributed graph and Cartesian 
+    process topologies with additional communication power.
+<P>
+<LI><B>Fortran 2008 Bindings</B> - expanded from Fortran90 bindings
+<P>
+<LI><B>MPIT Tool Interface</B> - This new tool interface allows the MPI 
+   implementation to expose certain internal variables, counters, and other states 
+   to the user (most likely performance tools).
+<P>
+<LI><B>Matched Probe</B> - Fixes an old bug in MPI-2 where one could not probe for
+    messages in a multi-threaded environment.
+</UL>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>More Information on MPI-2 and MPI-3:</SPAN>
+<UL>
+<LI>MPI Standard documents:
+    <A HREF=http://www.mpi-forum.org/docs/ TARGET=_blank>
+    http://www.mpi-forum.org/docs/</A>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Exercise3> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>MPI Exercise 3</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Your Choice</H2>
+
+<DD>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR VALIGN=top><TD BGCOLOR=#FOF5FE HEIGHT=400>
+<B><U>Overview:</U>
+<UL>
+<LI>Login to the LC workshop cluster, if you are not already logged in
+<LI>Following the Exercise 3 instructions will take you through all sorts
+    of MPI programs - pick any/all that are of interest.
+<LI>The intention is review the codes and see what's happening - not just
+    compile and run.
+<LI>Several codes provide serial examples for a comparison with the parallel
+    MPI versions.
+<LI>Check out the "bug" programs. 
+</UL>
+<P>
+<IMG SRC=../images/point02.jpg WIDTH=100 HEIGTH=45 BORDER=0>
+<A HREF=exercise.html#Exercise3 TARGET=_blank>GO TO THE EXERCISE HERE</A>
+</B>
+</TD></TR></TABLE>
+</DD>
+
+<BR><BR><BR><BR>
+
+<P><HR><P>
+
+<FONT SIZE=+1><B>This completes the tutorial.</B></FONT> 
+<P>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+<TR VALIGN=top>
+<TD><A HREF=../evaluation/index.html TARGET=evalForm>
+    <IMG SRC=../images/evaluationForm.gif 
+    BORDER=0 ALT='Evaluation Form'></A> &nbsp; &nbsp; &nbsp;</TD>
+<TD>Please complete the online evaluation form - unless you are doing the exercise,
+    in which case please complete it at the end of the exercises.</TD>
+</TR>
+</TABLE>
+<P>
+<FONT SIZE=+1><B>Where would you like to go now?</B></FONT>
+<UL>
+<LI><A HREF=exercise.html#Exercise3 TARGET=ex3>Exercise 3</A>
+<LI><A HREF=../agenda/index.html>Agenda</A>
+<LI><A HREF=#top>Back to the top</A>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=References> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>References and More Information</SPAN></TD>
+</TD></TR></TABLE>
+<BR>
+
+<UL>
+<LI>Author: <A HREF=mailto:blaiseb@llnl.gov>Blaise Barney</A>, Livermore
+    Computing.
+<P>
+<LI>MPI Standard documents:
+<BR><A HREF=http://www.mpi-forum.org/docs/ TARGET=_blank>
+    http://www.mpi-forum.org/docs/</A>
+<P>
+<LI>"Using MPI", Gropp, Lusk and Skjellum. MIT Press, 1994.
+<P>
+<LI>MPI Tutorials:
+<BR><A HREF=http://www.mcs.anl.gov/research/projects/mpi/tutorial/
+    TARGET=W3>www.mcs.anl.gov/research/projects/mpi/tutorial</A>
+<P>
+<LI>Livermore Computing specific information:
+    <UL>
+    <LI>Linux Clusters Overview tutorial
+    <BR><A HREF=https://computing.llnl.gov/tutorials/linux_clusters 
+        TARGET=_blank>computing.llnl.gov/tutorials/linux_clusters</A>
+    <LI>Using the Dawn BG/P System tutorial
+    <BR><A HREF=https://computing.llnl.gov/tutorials/bgp 
+        TARGET=_blank>computing.llnl.gov/tutorials/bgp</A>
+    <LI>Using the Sequoia/Vulcan BG/Q Systems tutorial
+    <BR><A HREF=https://computing.llnl.gov/tutorials/bgq 
+        TARGET=_blank>computing.llnl.gov/tutorials/bgq</A>
+    </UL>
+<!---------------------------------------------------------------
+<P>
+<LI>IBM Parallel Environment Manuals
+<BR><A HREF=http://publib.boulder.ibm.com/infocenter/clresctr/vxrx/index.jsp
+    TARGET=_blank7>
+    publib.boulder.ibm.com/infocenter/clresctr/vxrx/index.jsp</A>
+<P>
+<LI>IBM Compiler Documentation:
+    <BR>Fortran:
+    <A HREF=http://www-01.ibm.com/software/awdtools/fortran/ 
+    TARGET=_blank9>www-01.ibm.com/software/awdtools/fortran/</A>
+    <BR>C/C++:
+    <A HREF=http://www-01.ibm.com/software/awdtools/xlcpp/ 
+    TARGET=W33>www-01.ibm.com/software/awdtools/xlcpp</A>
+<P>
+<LI>"RS/6000 SP: Practical MPI Programming", Yukiya Aoyama and Jun Nakano,
+    RS/6000 Technical Support Center, IBM Japan.  Available from IBM's
+    Redbooks server at <A HREF=http://www.redbooks.ibm.com
+    TARGET=_blank>http://www.redbooks.ibm.com</A>.
+---------------------------------------------------------------->
+<P>
+<LI>"A User's Guide to MPI", Peter S. Pacheco. Department of Mathematics,
+    University of San Francisco.  
+</UL>
+
+
+<A NAME=AppendixA> <BR><BR>  </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Appendix A: MPI-1 Routine Index</SPAN></TD>
+</TD></TR></TABLE>
+<BR>
+<UL>
+<LI>These man pages were derived from the MVAPICH 0.9 implementation of MPI and 
+    may differ from the man pages of other implementations.
+<LI>Not all MPI routines are shown
+<LI><B>*</B> = deprecated in MPI-2.0, replaced in MPI-3.0
+<LI>The complete MPI-3 standard (2012) defines over 430 routines.
+
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=3>
+<TR VALIGN=TOP>
+<TH COLSPAN=4>Environment Management Routines</TH>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Abort.txt>MPI_Abort</A>
+  <TD><A HREF=man/MPI_Errhandler_create.txt>MPI_Errhandler_create</A>*
+  <TD><A HREF=man/MPI_Errhandler_free.txt>MPI_Errhandler_free</A>
+  <TD><A HREF=man/MPI_Errhandler_get.txt>MPI_Errhandler_get</A>*
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Errhandler_set.txt>MPI_Errhandler_set</A>*
+  <TD><A HREF=man/MPI_Error_class.txt>MPI_Error_class</A>
+  <TD><A HREF=man/MPI_Error_string.txt>MPI_Error_string</A>
+  <TD><A HREF=man/MPI_Finalize.txt>MPI_Finalize</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Get_processor_name.txt>MPI_Get_processor_name</A>
+    <TD><A HREF=man/MPI_Get_version.txt>MPI_Get_version</A>
+<TD><A HREF=man/MPI_Init.txt>MPI_Init</A>
+  <TD><A HREF=man/MPI_Initialized.txt>MPI_Initialized</A>
+<TR VALIGN=TOP>
+    <TD><A HREF=man/MPI_Wtick.txt>MPI_Wtick</A>
+<TD><A HREF=man/MPI_Wtime.txt>MPI_Wtime</A>
+  <TD>&nbsp;
+  <TD>&nbsp;
+
+<TR VALIGN=TOP>
+<TH COLSPAN=4>Point-to-Point Communication Routines</TH>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Bsend.txt>MPI_Bsend</A>
+  <TD><A HREF=man/MPI_Bsend_init.txt>MPI_Bsend_init</A>
+  <TD><A HREF=man/MPI_Buffer_attach.txt>MPI_Buffer_attach</A>
+  <TD><A HREF=man/MPI_Buffer_detach.txt>MPI_Buffer_detach</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Cancel.txt>MPI_Cancel</A>
+  <TD><A HREF=man/MPI_Get_count.txt>MPI_Get_count</A>
+  <TD><A HREF=man/MPI_Get_elements.txt>MPI_Get_elements</A>
+  <TD><A HREF=man/MPI_Ibsend.txt>MPI_Ibsend</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Iprobe.txt>MPI_Iprobe</A>
+  <TD><A HREF=man/MPI_Irecv.txt>MPI_Irecv</A>
+  <TD><A HREF=man/MPI_Irsend.txt>MPI_Irsend</A>
+  <TD><A HREF=man/MPI_Isend.txt>MPI_Isend</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Issend.txt>MPI_Issend</A>
+  <TD><A HREF=man/MPI_Probe.txt>MPI_Probe</A>
+  <TD><A HREF=man/MPI_Recv.txt>MPI_Recv</A>
+  <TD><A HREF=man/MPI_Recv_init.txt>MPI_Recv_init</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Request_free.txt>MPI_Request_free</A>
+  <TD><A HREF=man/MPI_Rsend.txt>MPI_Rsend</A>
+  <TD><A HREF=man/MPI_Rsend_init.txt>MPI_Rsend_init</A>
+  <TD><A HREF=man/MPI_Send.txt>MPI_Send</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Send_init.txt>MPI_Send_init</A>
+  <TD><A HREF=man/MPI_Sendrecv.txt>MPI_Sendrecv</A>
+  <TD><A HREF=man/MPI_Sendrecv_replace.txt>MPI_Sendrecv_replace</A>
+  <TD><A HREF=man/MPI_Ssend.txt>MPI_Ssend</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Ssend_init.txt>MPI_Ssend_init</A>
+  <TD><A HREF=man/MPI_Start.txt>MPI_Start</A>
+  <TD><A HREF=man/MPI_Startall.txt>MPI_Startall</A>
+  <TD><A HREF=man/MPI_Test.txt>MPI_Test</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Test_cancelled.txt>MPI_Test_cancelled</A>
+  <TD><A HREF=man/MPI_Testall.txt>MPI_Testall</A>
+  <TD><A HREF=man/MPI_Testany.txt>MPI_Testany</A>
+  <TD><A HREF=man/MPI_Testsome.txt>MPI_Testsome</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Wait.txt>MPI_Wait</A>
+  <TD><A HREF=man/MPI_Waitall.txt>MPI_Waitall</A>
+  <TD><A HREF=man/MPI_Waitany.txt>MPI_Waitany</A>
+  <TD><A HREF=man/MPI_Waitsome.txt>MPI_Waitsome</A>
+
+<TR VALIGN=TOP>
+<TH COLSPAN=4>Collective Communication Routines</TH>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Allgather.txt>MPI_Allgather</A>
+  <TD><A HREF=man/MPI_Allgatherv.txt>MPI_Allgatherv</A>
+  <TD><A HREF=man/MPI_Allreduce.txt>MPI_Allreduce</A>
+  <TD><A HREF=man/MPI_Alltoall.txt>MPI_Alltoall</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Alltoallv.txt>MPI_Alltoallv</A>
+  <TD><A HREF=man/MPI_Barrier.txt>MPI_Barrier</A>
+  <TD><A HREF=man/MPI_Bcast.txt>MPI_Bcast</A>
+  <TD><A HREF=man/MPI_Gather.txt>MPI_Gather</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Gatherv.txt>MPI_Gatherv</A>
+  <TD><A HREF=man/MPI_Op_create.txt>MPI_Op_create</A>
+  <TD><A HREF=man/MPI_Op_free.txt>MPI_Op_free</A>
+  <TD><A HREF=man/MPI_Reduce.txt>MPI_Reduce</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Reduce_scatter.txt>MPI_Reduce_scatter</A>
+  <TD><A HREF=man/MPI_Scan.txt>MPI_Scan</A>
+  <TD><A HREF=man/MPI_Scatter.txt>MPI_Scatter</A>
+  <TD><A HREF=man/MPI_Scatterv.txt>MPI_Scatterv</A>
+
+<TR VALIGN=TOP>
+<TH COLSPAN=4>Process Group Routines</TH>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Group_compare.txt>MPI_Group_compare</A>
+  <TD><A HREF=man/MPI_Group_difference.txt>MPI_Group_difference</A>
+  <TD><A HREF=man/MPI_Group_excl.txt>MPI_Group_excl</A>
+  <TD><A HREF=man/MPI_Group_free.txt>MPI_Group_free</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Group_incl.txt>MPI_Group_incl</A>
+  <TD><A HREF=man/MPI_Group_intersection.txt>MPI_Group_intersection</A>
+  <TD><A HREF=man/MPI_Group_range_excl.txt>MPI_Group_range_excl</A>
+  <TD><A HREF=man/MPI_Group_range_incl.txt>MPI_Group_range_incl</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Group_rank.txt>MPI_Group_rank</A>
+  <TD><A HREF=man/MPI_Group_size.txt>MPI_Group_size</A>
+  <TD><A HREF=man/MPI_Group_translate_ranks.txt>MPI_Group_translate_ranks</A>
+  <TD><A HREF=man/MPI_Group_union.txt>MPI_Group_union</A>
+
+<TR VALIGN=TOP>
+<TH COLSPAN=4>Communicators Routines</TH>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Comm_compare.txt>MPI_Comm_compare</A>
+  <TD><A HREF=man/MPI_Comm_create.txt>MPI_Comm_create</A>
+  <TD><A HREF=man/MPI_Comm_dup.txt>MPI_Comm_dup</A>
+  <TD><A HREF=man/MPI_Comm_free.txt>MPI_Comm_free</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Comm_group.txt>MPI_Comm_group</A>
+  <TD><A HREF=man/MPI_Comm_rank.txt>MPI_Comm_rank</A>
+  <TD><A HREF=man/MPI_Comm_remote_group.txt>MPI_Comm_remote_group</A>
+  <TD><A HREF=man/MPI_Comm_remote_size.txt>MPI_Comm_remote_size</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Comm_size.txt>MPI_Comm_size</A>
+  <TD><A HREF=man/MPI_Comm_split.txt>MPI_Comm_split</A>
+  <TD><A HREF=man/MPI_Comm_test_inter.txt>MPI_Comm_test_inter</A>
+  <TD><A HREF=man/MPI_Intercomm_create.txt>MPI_Intercomm_create</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Intercomm_merge.txt>MPI_Intercomm_merge</A>
+  <TD>&nbsp;
+  <TD>&nbsp;
+  <TD>&nbsp;
+
+<TR VALIGN=TOP>
+<TH COLSPAN=4>Derived Types Routines</TH>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Type_commit.txt>MPI_Type_commit</A>
+  <TD><A HREF=man/MPI_Type_contiguous.txt>MPI_Type_contiguous</A>
+  <TD><A HREF=man/MPI_Type_extent.txt>MPI_Type_extent</A>*
+  <TD><A HREF=man/MPI_Type_free.txt>MPI_Type_free</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Type_hindexed.txt>MPI_Type_hindexed</A>*
+  <TD><A HREF=man/MPI_Type_hvector.txt>MPI_Type_hvector</A>*
+  <TD><A HREF=man/MPI_Type_indexed.txt>MPI_Type_indexed</A>
+  <TD><A HREF=man/MPI_Type_lb.txt>MPI_Type_lb</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Type_size.txt>MPI_Type_size</A>
+  <TD><A HREF=man/MPI_Type_struct.txt>MPI_Type_struct</A>*
+  <TD><A HREF=man/MPI_Type_ub.txt>MPI_Type_ub</A>*
+  <TD><A HREF=man/MPI_Type_vector.txt>MPI_Type_vector</A>
+
+<TR VALIGN=TOP>
+<TH COLSPAN=4>Virtual Topology Routines</TH>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Cart_coords.txt>MPI_Cart_coords</A>
+  <TD><A HREF=man/MPI_Cart_create.txt>MPI_Cart_create</A>
+  <TD><A HREF=man/MPI_Cart_get.txt>MPI_Cart_get</A>
+  <TD><A HREF=man/MPI_Cart_map.txt>MPI_Cart_map</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Cart_rank.txt>MPI_Cart_rank</A>
+  <TD><A HREF=man/MPI_Cart_shift.txt>MPI_Cart_shift</A>
+  <TD><A HREF=man/MPI_Cart_sub.txt>MPI_Cart_sub</A>
+  <TD><A HREF=man/MPI_Cartdim_get.txt>MPI_Cartdim_get</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Dims_create.txt>MPI_Dims_create</A>
+  <TD><A HREF=man/MPI_Graph_create.txt>MPI_Graph_create</A>
+  <TD><A HREF=man/MPI_Graph_get.txt>MPI_Graph_get</A>
+  <TD><A HREF=man/MPI_Graph_map.txt>MPI_Graph_map</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Graph_neighbors.txt>MPI_Graph_neighbors</A>
+  <TD><A HREF=man/MPI_Graph_neighbors_count.txt>MPI_Graph_neighbors_count</A>
+  <TD><A HREF=man/MPI_Graphdims_get.txt>MPI_Graphdims_get</A>
+  <TD><A HREF=man/MPI_Topo_test.txt>MPI_Topo_test</A>
+
+<TR VALIGN=TOP>
+<TH COLSPAN=4>Miscellaneous Routines</TH>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Address.txt>MPI_Address</A>*
+  <TD><A HREF=man/MPI_Attr_delete.txt>MPI_Attr_delete</A>*
+  <TD><A HREF=man/MPI_Attr_get.txt>MPI_Attr_get</A>*
+  <TD><A HREF=man/MPI_Attr_put.txt>MPI_Attr_put</A>*
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Keyval_create.txt>MPI_Keyval_create</A>*
+  <TD><A HREF=man/MPI_Keyval_free.txt>MPI_Keyval_free</A>*
+  <TD><A HREF=man/MPI_Pack.txt>MPI_Pack</A>
+  <TD><A HREF=man/MPI_Pack_size.txt>MPI_Pack_size</A>
+<TR VALIGN=TOP>
+  <TD><A HREF=man/MPI_Pcontrol.txt>MPI_Pcontrol</A>
+  <TD><A HREF=man/MPI_Unpack.txt>MPI_Unpack</A>
+  <TD>&nbsp;
+  <TD>&nbsp;
+  
+</TABLE>
+</UL>
+
+<!-------------------------------------------------------------------------->
+
+<SCRIPT LANGUAGE="JavaScript">PrintFooter("UCRL-MI-133316")</SCRIPT>
+
+<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+
+</BODY>
+</HTML>
+

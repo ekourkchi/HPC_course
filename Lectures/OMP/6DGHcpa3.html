@@ -1,0 +1,2933 @@
+<HTML>
+<HEAD>
+<TITLE>POSIX Threads Programming</TITLE>
+
+<SCRIPT LANGUAGE="JavaScript" SRC="../tutorials.js"></SCRIPT>
+<LINK REL=StyleSheet HREF="../tutorials.css" TYPE="text/css">
+<LINK REL="SHORTCUT ICON" HREF="http://www.llnl.gov/favicon.ico">
+
+<!-- BEGIN META TAGS -->
+<META NAME="LLNLRandR" CONTENT="UCRL-MI-133316">
+<META NAME="distribution" CONTENT="global">
+<META NAME="description" content="Livermore Computing Training">
+<META NAME="rating" CONTENT="general">
+<META HTTP-EQUIV="keywords" CONTENT="Lawrence Livermore
+National Laboratory, LLNL, High Performance Computing, parallel, programming, 
+HPC, training, workshops, tutorials, pthreads, Posix threads, Blaise Barney">
+<META NAME="copyright" CONTENT="This document is copyrighted U.S.
+Department of Energy">
+<META NAME="Author" content="Blaise Barney">
+<META NAME="email" CONTENT="blaiseb@llnl.gov">
+<!-- END META TAGS -->
+</HEAD>
+
+<BODY> 
+<BASEFONT SIZE=3>            <!-- default font size -->
+
+<!-- Begin Piwik Tracking Code  -->
+<script src="https://analytics.llnl.gov/piwik.js" type="text/javascript">
+</script>
+<script>
+var siteName = document.domain;
+var pkBaseURL = 'https://analytics.llnl.gov/';
+if (typeof jQuery=="undefined") {
+    document.write(unescape("%3Cscript src='" + pkBaseURL + "jquery.js' type='text/javascript'%3E%3C/script%3E"));
+}
+</script>
+<script>
+    try {
+        var LLNLTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+        LLNLTracker.trackPageView();
+        LLNLTracker.enableLinkTracking();
+        var localSiteTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 149);
+        localSiteTracker.trackPageView();
+        localSiteTracker.enableLinkTracking();
+    }
+    catch (err) {
+        console.log(err);
+    }
+</script><noscript><p><img src="https://analytics.llnl.gov/piwik.php?idsite=149" style="border:0" alt="" /></p></noscript>
+<!-- End Piwik Tracking Code -->
+
+<FORM>                       <!-- required for interactive buttons -->
+
+<A NAME=top>  </A>
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH=100%>
+<TR><TD COLSPAN=2 BGCOLOR=#3F5098>
+  <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH=900>
+  <TR><TD BACKGROUND=../images/bg1.gif>
+  <A NAME=top> </A>
+  <SCRIPT LANGUAGE="JavaScript">addNavigation()</SCRIPT>
+  <P><BR>
+  <H1>POSIX Threads Programming</H1>
+  <P>
+  </TD></TR></TABLE>
+</TD>
+</TR><TR VALIGN=top>
+<TD><I>Author: Blaise Barney, Lawrence Livermore National Laboratory</I></TD>
+<TD ALIGN=right><FONT SIZE=-1>UCRL-MI-133316</FONT></TD>
+</TR></TABLE>
+<P>
+
+<A NAME=TOC> </A>
+<H2>Table of Contents</H2>
+
+<OL>
+<P>
+<LI><A HREF=#Abstract>Abstract</A>
+<LI><A HREF=#Overview>Pthreads Overview</A>
+  <OL>
+  <LI><A HREF=#Thread>What is a Thread?</A>
+  <LI><A HREF=#Pthread>What are Pthreads?</A>
+  <LI><A HREF=#WhyPthreads>Why Pthreads?</A>
+  <LI><A HREF=#Designing>Designing Threaded Programs</A>
+  </OL>
+<LI><A HREF=#PthreadsAPI>The Pthreads API</A>
+<LI><A HREF=#Compiling>Compiling Threaded Programs</A>
+<LI><A HREF=#Management>Thread Management</A>
+  <OL>
+  <LI><A HREF=#CreatingThreads>Creating and Terminating Threads</A>
+  <LI><A HREF=#PassingArguments>Passing Arguments to Threads</A>
+  <LI><A HREF=#Joining>Joining and Detaching Threads</A>
+  <LI><A HREF=#Stack>Stack Management</A>
+  <LI><A HREF=#Misc>Miscellaneous Routines</A>
+  </OL>
+<LI><A HREF=#Exercise1>Exercise 1</A>
+<LI><A HREF=#Mutexes>Mutex Variables</A>
+  <OL>
+  <LI><A HREF=#MutexOverview>Mutex Variables Overview</A>
+  <LI><A HREF=#MutexCreation>Creating and Destroying Mutexes</A>
+  <LI><A HREF=#MutexLocking>Locking and Unlocking Mutexes</A>
+  </OL>
+<LI><A HREF=#ConditionVariables>Condition Variables</A>
+  <OL>
+  <LI><A HREF=#ConVarOverview>Condition Variables Overview</A>
+  <LI><A HREF=#ConVarCreation>Creating and Destroying Condition Variables</A>
+  <LI><A HREF=#ConVarSignal>Waiting and Signaling on Condition Variables</A>
+  </OL>
+<LI><A HREF=#Tools>Monitoring, Debugging and Performance Analysis Tools for Pthreads</A>
+<LI><A HREF=#LLNL>LLNL Specific Information and Recommendations</A>
+<LI><A HREF=#NotCovered>Topics Not Covered</A>
+<LI><A HREF=#Exercise2>Exercise 2</A>
+<LI><A HREF=#References>References and More Information</A>
+<LI><A HREF=#AppendixA>Appendix A: Pthread Library Routines Reference</A>
+</OL>
+ 
+<!--------------------------------------------------------------------------->
+ 
+<A NAME=Abstract> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Abstract</SPAN>
+</TD></TR></TABLE>
+<P><BR>
+
+In shared memory multiprocessor architectures, threads can be
+used to implement parallelism. Historically, hardware vendors have
+implemented their own proprietary versions of threads, making portability a
+concern for software developers. For UNIX systems, a standardized C
+language threads programming interface has been specified by the IEEE
+POSIX 1003.1c standard. Implementations that adhere to this standard are
+referred to as POSIX threads, or Pthreads.
+<P>
+The tutorial begins with an introduction to concepts, motivations, and design
+considerations for using Pthreads. Each of the three major classes of
+routines in the Pthreads API are then covered: Thread Management, Mutex
+Variables, and Condition Variables. Example codes are used throughout to
+demonstrate how to use most of the Pthreads routines needed by a new Pthreads
+programmer. The tutorial concludes with a discussion of LLNL specifics and
+how to mix MPI with pthreads. A lab
+exercise, with numerous example codes (C Language) is also included.
+<P>
+<I>Level/Prerequisites:</I> This tutorial is one of the eight tutorials in the 4+ day "Using LLNL's Supercomputers" workshop.  It is deal for those who are new to parallel programming with threads. A basic understanding of parallel programming in C is required. For those who are unfamiliar with Parallel Programming in general, the material covered in 
+<A HREF=../parallel_comp TARGET=ec3500>EC3500: Introduction To Parallel
+Computing</A> would be helpful. 
+<BR><BR>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Overview> <BR><BR> </A>
+<A NAME=Thread> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Pthreads Overview</SPAN></TD>
+</TD></TR></TABLE>
+<H2>What is a Thread?</H2>
+
+<UL>
+<LI>Technically, a thread is defined as an independent stream of 
+    instructions that can be scheduled to run as such by the 
+    operating system. But what does this mean?
+<P>
+<LI>To the software developer, the concept of a "procedure" that runs
+    independently from its main program may best describe a thread. 
+<P>
+<LI>To go one step further, imagine a main program (a.out) that contains
+    a number of procedures. Then imagine all of these procedures being
+    able to be scheduled to run simultaneously and/or independently by
+    the operating system. That would describe a "multi-threaded" program.
+<P>
+<LI>How is this accomplished? 
+</UL>
+<UL> 
+<LI>Before understanding a thread, one first needs to understand a UNIX process.
+    A process is created by the operating system, and requires a fair amount 
+    of "overhead".  Processes contain information about program 
+    resources and program execution state, including:
+    <UL>
+    <LI>Process ID, process group ID, user ID, and group ID
+    <LI>Environment
+    <LI>Working directory.
+    <LI>Program instructions 
+    <LI>Registers
+    <LI>Stack
+    <LI>Heap
+    <LI>File descriptors
+    <LI>Signal actions
+    <LI>Shared libraries
+    <LI>Inter-process communication tools (such as message queues, pipes,
+        semaphores, or shared memory).
+    </UL>
+<P>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+<TR VALIGN=top>
+<TD><IMG SRC=images/process.gif WIDTH=450 HEIGHT=406 BORDER=0 
+ALT='Unix Process'></TD>
+<TD><IMG SRC=images/thread.gif WIDTH=450 HEIGHT=398 BORDER=0 HSPACE=20
+ALT='Process-thread relationship'></TD>
+<TR VALIGN=top>
+<TD ALIGN=center><B>UNIX PROCESS</B></TD>
+<TD ALIGN=center><B>THREADS WITHIN A UNIX PROCESS</B></TD>
+</TR></TABLE>
+<P>
+<LI>Threads use and exist within these process resources, yet are able to
+    be scheduled by the operating system and run as independent entities
+    largely because they duplicate only the bare essential resources that 
+    enable them to exist as executable code.
+<P>
+<LI>This independent flow of control is accomplished because a thread
+     maintains its own:
+    <UL>
+    <LI>Stack pointer
+    <LI>Registers
+    <LI>Scheduling properties (such as policy or priority)
+    <LI>Set of pending and blocked signals
+    <LI>Thread specific data.
+    </UL>
+<P>
+<LI>So, in summary, in the UNIX environment a thread:
+    <UL>
+    <LI>Exists within a process and uses the process resources
+    <LI>Has its own independent flow of control as long as
+        its parent process exists and the OS supports it
+    <LI>Duplicates only the essential resources it needs to be independently
+        schedulable
+    <LI>May share the process resources with other threads that act
+        equally independently (and dependently)
+    <LI>Dies if the parent process dies - or something similar
+    <LI>Is "lightweight" because most of the overhead has already been
+        accomplished through the creation of its process.
+    </UL>
+<P>
+<LI>Because threads within the same process share resources:
+    <UL>
+    <LI>Changes made by one thread to shared system resources (such as closing
+         a file) will be seen by all other threads.
+    <LI>Two pointers having the same value point to the same data.
+    <LI>Reading and writing to the same memory locations is possible, and
+        therefore requires explicit synchronization by the programmer.
+    </UL>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Pthread> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Pthreads Overview</SPAN></TD>
+</TD></TR></TABLE>
+<H2>What are Pthreads?</H2>
+
+<UL>
+<LI>Historically, hardware vendors have implemented their own proprietary
+    versions of threads.  These implementations differed substantially from 
+    each other making it difficult for programmers to develop portable 
+    threaded applications.
+<P>
+<LI>In order to take full advantage of the capabilities provided by threads,
+    a standardized programming interface was required.  
+    <UL>
+    <LI>For UNIX systems, this interface has been specified by the IEEE 
+        POSIX 1003.1c standard (1995).
+    <LI>Implementations adhering to this standard are referred to as POSIX
+        threads, or Pthreads. 
+    <LI>Most hardware vendors now offer Pthreads in addition to their 
+        proprietary API's.
+    </UL>
+<P>
+<LI>The POSIX standard has continued to evolve and undergo revisions,
+    including the Pthreads specification.
+<P>
+<LI>Some useful links:
+    <UL>
+    <LI><A HREF=http://standards.ieee.org/findstds/standard/1003.1-2008.html>
+        standards.ieee.org/findstds/standard/1003.1-2008.html</A>
+    <LI><A HREF=http://www.opengroup.org/austin/papers/posix_faq.html
+        TARGET=posixfaq>www.opengroup.org/austin/papers/posix_faq.html</A>
+    <LI><A HREF=http://www.unix.org/version3/ieee_std.html
+        TARGET=dwnldstd>www.unix.org/version3/ieee_std.html</A>
+    </UL>
+<P>
+<LI>Pthreads are defined as a set of C language programming types and
+    procedure calls, implemented with a <TT>pthread.h</TT> header/include file
+    and a thread library - though this library may be part of another
+    library, such as <TT>libc</TT>, in some implementations.
+
+<!--------------------
+<P>
+<LI>There are several drafts of the POSIX threads standard. It is important 
+    to be aware of the draft number of a given implementation, because there 
+    are differences between drafts that can cause problems.
+---------------------->
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=WhyPthreads> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Pthreads Overview</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Why Pthreads?</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Light Weight:</SPAN>
+<UL>
+<P>
+<LI>When compared to the cost of creating and managing a process, a thread 
+    can be created with much less operating system overhead.  Managing threads
+    requires fewer system resources than managing processes. 
+<P>
+<LI>For example, the following table compares timing results
+    for the <TT><B>fork()</B></TT> subroutine and 
+    the <TT><B>pthread_create()</B></TT> subroutine.  Timings reflect 
+    50,000 process/thread creations, were performed with the <TT>time</TT> 
+    utility, and units are in seconds, no optimization flags.
+<P>
+    Note: don't expect the sytem and user times to add up to real time,
+    because these are SMP systems with multiple CPUs/cores working on the problem 
+    at the same time. At best, these are approximations run on local machines,
+    past and present.
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR>
+<TH ROWSPAN=2>Platform</TH>
+<TH COLSPAN=3><TT>fork()</TH>
+<TH COLSPAN=3><TT>pthread_create()</TH>
+</TR><TR>
+<TH>real</TH>
+<TH>user</TH>
+<TH>sys</TH>
+<TH>real</TH>
+<TH>user</TH>
+<TH>sys</TH>
+
+</TR><TR VALIGN=top ALIGN=right>
+<TD ALIGN=left><B>Intel 2.6 GHz Xeon E5-2670 (16 cores/node)</B>
+<TD>8.1</TD>
+<TD>0.1</TD>
+<TD>2.9</TD>
+<TD>0.9</TD>
+<TD>0.2</TD>
+<TD>0.3</TD>
+
+</TR><TR VALIGN=top ALIGN=right>
+<TD ALIGN=left><B>Intel 2.8 GHz Xeon 5660 (12 cores/node)</B>
+<TD>4.4</TD>
+<TD>0.4</TD>
+<TD>4.3</TD>
+<TD>0.7</TD>
+<TD>0.2</TD>
+<TD>0.5</TD>
+
+</TR><TR VALIGN=top ALIGN=right>
+<TD ALIGN=left><B>AMD 2.3 GHz Opteron (16 cores/node)</B>
+<TD>12.5</TD>
+<TD>1.0</TD>
+<TD>12.5</TD>
+<TD>1.2</TD>
+<TD>0.2</TD>
+<TD>1.3</TD>
+
+</TR><TR VALIGN=top ALIGN=right>
+<TD ALIGN=left><B>AMD 2.4 GHz Opteron (8 cores/node)</B>
+<TD>17.6</TD>
+<TD>2.2</TD>
+<TD>15.7</TD>
+<TD>1.4</TD>
+<TD>0.3</TD>
+<TD>1.3</TD>
+
+</TR><TR VALIGN=top ALIGN=right>
+<TD ALIGN=left><B>IBM 4.0 GHz POWER6 (8 cpus/node)</B>
+<TD>9.5</TD>
+<TD>0.6</TD>
+<TD>8.8</TD>
+<TD>1.6</TD>
+<TD>0.1</TD>
+<TD>0.4</TD>
+
+</TR><TR VALIGN=top ALIGN=right>
+<TD ALIGN=left><B>IBM 1.9 GHz POWER5 p5-575 (8 cpus/node)</B>
+<TD>64.2</TD>
+<TD>30.7</TD>
+<TD>27.6</TD>
+<TD>1.7</TD>
+<TD>0.6</TD>
+<TD>1.1</TD>
+
+</TR><TR VALIGN=top ALIGN=right>
+<TD ALIGN=left><B>IBM 1.5 GHz POWER4 (8 cpus/node)</B>
+<TD>104.5</TD>
+<TD>48.6</TD>
+<TD>47.2</TD>
+<TD>2.1</TD>
+<TD>1.0</TD>
+<TD>1.5</TD>
+
+</TR><TR VALIGN=top ALIGN=right>
+<TD ALIGN=left><B>INTEL 2.4 GHz Xeon (2 cpus/node)</B>
+<TD>54.9</TD>
+<TD>1.5</TD>
+<TD>20.8</TD>
+<TD>1.6</TD>
+<TD>0.7</TD>
+<TD>0.9</TD>
+
+</TR><TR VALIGN=top ALIGN=right>
+<TD ALIGN=left><B>INTEL 1.4 GHz Itanium2 (4 cpus/node)</B>
+<TD>54.5</TD>
+<TD>1.1</TD>
+<TD>22.2</TD>
+<TD>2.0</TD>
+<TD>1.2</TD>
+<TD>0.6</TD>
+
+</TR></TABLE>
+<IMG SRC=../images/source1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View source code'>&nbsp;<A HREF=fork_vs_thread.txt TARGET=_blank>
+fork_vs_thread.txt</A>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Efficient Communications/Data Exchange:</SPAN>
+<UL>
+<P>
+<LI>The primary motivation for considering the use of Pthreads in a high 
+    performance computing environment is to achieve optimum performance. 
+    In particular, if an application is using MPI for on-node communications, 
+    there is a potential that performance could be improved by using Pthreads 
+    instead.
+<P>
+<LI>MPI libraries usually implement on-node task communication via shared memory,
+    which involves at least one memory copy operation (process to process). 
+<P>
+<LI>For Pthreads there is no intermediate memory copy required because
+    threads share the same address space within a single process. There
+    is no data transfer, per se. It can be as efficient as simply passing
+    a pointer.
+<P>
+<LI>In the worst case scenario, Pthread communications become more of a 
+    cache-to-CPU or memory-to-CPU bandwidth issue. These speeds are much
+    higher than MPI shared memory communications.
+<P>
+<LI>For example: some local comparisons, past and present, are shown below:
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5>
+<TR>
+<TH>Platform</TH>
+<TH>MPI Shared Memory Bandwidth<BR>(GB/sec)</TH>
+<TH>Pthreads Worst Case<BR>Memory-to-CPU Bandwidth <BR>(GB/sec)</TH>
+</TR><TR VALIGN=top>
+<TD>Intel 2.6 GHz Xeon E5-2670 
+<TD ALIGN=right>4.5</TD>
+<TD ALIGN=right>51.2</TD>
+</TR><TR VALIGN=top>
+<TD>Intel 2.8 GHz Xeon 5660 
+<TD ALIGN=right>5.6</TD>
+<TD ALIGN=right>32</TD>
+</TR><TR VALIGN=top>
+<TD>AMD 2.3 GHz Opteron 
+<TD ALIGN=right>1.8</TD>
+<TD ALIGN=right>5.3</TD>
+</TR><TR VALIGN=top>
+<TD>AMD 2.4 GHz Opteron 
+<TD ALIGN=right>1.2</TD>
+<TD ALIGN=right>5.3</TD>
+</TR><TR VALIGN=top>
+<TD>IBM 1.9 GHz POWER5 p5-575 
+<TD ALIGN=right>4.1</TD>
+<TD ALIGN=right>16</TD>
+</TR><TR VALIGN=top>
+<TD>IBM 1.5 GHz POWER4
+<TD ALIGN=right>2.1</TD>
+<TD ALIGN=right>4</TD>
+</TR><TR VALIGN=top>
+<TD>Intel 2.4 GHz Xeon
+<TD ALIGN=right>0.3</TD>
+<TD ALIGN=right>4.3</TD>
+</TR><TR VALIGN=top>
+<TD>Intel 1.4 GHz Itanium 2
+<TD ALIGN=right>1.8</TD>
+<TD ALIGN=right>6.4</TD> 
+</TR></TABLE>
+</UL>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Other Common Reasons:</SPAN>
+<UL>
+<P>
+<LI>Threaded applications offer potential performance gains and practical
+    advantages over non-threaded applications in several other ways:
+    <UL>
+    <LI>Overlapping CPU work with I/O: For example, a program may have 
+        sections where it is performing a long I/O operation.  While one 
+        thread is waiting for an I/O system call to complete, CPU intensive 
+        work can be performed by other threads.
+    <LI>Priority/real-time scheduling: tasks which are more important can
+        be scheduled to supersede or interrupt lower priority tasks.  
+    <LI>Asynchronous event handling: tasks which service events of indeterminate
+        frequency and duration can be interleaved. For example, a web server
+        can both transfer data from previous requests and manage the arrival
+        of new requests.
+    </UL>
+<P>
+<LI>A perfect example is the typical web browser, where many interleaved
+    tasks can be happening at the same time, and where tasks can vary in 
+    priority.
+<P>
+<LI>Another good example is a modern operating system, which makes extensive
+    use of threads.  A screenshot of the MS Windows OS and applications using
+    threads is shown below.
+<P>
+<TABLE CELLPADDING=0 CELLSPACING=0 BORDER=0>
+<TR><TD ALIGN=center>
+<A HREF=images/resourcemonitor.jpg TARGET=_blank>
+<IMG SRC=images/resourcemonitor.600pix.jpg WIDTH=600 HEIGHT=339 BORDER=0></A>
+<BR><I>Click on image for a larger version</I></B>
+</TD></TR></TABLE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Designing> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Pthreads Overview</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Designing Threaded Programs</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Parallel Programming:</SPAN>
+<UL>
+<LI>On modern, multi-core machines, pthreads are ideally suited for parallel
+    programming, and whatever applies to parallel programming in general, applies
+    to parallel pthreads programs.
+<P>
+<LI>There are many considerations for designing parallel programs, such as:
+    <UL>
+    <LI>What type of parallel programming model to use?
+    <LI>Problem partitioning
+    <LI>Load balancing
+    <LI>Communications
+    <LI>Data dependencies
+    <LI>Synchronization and race conditions
+    <LI>Memory issues
+    <LI>I/O issues
+    <LI>Program complexity
+    <LI>Programmer effort/costs/time
+    <LI>...
+    </UL>
+<P>
+<LI>Covering these topics is beyond the scope of this tutorial, however interested 
+    readers can obtain a quick overview in the <A HREF=../parallel_comp 
+    TARGET=intropar>Introduction to Parallel Computing</A> tutorial.
+<P>
+<LI>In general though, in order for a program to take advantage of Pthreads, it 
+    must be able to be organized into discrete, independent tasks which can 
+    execute concurrently.  For example, if routine1 and routine2 can be 
+    interchanged, interleaved and/or overlapped in real time, they are candidates 
+    for threading.
+<P>
+<IMG SRC=images/concurrent.gif WIDTH=360 HEIGHT=254 BORDER=0>
+<P>
+<LI>Programs having the following characteristics may be well suited for pthreads:
+    <UL>
+    <LI>Work that can be executed, or data that can be operated on, by multiple
+        tasks simultaneously:
+    <LI>Block for potentially long I/O waits
+    <LI>Use many CPU cycles in some places but not others
+    <LI>Must respond to asynchronous  events
+    <LI>Some work is more important than other work (priority interrupts)
+    </UL>
+<P>
+<LI>Several common models for threaded programs exist:
+    <UL>
+    <P>
+    <LI><B><I>Manager/worker:</I></B>
+        a single thread, the <I>manager</I> assigns work
+        to other threads, the <I>workers</I>.  Typically, the manager handles
+        all input and parcels out work to the other tasks.  At least two 
+        forms of the manager/worker model are common: static worker pool and
+        dynamic worker pool.
+    <P>
+    <LI><B><I>Pipeline:</I></B>
+        a task is broken into a series of suboperations, 
+        each of which is handled in series, but concurrently, by a different 
+        thread.  An automobile assembly line best describes this model.
+    <P>
+    <LI><B><I>Peer:</I></B>
+        similar to the manager/worker model, but after the main 
+        thread creates other threads, it participates in the work.
+    </UL>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Shared Memory Model:</SPAN>
+<UL>
+<LI>All threads have access to the same global, shared memory
+<P>
+<LI>Threads also have their own private data
+<P>
+<LI>Programmers are responsible for synchronizing access (protecting) globally
+    shared data.
+<P>
+<IMG SRC=images/sharedMemoryModel.gif WIDTH=577 HEIGHT=491 BORDER=0 
+ALT='Shared Memory Model'>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Thread-safeness:</SPAN>
+<UL>
+<LI>Thread-safeness: in a nutshell, refers an application's ability to
+    execute multiple threads simultaneously without "clobbering" shared
+    data or creating "race" conditions. 
+<P>
+<LI>For example, suppose that your application creates several threads, each
+    of which makes a call to the same library routine:
+    <UL>
+    <LI>This library routine accesses/modifies a global structure or location
+        in memory. 
+    <LI>As each thread calls this routine it is possible that
+        they may try to modify this global structure/memory location at the
+        same time. 
+    <LI>If the routine does not employ some sort of synchronization
+        constructs to prevent data corruption, then it is not thread-safe.
+    </UL>
+<P>
+<IMG SRC=images/threadUnsafe.gif WIDTH=666 HEIGHT=316 BORDER=0 ALT=threadunsafe>
+</UL>
+
+<UL>
+<LI>The implication to users of external library routines is that if you
+    aren't 100% certain the routine is thread-safe, then you take your
+    chances with problems that could arise.
+<P>
+<LI>Recommendation: Be careful if your application uses libraries or other objects
+    that don't explicitly guarantee thread-safeness.  When in doubt,
+    assume that they are not thread-safe until proven otherwise. This can be done by
+    "serializing" the calls to the uncertain routine, etc.
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Thread Limits:</SPAN>
+<UL>
+<LI>Although the Pthreads API is an ANSI/IEEE standard, implementations can, and
+    usually do, vary in ways not specified by the standard.
+<P>
+<LI>Because of this, a program that runs fine on one platform, may fail or produce
+    wrong results on another platform.<P>
+<LI>For example, the maximum number of threads permitted, and the default thread
+    stack size are two important limits to consider when designing your program.
+<P>
+<LI>Several thread limits are discussed in more detail later in this tutorial.
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=PthreadsAPI> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>
+The Pthreads API</TD>
+</SPAN></TD>
+</TD></TR></TABLE>
+<BR>
+
+<UL>
+<LI>The original Pthreads API was defined in the ANSI/IEEE POSIX 1003.1 - 1995
+    standard. The POSIX standard has continued to evolve and undergo revisions,
+    including the Pthreads specification. 
+<P>
+<LI>Copies of the standard can be purchased from IEEE or downloaded for free
+    from other sites online.
+<P>     
+<LI>The subroutines which comprise the Pthreads API can be informally grouped 
+    into four major groups: 
+    <OL>
+    <P>
+    <LI><B>Thread management:</B> Routines that work 
+        directly on threads - creating, detaching, joining, etc. 
+        They also include functions to set/query thread attributes
+        (joinable, scheduling etc.)
+    <P>
+    <LI><B>Mutexes:</B> Routines that deal with 
+        synchronization, called a "mutex", which is an abbreviation
+        for "mutual exclusion".  Mutex functions provide for creating,
+        destroying, locking and unlocking mutexes.
+        These are supplemented by mutex attribute functions that
+        set or modify attributes associated with mutexes. 
+    <P>    
+    <LI><B>Condition variables:</B> Routines that address
+        communications between threads that share a mutex.  Based upon
+        programmer specified
+        conditions.  This group includes functions to create, destroy,
+        wait and signal based upon specified variable values.
+        Functions to set/query condition variable attributes are also included.
+    <P>    
+    <LI><B>Synchronization:</B> Routines that manage read/write locks and
+        barriers.
+    </OL>
+<P>
+<LI>Naming conventions: All identifiers in the threads library begin with 
+    <B>pthread_</B>. Some examples are shown below.
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR>
+<TH>Routine Prefix</TH>
+<TH>Functional Group</TH>
+</TR><TR>
+<TD><B>pthread_</B></TD>
+<TD>Threads themselves and miscellaneous subroutines</TD>
+</TR><TR>
+<TD><B>pthread_attr_</B></TD>
+<TD>Thread attributes objects</TD>
+</TR><TR>
+<TD><B>pthread_mutex_</B></TD>
+<TD>Mutexes</TD>
+</TR><TR>
+<TD><B>pthread_mutexattr_</B></TD>
+<TD>Mutex attributes objects.</TD>
+</TR><TR>
+<TD><B>pthread_cond_</B></TD>
+<TD>Condition variables</TD>
+</TR><TR>
+<TD><B>pthread_condattr_</B></TD>
+<TD>Condition attributes objects</TD>
+</TR><TR>
+<TD><B>pthread_key_</B></TD>
+<TD>Thread-specific data keys</TD>
+</TR><TR>
+<TD><B>pthread_rwlock_</B></TD>
+<TD>Read/write locks</TD>
+</TR><TR>
+<TD><B>pthread_barrier_</B></TD>
+<TD>Synchronization barriers</TD>
+</TR></TABLE>
+<P>
+<LI>The concept of opaque objects pervades the design of the API. 
+    The basic calls work to create or modify opaque objects - the
+    opaque objects can be modified by calls to attribute functions, 
+    which deal with opaque attributes. 
+<P>
+<LI>The Pthreads API contains around 100 subroutines.  This tutorial will
+    focus on a subset of these - specifically, those which are most likely 
+    to be immediately useful to the beginning Pthreads programmer.
+<P>
+<LI>For portability, the <TT>pthread.h</TT> header file should be included in 
+    each source file using the Pthreads library. 
+<P>
+<LI>The current POSIX standard is defined only for the C language.
+    Fortran programmers can use wrappers around C function calls. 
+    Some Fortran compilers may provide a Fortran pthreads API.
+<P>
+<LI>A number of excellent books about Pthreads are available.  Several of
+    these are listed in the <A HREF=#References>References </A>
+    section of this tutorial.
+</UL>
+ 
+<!--------------------------------------------------------------------------->
+ 
+<A NAME=Compiling> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Compiling Threaded Programs</SPAN></TD>
+</TD></TR></TABLE>
+<BR>
+
+<UL>
+<LI>Several examples of compile commands used for pthreads codes are
+    listed in the table below.
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR>
+<TH>Compiler / Platform</TH>
+<TH>Compiler Command</TH>
+<TH>Description</TH>
+</TR><TR>
+<TD ROWSPAN=2><SPAN CLASS=heading3>INTEL<BR>Linux</SPAN></TD>
+<TD><TT><B>icc -pthread</B></TT></TD>
+<TD>C</TD>
+</TR><TR>
+<TD><TT><B>icpc -pthread</B></TT></TD>
+<TD>C++</TD>
+</TR><TR>
+<TD ROWSPAN=2><SPAN CLASS=heading3>PGI<BR>Linux</SPAN></TD>
+<TD><TT><B>pgcc -lpthread</B></TT></TD>
+<TD>C</TD>
+</TR><TR>
+<TD><TT><B>pgCC -lpthread</B></TT></TD> 
+<TD>C++</TD>
+</TR><TR>
+<TD ROWSPAN=2><SPAN CLASS=heading3>GNU<BR>Linux, Blue Gene</SPAN></TD>
+<TD><TT><B>gcc -pthread</B></TT></TD>
+<TD>GNU C</TD> 
+</TR><TR>
+<TD><TT><B>g++ -pthread</B></TT></TD>
+<TD>GNU C++</TD> 
+</TR><TR>
+<TD ROWSPAN=3><SPAN CLASS=heading3>IBM 
+<BR>Blue Gene</SPAN></TD>
+<TD><TT><B>bgxlc_r &nbsp;/&nbsp; bgcc_r</B></TT></TD> 
+<TD>C (ANSI &nbsp;/&nbsp; non-ANSI)</TD>
+</TR><TR>
+<TD><TT><B>bgxlC_r, bgxlc++_r</B></TT></TD>   
+<TD>C++</TD>
+</TR>
+</TABLE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Management> <BR><BR> </A>
+<A NAME=CreatingThreads> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Thread Management</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Creating and Terminating Threads</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Routines:</SPAN>
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE><TT><B>
+<A HREF=man/pthread_create.txt TARGET=W4>
+pthread_create</A> (thread,attr,start_routine,arg)
+<P>
+<A HREF=man/pthread_exit.txt TARGET=W5>
+pthread_exit</A> (status)
+<P>
+<A HREF=man/pthread_cancel.txt TARGET=W5>
+pthread_cancel</A> (thread)
+<P>
+<A HREF=man/pthread_attr_init.txt TARGET=W6>
+pthread_attr_init</A> (attr)
+<P>
+<A HREF=man/pthread_attr_destroy.txt TARGET=W7>
+pthread_attr_destroy</A> (attr)
+</B></TT></TD></TR></TABLE>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Creating Threads:</SPAN>
+<UL>
+<P>
+<LI>Initially, your <TT>main()</TT> program comprises a single, default
+    thread.  All other threads must be explicitly created by the programmer.
+<P>
+<LI><TT>pthread_create</TT> creates a new thread and makes it executable.
+    This routine can be called any number of times from anywhere within your
+    code.
+<P>
+<LI><TT>pthread_create</TT> arguments:
+    <UL>
+    <LI><TT>thread</TT>: An opaque, unique identifier for the new thread 
+        returned by the subroutine. 
+    <LI><TT>attr</TT>: An opaque attribute object that may be used to set 
+        thread attributes. You can specify a thread attributes object, or 
+        NULL for the default values.  
+    <LI><TT>start_routine</TT>: the C routine that the thread will
+        execute once it is created.
+    <LI><TT>arg</TT>: A single argument that may be passed to 
+        <I>start_routine</I>. It must be passed by reference as a pointer 
+        cast of type void. NULL may be used if no argument is to be passed.
+    </UL>
+<P>
+<LI>The maximum number of threads that may be created by a process is
+    implementation dependent.  Programs that attempt to exceed the limit can
+    fail or produce wrong results.
+<P>
+<LI>Querying and setting your implementation's thread limit - Linux example shown. 
+    Demonstrates querying the default (soft) limits and then setting the
+    maximum number of processes (including threads) to the hard limit. Then
+    verifying that the limit has been overridden.
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR VALIGN=top>
+<TH WIDTH=50%>bash / ksh / sh</TH>
+<TH WIDTH=50%>tcsh / csh</TH>
+</TR><TR VALIGN=top>
+<TD BGCOLOR=#FOF5FE><PRE>
+$ <FONT COLOR=red>ulimit -a</FONT>
+core file size          (blocks, -c) 16
+data seg size           (kbytes, -d) unlimited
+scheduling priority             (-e) 0
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 255956
+max locked memory       (kbytes, -l) 64
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 1024
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+real-time priority              (-r) 0
+stack size              (kbytes, -s) unlimited
+cpu time               (seconds, -t) unlimited
+<FONT COLOR=blue>max user processes              (-u) 1024</FONT>
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited
+
+$ <FONT COLOR=red>ulimit -Hu</FONT>
+7168
+
+$ <FONT COLOR=red>ulimit -u 7168</FONT>
+
+$ <FONT COLOR=red>ulimit -a</FONT>
+core file size          (blocks, -c) 16
+data seg size           (kbytes, -d) unlimited
+scheduling priority             (-e) 0
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 255956
+max locked memory       (kbytes, -l) 64
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 1024
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+real-time priority              (-r) 0
+stack size              (kbytes, -s) unlimited
+cpu time               (seconds, -t) unlimited
+<FONT COLOR=blue>max user processes              (-u) 7168</FONT>
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited</PRE></TD>
+<TD BGCOLOR=#FOF5FE><PRE>
+% <FONT COLOR=red>limit</FONT> 
+cputime      unlimited
+filesize     unlimited
+datasize     unlimited
+stacksize    unlimited
+coredumpsize 16 kbytes
+memoryuse    unlimited
+vmemoryuse   unlimited
+descriptors  1024 
+memorylocked 64 kbytes
+<FONT COLOR=blue>maxproc      1024</FONT>
+
+% <FONT COLOR=red>limit maxproc unlimited</FONT>
+
+% <FONT COLOR=red>limit</FONT>
+cputime      unlimited
+filesize     unlimited
+datasize     unlimited
+stacksize    unlimited
+coredumpsize 16 kbytes
+memoryuse    unlimited
+vmemoryuse   unlimited
+descriptors  1024 
+memorylocked 64 kbytes
+<FONT COLOR=blue>maxproc      7168</FONT>
+</PRE></TD>
+</TR></TABLE>
+<P>
+<LI>Once created, threads are peers, and may create other threads. There is no
+   implied hierarchy or dependency between threads.
+<P>
+<IMG SRC=images/peerThreads.gif WIDTH=727 HEIGHT=325 BORDER=0 ALT='Peer Threads'> 
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Thread Attributes:</SPAN>
+<UL>
+<P>
+<LI>By default, a thread is created with certain attributes. Some of these
+    attributes can be changed by the programmer via the thread attribute 
+    object. 
+<P>
+<LI><TT>pthread_attr_init</TT> and <TT>pthread_attr_destroy</TT> are used to 
+    initialize/destroy the thread attribute object. 
+<P>
+<LI>Other routines are then used to query/set specific attributes in the
+    thread attribute object. Attributes include:
+    <UL>
+    <LI>Detached or joinable state
+    <LI>Scheduling inheritance
+    <LI>Scheduling policy
+    <LI>Scheduling parameters
+    <LI>Scheduling contention scope
+    <LI>Stack size
+    <LI>Stack address
+    <LI>Stack guard (overflow) size
+    </UL>
+<P>
+<LI>Some of these attributes will be discussed later.
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Thread Binding and Scheduling</TT>:</SPAN>
+<P>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+<TR VALIGN=top>
+<TD WIDTH=15></TD>
+<TD><IMG SRC=../images/question2.gif WIDTH=29 HEIGHT=39></TD>
+<TD>Question: After a thread has been created, how do you know a)when it
+    will be scheduled to run by the operating system, and b)which processor/core
+    it will run on?
+<BR><INPUT TYPE=button VALUE=Answer onClick=Answers('pthreads01')></TD>
+</TR></TABLE>
+<P>
+<UL>
+<LI>The Pthreads API provides several routines that may be used to specify how
+    threads are scheduled for execution. For example, threads can be scheduled
+    to run FIFO (first-in first-out), RR (round-robin) or OTHER (operating system
+    determines). It also provides the ability to set a thread's scheduling priority
+    value.
+<P>
+<LI>These topics are not covered here, however a good overview of "how things work"
+    under Linux can be found in the 
+    <A HREF=man/sched_setscheduler.txt TARGET=sched><TT>sched_setscheduler</TT></A>
+    man page.
+<P>
+<LI>The Pthreads API does not provide routines for binding threads to specific
+    cpus/cores.  However, local implementations may include this functionality
+- such as providing the non-standard 
+    <A HREF=man/pthread_setaffinity_np.txt TARGET=paffin>
+    <TT>pthread_setaffinity_np</TT></A> routine. Note that "_np" in the name
+    stands for "non-portable".
+<P>
+<LI>Also, the local operating system may provide a way to do this.
+    For example, Linux provides the 
+    <A HREF=man/sched_setaffinity.txt TARGET=affin><TT>sched_setaffinity</TT></A> 
+    routine. 
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Terminating Threads & <TT>pthread_exit()</TT>:</SPAN>
+<UL>
+<P>
+<LI>There are several ways in which a thread may be terminated:
+    <UL>
+    <P>
+    <LI>The thread returns normally from its starting routine. Its work is done.
+    <P>
+    <LI>The thread makes a call to the <TT>pthread_exit</TT> subroutine - whether
+        its work is done or not.
+    <P>
+    <LI>The thread is canceled by another thread via the <TT>pthread_cancel</TT> 
+        routine.
+    <P>
+    <LI>The entire process is terminated due to making a call to either the
+        <TT>exec()</TT> or <TT>exit()</TT>
+    <P>
+    <LI>If main() finishes first, without calling <TT>pthread_exit</TT>
+        explicitly itself
+
+    </UL>
+<P>
+<LI>The <TT>pthread_exit()</TT> routine allows the programmer to specify an 
+    optional termination <I>status</I> parameter. This optional parameter is
+    typically returned to threads "joining" the terminated thread (covered
+    later).
+<P>
+<LI>In subroutines that execute to completion normally, you can 
+    often dispense with calling <TT>pthread_exit()</TT> - unless, of course,
+    you want to pass the optional status code back. 
+<P>
+<LI>Cleanup: the <TT>pthread_exit()</TT> routine does not close files; any 
+    files opened inside the thread will remain open after the thread is 
+    terminated.
+<P>
+<LI><B>Discussion on calling <TT>pthread_exit()</TT> from main():</B>
+    <UL>
+    <LI>There is a definite problem if main() finishes before the threads 
+        it spawned if you don't call <TT>pthread_exit()</TT> explicitly.  All of the
+        threads it created will terminate because main() is done and no longer
+        exists to support the threads.
+    <LI>By having main() explicitly call <TT>pthread_exit()</TT> as the last thing
+        it does, main() will block and be kept alive to support the threads it
+        created until they are done.
+     </UL>
+</UL>
+
+<P><HR><P>
+
+<H2>Example: Pthread Creation and Termination</H2>
+
+<UL>
+<P>
+<LI>This simple example code creates 5 threads with the 
+    <TT>pthread_create()</TT> routine. Each thread prints a "Hello World!" 
+    message, and then terminates with a call to <TT>pthread_exit()</TT>.
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<SPAN CLASS=heading3>Example Code - Pthread Creation and Termination</SPAN>
+<P>
+<PRE>
+<FONT COLOR=red>#include &LT;pthread.h&GT;</FONT>
+#include &LT;stdio.h&GT;
+#define NUM_THREADS     5
+
+void *PrintHello(void *threadid)
+{
+   long tid;
+   tid = (long)threadid;
+   printf("Hello World! It's me, thread #%ld!\n", tid);
+   <FONT COLOR=red>pthread_exit(NULL);</FONT>
+}
+
+int main (int argc, char *argv[])
+{
+   <FONT COLOR=red>pthread_t threads[NUM_THREADS];</FONT>
+   int rc;
+   long t;
+   for(t=0; t&LT;NUM_THREADS; t++){
+      printf("In main: creating thread %ld\n", t);
+      <FONT COLOR=red>rc = pthread_create(&threads[t], NULL, PrintHello, (void *)t);</FONT>
+      if (rc){
+         printf("ERROR; return code from pthread_create() is %d\n", rc);
+         exit(-1);
+      }
+   }
+
+   /* Last thing that main() should do */
+   <FONT COLOR=red>pthread_exit(NULL);</FONT>
+}
+</PRE>
+<A HREF=samples/hello.c TARGET=W8>
+<IMG SRC=../images/source1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View source code'></A>
+<A HREF=samples/hello.out TARGET=W9>
+<IMG SRC=../images/output1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View sample output'></A>
+</TD></TR></TABLE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=PassingArguments> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Thread Management</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Passing Arguments to Threads</H2>
+
+<UL>
+<P>
+<LI>The <TT>pthread_create()</TT> routine permits the programmer to pass
+    one argument to the thread start routine.  For cases where multiple 
+    arguments must be passed, this limitation is easily overcome by creating 
+    a structure which contains all of the arguments, and then passing a 
+    pointer to that structure in the <TT>pthread_create()</TT> routine.  
+<P>
+<LI>All arguments must be passed by reference and cast to (void *).
+<P>
+</UL>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+<TR VALIGN=top>
+<TD WIDTH=15></TD>
+<TD><IMG SRC=../images/question2.gif WIDTH=29 HEIGHT=39></TD>
+<TD>Question: How can you safely pass data to newly created threads, given 
+    their non-deterministic start-up and scheduling?
+<BR><INPUT TYPE=button VALUE=Answer onClick=Answers('pthreads02')></TD>
+</TR></TABLE>
+
+<UL>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<B><SPAN CLASS=heading3>Example 1 - Thread Argument Passing</SPAN></B>
+<UL>
+This code fragment demonstrates how to pass a simple integer
+to each thread.  The calling thread uses a unique data structure for
+each thread, insuring that each thread's argument remains intact 
+throughout the program.  
+</UL>
+<HR>
+<PRE>
+long taskids[NUM_THREADS];
+
+for(t=0; t&LT;NUM_THREADS; t++)
+{
+   taskids[t] = t;
+   printf("Creating thread %ld\n", t);
+   <FONT COLOR=red>rc = pthread_create(&threads[t], NULL, PrintHello, (void *) taskids[t]);</FONT>
+   ...
+}
+</PRE>
+<A HREF=samples/hello_arg1.c TARGET=W10>
+<IMG SRC=../images/source1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View source code'></A>
+<A HREF=samples/hello_arg1.out TARGET=W11>
+<IMG SRC=../images/output1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View sample output'></A>        
+</TD></TR></TABLE>
+<P>
+
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<B><SPAN CLASS=heading3>Example 2 - Thread Argument Passing</SPAN></B>
+<UL>
+This example shows how to setup/pass multiple arguments via a structure.
+Each thread receives a unique instance of the structure.
+</UL>
+<HR>
+<PRE>
+struct thread_data{
+   int  thread_id;
+   int  sum;
+   char *message;
+};
+
+struct thread_data thread_data_array[NUM_THREADS];
+
+void *PrintHello(void *threadarg)
+{
+   struct thread_data *my_data;
+   ...
+   my_data = (struct thread_data *) threadarg;
+   taskid = my_data->thread_id;
+   sum = my_data->sum;
+   hello_msg = my_data->message;
+   ...
+}
+
+int main (int argc, char *argv[])
+{
+   ...
+   thread_data_array[t].thread_id = t;
+   thread_data_array[t].sum = sum;
+   thread_data_array[t].message = messages[t];
+   <FONT COLOR=red>rc = pthread_create(&threads[t], NULL, PrintHello, 
+        (void *) &thread_data_array[t]);</FONT>
+   ...
+}
+</PRE>
+<A HREF=samples/hello_arg2.c TARGET=W12>
+<IMG SRC=../images/source1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View source code'></A>
+<A HREF=samples/hello_arg2.out TARGET=W13>
+<IMG SRC=../images/output1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View sample output'></A>        
+</TD></TR></TABLE>
+<P>
+
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<B><SPAN CLASS=heading3>Example 3 - Thread Argument Passing</SPAN>
+(Incorrect)</B>
+<UL>
+This example performs argument passing incorrectly. It passes the <I>address</I>
+of variable <TT>t</TT>, which is shared memory space and visible to all threads.
+As the loop iterates, the value of this memory location changes, possibly
+before the created threads can access it.
+</UL>
+<HR>
+<PRE>
+int rc;
+long t;
+
+for(t=0; t&LT;NUM_THREADS; t++) 
+{
+   printf("Creating thread %ld\n", t);
+   <FONT COLOR=red>rc = pthread_create(&threads[t], NULL, PrintHello, (void *) &t);</FONT>
+   ...
+}
+</PRE>
+<A HREF=samples/hello_arg3.c TARGET=W14>
+<IMG SRC=../images/source1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View source code'></A>
+<A HREF=samples/hello_arg3.out TARGET=W15>
+<IMG SRC=../images/output1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View sample output'></A>        
+</TD></TR></TABLE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Joining> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Thread Management</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Joining and Detaching Threads</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Routines:</SPAN>
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE><TT><B>
+<A HREF=man/pthread_join.txt TARGET=W16>
+pthread_join</A> (threadid,status)
+<P>
+<A HREF=man/pthread_detach.txt TARGET=W17>
+pthread_detach</A> (threadid)
+<P>
+<A HREF=man/pthread_attr_setdetachstate.txt TARGET=W18>
+pthread_attr_setdetachstate</A> (attr,detachstate)
+<P>
+<A HREF=man/pthread_attr_getdetachstate.txt TARGET=W19>
+pthread_attr_getdetachstate</A> (attr,detachstate)
+</B></TT></TD></TR></TABLE>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Joining:</SPAN>
+<UL>
+<P>
+<LI>"Joining" is one way to accomplish synchronization between threads. For
+    example:
+<P>
+<IMG SRC=images/joining.gif WIDTH=755 HEIGHT=258 BORDER=0 ALT='Joining'>
+<P>
+<LI>The <TT>pthread_join()</TT> subroutine blocks the calling thread until the 
+    specified <TT>threadid</TT> thread terminates. 
+<P>
+<LI>The programmer is able to obtain the target thread's termination 
+    return <TT>status</TT> if it was specified in the target thread's 
+    call to <TT>pthread_exit()</TT>.
+<P>
+<LI>A joining thread can match one <TT>pthread_join()</TT> call. It is a 
+    logical error to attempt multiple joins on the same thread.
+<P>
+<LI>Two other synchronization methods, mutexes and condition variables, will 
+    be discussed later.
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Joinable or Not?</SPAN>
+<UL>
+<P>
+<LI>When a thread is created, one of its attributes defines whether
+    it is joinable or detached.  Only threads that are created as joinable
+    can be joined. If a thread is created as detached, it can never be joined.
+<P>
+<LI>The final draft of the POSIX standard specifies that threads should be
+    created as joinable.
+<P>
+<LI>To explicitly create a thread as joinable or detached, the 
+    <TT>attr</TT> argument in the <TT>pthread_create()</TT> routine
+    is used. The typical 4 step process is: 
+    <OL>
+    <LI>Declare a pthread attribute variable of the <TT>pthread_attr_t</TT>
+        data type
+    <LI>Initialize the attribute variable with 
+        <TT>pthread_attr_init()</TT> 
+    <LI>Set the attribute detached status with 
+        <TT>pthread_attr_setdetachstate()</TT> 
+    <LI>When done, free library resources used by the attribute with 
+        <TT>pthread_attr_destroy()</TT> 
+    </OL>
+</UL>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Detaching:</SPAN>
+<UL>
+<P>
+<LI>The <TT>pthread_detach()</TT> routine can be used to explicitly detach 
+    a thread even though it was created as joinable.
+<P>
+<LI>There is no converse routine.
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Recommendations:</SPAN>
+<UL>
+<P>
+<LI>If a thread requires joining, consider explicitly creating it as
+    joinable.  This provides portability as not all implementations
+    may create threads as joinable by default.
+<P>
+<LI>If you know in advance that a thread will never need to join with
+    another thread, consider creating it in a detached state.  Some
+    system resources may be able to be freed.
+</UL>
+
+<P><HR><P>
+
+<H2>Example: Pthread Joining</H2>
+
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<B><SPAN CLASS=heading3>Example Code - Pthread Joining</SPAN></B>
+<UL>
+This example demonstrates how to "wait" for thread completions by using
+the Pthread join routine.  Since some implementations of Pthreads may 
+not create threads in a joinable state, the threads in this 
+example are explicitly created in a joinable state so that they can
+be joined later.
+</UL>
+<HR>
+<PRE>
+<FONT COLOR=red>#include &LT;pthread.h&GT;</FONT>
+#include &LT;stdio.h&GT;
+#include &LT;stdlib.h&GT;
+#include &LT;math.h&GT;
+#define NUM_THREADS	4
+
+void *BusyWork(void *t)
+{
+   int i;
+   long tid;
+   double result=0.0;
+   tid = (long)t;
+   printf("Thread %ld starting...\n",tid);
+   for (i=0; i&LT;1000000; i++)
+   {
+      result = result + sin(i) * tan(i);
+   }
+   printf("Thread %ld done. Result = %e\n",tid, result);
+   pthread_exit((void*) t);
+}
+
+int main (int argc, char *argv[])
+{
+   <FONT COLOR=red>pthread_t thread[NUM_THREADS];</FONT>
+   <FONT COLOR=red>pthread_attr_t attr;</FONT>
+   int rc;
+   long t;
+   void *status;
+
+   /* Initialize and set thread detached attribute */
+   <FONT COLOR=red>pthread_attr_init(&attr);</FONT>
+   <FONT COLOR=red>pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);</FONT>
+
+   for(t=0; t&LT;NUM_THREADS; t++) {
+      printf("Main: creating thread %ld\n", t);
+      <FONT COLOR=red>rc = pthread_create(&thread[t], &attr, BusyWork, (void *)t); </FONT>
+      if (rc) {
+         printf("ERROR; return code from pthread_create() 
+                is %d\n", rc);
+         exit(-1);
+         }
+      }
+
+   /* Free attribute and wait for the other threads */
+   <FONT COLOR=red>pthread_attr_destroy(&attr);</FONT>
+   for(t=0; t&LT;NUM_THREADS; t++) {
+      <FONT COLOR=red>rc = pthread_join(thread[t], &status);</FONT>
+      if (rc) {
+         printf("ERROR; return code from pthread_join() 
+                is %d\n", rc);
+         exit(-1);
+         }
+      printf("Main: completed join with thread %ld having a status   
+            of %ld\n",t,(long)status);
+      }
+ 
+printf("Main: program completed. Exiting.\n");
+<FONT COLOR=red>pthread_exit(NULL);</FONT>
+}
+</PRE>
+<A HREF=samples/join.c TARGET=W20>
+<IMG SRC=../images/source1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View source code'></A>
+<A HREF=samples/join.out TARGET=W21>
+<IMG SRC=../images/output1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View sample output'></A>        
+</TD></TR></TABLE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+ 
+<A NAME=Stack> <BR><BR> </A> 
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Thread Management</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Stack Management</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Routines:</SPAN>
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE><TT><B>
+<A HREF=man/pthread_attr_getstacksize.txt TARGET=W22>
+ pthread_attr_getstacksize</A> (attr, stacksize)
+<P>
+<A HREF=man/pthread_attr_setstacksize.txt TARGET=W23>
+ pthread_attr_setstacksize</A> (attr, stacksize)
+<P>
+<A HREF=man/pthread_attr_getstackaddr.txt TARGET=W24>
+ pthread_attr_getstackaddr</A> (attr, stackaddr)
+<P>
+<A HREF=man/pthread_attr_setstackaddr.txt TARGET=W25>
+ pthread_attr_setstackaddr</A> (attr, stackaddr)
+</B></TT></TD></TR></TABLE>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Preventing Stack Problems:</SPAN>
+<UL>
+<P>
+<LI>The POSIX standard does not dictate the size of a thread's stack. This is
+    implementation dependent and varies.
+<P>
+<LI>Exceeding the default stack limit is often very easy to do, with the
+    usual results: program termination and/or corrupted data.
+<P>
+<LI>Safe and portable programs do not depend upon the default stack limit, 
+    but instead, explicitly allocate enough stack for each thread by using the 
+    <TT>pthread_attr_setstacksize</TT> routine.
+<P>
+<LI>The <TT>pthread_attr_getstackaddr</TT> and
+    <TT>pthread_attr_setstackaddr</TT> routines can be used by applications 
+    in an environment where the stack for a thread must be placed in 
+    some particular region of memory.
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Some Practical Examples at LC:</SPAN>
+<UL>
+<P>
+<LI>Default thread stack size varies greatly. The maximum size that can be 
+    obtained also varies greatly, and may depend upon the number of threads
+    per node.
+<P>
+<LI>Both past and present architectures are shown to demonstrate the wide variation
+    in default thread stack size.
+<P>
+<TABLE BORDER=1 CELLPADDING=3 CELLSPACING=0>
+<TR VALIGN=TOP>
+<TH>Node<BR>Architecture</TH>
+<TH>#CPUs</TH>
+<TH>Memory (GB)</TH>
+<TH>Default Size<BR>(bytes)</TH>
+
+</TR><TR VALIGN=TOP>
+<TD ALIGN=left>Intel Xeon E5-2670</TD>
+<TD ALIGN=right>16</TD>
+<TD ALIGN=right>32</TD>
+<TD ALIGN=right>2,097,152</TD>
+
+</TR><TR VALIGN=TOP>
+<TD ALIGN=left>Intel Xeon 5660</TD>
+<TD ALIGN=right>12</TD>
+<TD ALIGN=right>24</TD>
+<TD ALIGN=right>2,097,152</TD>
+
+</TR><TR VALIGN=TOP>
+<TD ALIGN=left>AMD Opteron</TD>
+<TD ALIGN=right>8</TD>
+<TD ALIGN=right>16</TD>
+<TD ALIGN=right>2,097,152</TD>
+
+</TR><TR VALIGN=TOP>
+<TD ALIGN=left>Intel IA64</TD>
+<TD ALIGN=right>4</TD>
+<TD ALIGN=right>8</TD>
+<TD ALIGN=right>33,554,432</TD>
+
+</TR><TR VALIGN=TOP>
+<TD ALIGN=left>Intel IA32</TD>
+<TD ALIGN=right>2</TD>
+<TD ALIGN=right>4</TD>
+<TD ALIGN=right>2,097,152</TD>
+
+</TR><TR VALIGN=TOP>
+<TD ALIGN=left>IBM Power5</TD>
+<TD ALIGN=right>8</TD>
+<TD ALIGN=right>32</TD>
+<TD ALIGN=right>196,608</TD>
+
+</TR><TR VALIGN=TOP>
+<TD ALIGN=left>IBM Power4</TD>
+<TD ALIGN=right>8</TD>
+<TD ALIGN=right>16</TD>
+<TD ALIGN=right>196,608</TD>
+
+</TR><TR VALIGN=TOP>
+<TD ALIGN=left>IBM Power3</TD>
+<TD ALIGN=right>16</TD>
+<TD ALIGN=right>16</TD>
+<TD ALIGN=right>98,304</TD>
+
+</TR>
+</TABLE>
+</UL>
+
+<P><HR><P>
+
+<H2>Example: Stack Management</H2>
+ 
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<B><SPAN CLASS=heading3>Example Code - Stack Management</SPAN></B>
+<UL>
+This example demonstrates how to query and set a thread's stack size.
+</UL>
+<HR>
+<PRE>
+<FONT COLOR=red>#include &LT;pthread.h&GT;</FONT>
+#include &LT;stdio.h&GT;
+#define NTHREADS 4
+#define N 1000
+#define MEGEXTRA 1000000
+ 
+<FONT COLOR=red>pthread_attr_t attr;
+ 
+void *dowork(void *threadid)</FONT>
+{
+   double A[N][N];
+   int i,j;
+   long tid;
+   <FONT COLOR=red>size_t mystacksize;</FONT>
+
+   tid = (long)threadid;
+   <FONT COLOR=red>pthread_attr_getstacksize (&attr, &mystacksize);</FONT>
+   printf("Thread %ld: stack size = %li bytes \n", tid, mystacksize);
+   for (i=0; i&LT;N; i++)
+     for (j=0; j&LT;N; j++)
+      A[i][j] = ((i*j)/3.452) + (N-i);
+   <FONT COLOR=red>pthread_exit(NULL);</FONT>
+}
+ 
+int main(int argc, char *argv[])
+{
+   <FONT COLOR=red>pthread_t threads[NTHREADS];</FONT>
+   <FONT COLOR=red>size_t stacksize;</FONT>
+   int rc;
+   long t;
+ 
+   <FONT COLOR=red>pthread_attr_init(&attr);</FONT>
+   <FONT COLOR=red>pthread_attr_getstacksize (&attr, &stacksize);</FONT>
+   printf("Default stack size = %li\n", stacksize);
+   stacksize = sizeof(double)*N*N+MEGEXTRA;
+   printf("Amount of stack needed per thread = %li\n",stacksize);
+   <FONT COLOR=red>pthread_attr_setstacksize (&attr, stacksize);</FONT>
+   printf("Creating threads with stack size = %li bytes\n",stacksize);
+   for(t=0; t&LT;NTHREADS; t++){
+      rc = <FONT COLOR=red>pthread_create(&threads[t], &attr, dowork, (void *)t);</FONT>
+      if (rc){
+         printf("ERROR; return code from pthread_create() is %d\n", rc);
+         exit(-1);
+      }
+   }
+   printf("Created %ld threads.\n", t);
+   <FONT COLOR=red>pthread_exit(NULL)</FONT>;
+}
+</PRE>
+</TD></TR></TABLE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Misc> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Thread Management</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Miscellaneous Routines</H2>
+
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE><TT><B>
+<A HREF=man/pthread_self.txt TARGET=W26>
+pthread_self</A> ()
+<P>
+<A HREF=man/pthread_equal.txt TARGET=W27>
+pthread_equal</A> (thread1,thread2)
+</B></TT></TD></TR></TABLE>
+<P>
+<LI><TT>pthread_self</TT> returns the unique, system 
+    assigned thread ID of the calling thread.
+<P>
+<LI><TT>pthread_equal</TT> compares two thread IDs.  If the 
+    two IDs are different 0 is returned, otherwise a non-zero value is
+    returned.
+<P>
+<LI>Note that for both of these routines, the thread identifier objects are
+    opaque and can not be easily inspected. Because thread IDs are opaque 
+    objects, the C language equivalence operator <TT>==</TT> should not be 
+    used to compare two thread IDs against each other, or to compare a 
+    single thread ID against another value.
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE><TT><B>
+<A HREF=man/pthread_once.txt TARGET=W28>
+pthread_once</A> (once_control, init_routine)
+</B></TT></TD></TR></TABLE>
+<P>
+<LI><TT>pthread_once</TT> executes the <TT>init_routine</TT> exactly once in 
+    a process. The first call to this routine by any thread in the process 
+    executes the given <TT>init_routine</TT>, without parameters. 
+    Any subsequent call will have no effect.
+<P>
+<LI>The init_routine routine is typically an initialization routine.
+<P>
+<LI>The <TT>once_control</TT> parameter is a synchronization control structure
+    that requires initialization prior to calling <TT>pthread_once</TT>. 
+    For example:
+<P>
+<TT>pthread_once_t once_control = PTHREAD_ONCE_INIT;</TT>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Exercise1> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Pthread Exercise 1</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Getting Started and Thread Management Routines</H2>
+
+<DD>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR VALIGN=top><TD BGCOLOR=#FOF5FE HEIGHT=400>
+<B><U>Overview:</U>
+<UL>
+<LI>Login to an LC cluster using your workshop username and OTP token
+<LI>Copy the exercise files to your home directory
+<LI>Familiarize yourself with LC's Pthreads environment
+<LI>Write a simple "Hello World" Pthreads program 
+<LI>Successfully compile your program
+<LI>Successfully run your program - several different ways
+<LI>Review, compile, run and/or debug some related Pthreads programs (provided)
+</UL>
+<P>
+<IMG SRC=../images/point02.jpg WIDTH=100 HEIGTH=45 BORDER=0>
+<A HREF=exercise.html#Exercise1 TARGET=_blank>GO TO THE EXERCISE HERE</A>
+</B>
+
+</TD></TR></TABLE>
+</DD>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Mutexes>  <BR><BR> </A>
+<A NAME=MutexOverview> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Mutex Variables</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Overview</H2>
+
+<UL>
+<P>
+<LI>Mutex is an abbreviation for "mutual exclusion".  Mutex variables are one 
+    of the primary means of implementing thread synchronization and for
+    protecting shared data when multiple writes occur.
+<P>
+<LI>A mutex variable acts like a "lock" protecting access to a shared
+    data resource. The basic concept of a mutex as used in Pthreads is 
+    that only one thread can lock (or own) a mutex variable at any given 
+    time. Thus, even if several threads try to lock a mutex only one thread
+    will be successful. No other thread can own that mutex until  
+    the owning thread unlocks that mutex.  Threads must "take turns" accessing
+    protected data.
+<P>
+<LI>Mutexes can be used to prevent "race" conditions.  An example of
+    a race condition involving a bank transaction is shown below:
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR>
+<TH>Thread 1</TH>
+<TH>Thread 2</TH>
+<TH>Balance</TH>
+</TR><TR>
+<TD BGCOLOR=#DDABCB><B>Read balance: $1000</B></TD>
+<TD>&nbsp;</TD>
+<TD><B>$1000</B></TD>
+</TR><TR>
+<TD>&nbsp;</TD>
+<TD BGCOLOR=#DDABCB><B>Read balance: $1000</B></TD>
+<TD><B>$1000</B></TD>
+</TR><TR>
+<TD>&nbsp;</TD>
+<TD BGCOLOR=#efd5a2><B>Deposit $200</B></TD>
+<TD><B>$1000</B></TD>
+</TR><TR>
+<TD BGCOLOR=#efd5a2><B>Deposit $200</B></TD>
+<TD>&nbsp;</TD>
+<TD><B>$1000</B></TD>
+</TR><TR>
+<TD BGCOLOR=#b4efa2><B>Update balance $1000+$200</B></TD>
+<TD>&nbsp;</TD>
+<TD><B>$1200</B></TD>
+</TR><TR>
+<TD>&nbsp;</TD>
+<TD BGCOLOR=#b4efa2><B>Update balance $1000+$200</B></TD>
+<TD><B>$1200</B></TD>
+</TR></TABLE>
+
+<P>
+<LI>In the above example, a mutex should be used to lock the "Balance"
+    while a thread is using this shared data resource.
+<P>
+<LI>Very often the action performed by a thread owning a mutex 
+    is the updating of global variables. This is a safe way to
+    ensure that when several threads update the same variable,
+    the final value is the same as what it would be if only one
+    thread performed the update.  The variables being updated belong
+    to a "critical section".
+<P>
+<LI>A typical sequence in the use of a mutex is as follows:
+    <UL>
+    <LI>Create and initialize a mutex variable
+    <LI>Several threads attempt to lock the mutex
+    <LI>Only one succeeds and that thread owns the mutex
+    <LI>The owner thread performs some set of actions 
+    <LI>The owner unlocks the mutex
+    <LI>Another thread acquires the mutex and repeats the process
+    <LI>Finally the mutex is destroyed
+    </UL>
+<P>     
+<LI>When several threads compete for a mutex, the losers block 
+    at that call - an unblocking call is available with "trylock"
+    instead  of the "lock" call. 
+<P>
+<LI>When protecting shared data, it is the programmer's responsibility 
+    to make sure every thread that needs to use a mutex does so. For
+    example, if 4 threads are updating the same data, but only one
+    uses a mutex, the data can still be corrupted. 
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=MutexCreation>  <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Mutex Variables</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Creating and Destroying Mutexes</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Routines:</SPAN>
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE><TT><B>
+<A HREF=man/pthread_mutex_init.txt TARGET=W30>
+pthread_mutex_init</A> (mutex,attr)
+<P>
+<A HREF=man/pthread_mutex_destroy.txt TARGET=W31>
+pthread_mutex_destroy</A> (mutex)
+<P>
+<A HREF=man/pthread_mutexattr_init.txt TARGET=W32>
+pthread_mutexattr_init</A> (attr)
+<P>
+<A HREF=man/pthread_mutexattr_destroy.txt TARGET=W33>
+pthread_mutexattr_destroy</A> (attr)
+</B></TT></TD></TR></TABLE>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Usage:</SPAN>
+<UL>
+<P>
+<LI>Mutex variables must be declared with type <TT>pthread_mutex_t</TT>,
+    and must be initialized before they can be used.  There are two ways
+    to initialize a mutex variable:
+    <OL>
+    <P>
+    <LI>Statically, when it is declared.  For example:
+    <BR>
+    <TT>pthread_mutex_t mymutex = PTHREAD_MUTEX_INITIALIZER;</TT>
+    <P>
+    <LI>Dynamically, with the <TT>pthread_mutex_init()</TT> routine.
+        This method permits setting mutex object attributes, <I>attr</I>. 
+    </OL>
+    <P>
+    The mutex is initially unlocked.
+<P>
+<LI>The <I>attr</I> object is used to establish properties for the mutex 
+    object, and must be of type <TT>pthread_mutexattr_t</TT> if used
+    (may be specified as NULL to accept defaults).  
+    The Pthreads standard defines three optional mutex attributes: 
+    <UL>
+    <LI>Protocol: Specifies the protocol used to prevent priority inversions
+        for a mutex.
+    <LI>Prioceiling: Specifies the priority ceiling of a mutex.
+    <LI>Process-shared: Specifies the process sharing of a mutex.
+    </UL>
+<P>
+    Note that not all implementations may provide the three optional mutex 
+    attributes.  
+<P>
+<LI>The <TT>pthread_mutexattr_init()</TT> and 
+    <TT>pthread_mutexattr_destroy()</TT> routines are used to create and
+    destroy mutex attribute objects respectively.
+<P>
+<LI><TT>pthread_mutex_destroy()</TT> should be used to free a mutex object 
+    which is no longer needed. 
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=MutexLocking>  <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Mutex Variables</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Locking and Unlocking Mutexes</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Routines:</SPAN>
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE><TT><B>
+<A HREF=man/pthread_mutex_lock.txt TARGET=W34>
+pthread_mutex_lock</A> (mutex)
+<P>
+<A HREF=man/pthread_mutex_trylock.txt TARGET=W35>
+pthread_mutex_trylock</A> (mutex)
+<P>
+<A HREF=man/pthread_mutex_unlock.txt TARGET=W36>
+pthread_mutex_unlock</A> (mutex)
+</B></TT></TD></TR></TABLE>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Usage:</SPAN>
+<UL>
+<P>
+<LI>The <TT>pthread_mutex_lock()</TT> routine is used by a thread to 
+    acquire a lock on the specified <I>mutex</I> variable.  If the mutex 
+    is already locked by another thread, this call will block the calling 
+    thread until the mutex is unlocked.  
+<P>
+<LI><TT>pthread_mutex_trylock()</TT> will attempt to lock a mutex.  However, 
+    if the mutex is already locked, the routine will return immediately
+    with a "busy" error code. This routine may be useful in preventing 
+    deadlock conditions, as in a priority-inversion situation.
+<P>
+<LI><TT>pthread_mutex_unlock()</TT> will unlock a mutex if called by the
+    owning thread.  Calling this routine is required after a thread has
+    completed its use of protected data if other threads are to acquire the
+    mutex for their work with the protected data. An error will be returned if:
+    <UL>
+    <LI>If the mutex was already unlocked
+    <LI>If the mutex is owned by another thread
+    </UL>
+<P>
+<LI>There is nothing "magical" about mutexes...in fact they are akin to
+    a "gentlemen's agreement" between participating threads. It is up to 
+    the code writer to insure that the necessary threads all make the 
+    the mutex lock and unlock calls correctly. 
+    The following scenario demonstrates a logical error:
+<P>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0>
+<TR VALIGN=TOP>
+<TD><PRE>
+<B>Thread 1     Thread 2     Thread 3</B>
+Lock         Lock         
+A = 2        A = A+1      A = A*B
+Unlock       Unlock    
+</PRE></TD>
+</TR></TABLE>
+</UL>
+
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+<TR VALIGN=top>
+<TD WIDTH=15></TD>
+<TD><IMG SRC=../images/question2.gif WIDTH=29 HEIGHT=39></TD>
+<TD>Question: When more than one thread is waiting for
+    a locked mutex, which thread will be granted the lock first after 
+    it is released?
+<BR><INPUT TYPE=button VALUE=Answer onClick=Answers('pthreads03')></TD>
+</TR></TABLE>
+
+<P><HR><P>
+
+<H2>Example: Using Mutexes</H2>
+
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<B><SPAN CLASS=heading3>Example Code - Using Mutexes</SPAN></B>
+<UL>
+This example program illustrates the use of mutex variables
+in a threads program that performs a dot product. The main data is 
+made available to all threads through a globally accessible structure. 
+Each thread works on a different part of the data. The main thread 
+waits for all the threads to complete their computations, and then it 
+prints the resulting sum.
+</UL>
+<HR>
+<PRE>
+<FONT COLOR=red>#include &LT;pthread.h&GT;</FONT>
+#include &LT;stdio.h&GT;
+#include &LT;stdlib.h&GT;
+
+/*   
+The following structure contains the necessary information  
+to allow the function "dotprod" to access its input data and 
+place its output into the structure.  
+*/
+
+typedef struct 
+ {
+   double      *a;
+   double      *b;
+   double     sum; 
+   int     veclen; 
+ } DOTDATA;
+
+/* Define globally accessible variables and a mutex */
+
+#define NUMTHRDS 4
+#define VECLEN 100
+   DOTDATA dotstr; 
+   <FONT COLOR=red>pthread_t callThd[NUMTHRDS];</FONT>
+   <FONT COLOR=red>pthread_mutex_t mutexsum;</FONT>
+
+/*
+The function dotprod is activated when the thread is created.
+All input to this routine is obtained from a structure 
+of type DOTDATA and all output from this function is written into
+this structure. The benefit of this approach is apparent for the 
+multi-threaded program: when a thread is created we pass a single
+argument to the activated function - typically this argument
+is a thread number. All  the other information required by the 
+function is accessed from the globally accessible structure. 
+*/
+
+void *dotprod(void *arg)
+{
+
+   /* Define and use local variables for convenience */
+
+   int i, start, end, len ;
+   long offset;
+   double mysum, *x, *y;
+   offset = (long)arg;
+     
+   len = dotstr.veclen;
+   start = offset*len;
+   end   = start + len;
+   x = dotstr.a;
+   y = dotstr.b;
+
+   /*
+   Perform the dot product and assign result
+   to the appropriate variable in the structure. 
+   */
+
+   mysum = 0;
+   for (i=start; i&LT;end ; i++) 
+    {
+      mysum += (x[i] * y[i]);
+    }
+
+   /*
+   Lock a mutex prior to updating the value in the shared
+   structure, and unlock it upon updating.
+   */
+   <FONT COLOR=red>pthread_mutex_lock (&mutexsum);</FONT>
+   dotstr.sum += mysum;
+   <FONT COLOR=red>pthread_mutex_unlock (&mutexsum);</FONT>
+
+   <FONT COLOR=red>pthread_exit((void*) 0);</FONT>
+}
+
+/* 
+The main program creates threads which do all the work and then 
+print out result upon completion. Before creating the threads,
+the input data is created. Since all threads update a shared structure, 
+we need a mutex for mutual exclusion. The main thread needs to wait for
+all threads to complete, it waits for each one of the threads. We specify
+a thread attribute value that allow the main thread to join with the
+threads it creates. Note also that we free up handles when they are
+no longer needed.
+*/
+
+int main (int argc, char *argv[])
+{
+   long i;
+   double *a, *b;
+   void *status;
+   <FONT COLOR=red>pthread_attr_t attr;</FONT>
+
+   /* Assign storage and initialize values */
+   a = (double*) malloc (NUMTHRDS*VECLEN*sizeof(double));
+   b = (double*) malloc (NUMTHRDS*VECLEN*sizeof(double));
+  
+   for (i=0; i&LT;VECLEN*NUMTHRDS; i++)
+    {
+     a[i]=1.0;
+     b[i]=a[i];
+    }
+
+   dotstr.veclen = VECLEN; 
+   dotstr.a = a; 
+   dotstr.b = b; 
+   dotstr.sum=0;
+
+   <FONT COLOR=red>pthread_mutex_init(&mutexsum, NULL);</FONT>
+         
+   /* Create threads to perform the dotproduct  */
+   <FONT COLOR=red>pthread_attr_init(&attr);</FONT>
+   <FONT COLOR=red>pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);</FONT>
+
+	for(i=0; i&LT;NUMTHRDS; i++)
+        {
+	/* 
+	Each thread works on a different set of data.
+	The offset is specified by 'i'. The size of
+	the data for each thread is indicated by VECLEN.
+	*/
+	<FONT COLOR=red>pthread_create(&callThd[i], &attr, dotprod, (void *)i);</FONT>
+	}
+
+ 	<FONT COLOR=red>pthread_attr_destroy(&attr);</FONT>
+
+        /* Wait on the other threads */
+	for(i=0; i&LT;NUMTHRDS; i++)
+        {
+	  <FONT COLOR=red>pthread_join(callThd[i], &status);</FONT>
+	}
+
+   /* After joining, print out the results and cleanup */
+   printf ("Sum =  %f \n", dotstr.sum);
+   free (a);
+   free (b);
+   <FONT COLOR=red>pthread_mutex_destroy(&mutexsum);</FONT>
+   <FONT COLOR=red>pthread_exit(NULL);</FONT>
+}   
+</PRE>
+<A HREF=samples/dotprod_serial.c TARGET=W37>
+<IMG SRC=../images/source1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View source code'></A>
+<I>Serial version</I>
+<BR>
+<A HREF=samples/dotprod_mutex.c TARGET=W38>
+<IMG SRC=../images/source1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View source code'></A>
+<I>Pthreads version</I>
+</TD></TR></TABLE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=ConditionVariables>  <BR><BR> </A>
+<A NAME=ConVarOverview>  </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Condition Variables</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Overview</H2>
+
+<UL>
+<P>
+<LI>Condition variables provide yet another way for threads to synchronize.
+    While mutexes implement synchronization by controlling thread access to
+    data, condition variables allow threads to synchronize based upon the
+    actual value of data.
+<P>
+<LI>Without condition variables, the programmer would need to have
+    threads continually polling (possibly in a critical section), to check 
+    if the condition is met. This can be very resource consuming since 
+    the thread would be continuously busy in this activity. A condition 
+    variable is a way to achieve the same goal without polling.
+<P>
+<LI>A condition variable is always used in conjunction with a mutex lock.
+<P>
+<LI>A representative sequence for using condition variables is shown below.
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR VALIGN=top>
+<TD COLSPAN=2 BGCOLOR=#FOF5FE><SPAN CLASS=heading3>Main Thread</SPAN>
+<UL>
+<LI>Declare and initialize global data/variables which require synchronization 
+    (such as "count")
+<LI>Declare and initialize a condition variable object 
+<LI>Declare and initialize an associated mutex 
+<LI>Create threads A and B to do work
+</UL></TD>
+</TR>
+<TR VALIGN=top>
+<TD WIDTH=50%>
+<SPAN CLASS=heading3>Thread A</SPAN>
+<UL>
+<LI>Do work up to the point where a certain condition must
+    occur (such as "count" must reach a specified value)
+<LI>Lock associated mutex and check value of a global variable
+<LI>Call <TT>pthread_cond_wait()</TT> to perform a blocking wait for
+    signal from Thread-B. 
+    Note that a call to <TT>pthread_cond_wait()</TT> automatically and 
+    atomically unlocks the associated mutex variable so that it can be 
+    used by Thread-B.
+<LI>When signalled, wake up. Mutex is automatically and atomically locked.
+<LI>Explicitly unlock mutex
+<LI>Continue
+</UL></TD>
+<TD WIDTH=50%>
+<SPAN CLASS=heading3>Thread B</SPAN>
+<UL>
+<LI>Do work
+<LI>Lock associated mutex
+<LI>Change the value of the global variable that Thread-A is waiting upon.  
+<LI>Check value of the global Thread-A wait variable.  If it fulfills 
+    the desired condition, signal Thread-A.
+<LI>Unlock mutex. 
+<LI>Continue
+</UL></TD>
+</TR>
+<TR VALIGN=top><TD COLSPAN=2 BGCOLOR=#FOF5FE>
+<SPAN CLASS=heading3>Main Thread</SPAN>
+<UL>
+Join / Continue
+</UL></TD>
+</TR></TABLE>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=ConVarCreation>  <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Condition Variables</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Creating and Destroying Condition Variables</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Routines:</SPAN>
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE><TT><B>
+<A HREF=man/pthread_cond_init.txt TARGET=W39>
+pthread_cond_init</A> (condition,attr)
+<P>
+<A HREF=man/pthread_cond_destroy.txt TARGET=W40>
+pthread_cond_destroy</A> (condition)
+<P>
+<A HREF=man/pthread_condattr_init.txt TARGET=W41>
+pthread_condattr_init</A> (attr)
+<P>
+<A HREF=man/pthread_condattr_destroy.txt TARGET=W42>
+pthread_condattr_destroy</A> (attr)
+</B></TT></TD></TR></TABLE>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Usage:</SPAN>
+<UL>
+<P>
+<LI>Condition variables must be declared with type <TT>pthread_cond_t</TT>,
+    and must be initialized before they can be used.  There are two ways
+    to initialize a condition variable:
+    <OL>
+    <P>
+    <LI>Statically, when it is declared.  For example:
+    <BR>
+    <TT>pthread_cond_t myconvar = PTHREAD_COND_INITIALIZER;</TT>
+    <P>
+    <LI>Dynamically, with the <TT>pthread_cond_init()</TT> routine.
+        The ID of the created condition variable is returned to the calling 
+        thread through the <I>condition</I> parameter.
+        This method permits setting condition variable object attributes, 
+        <I>attr</I>.
+    </OL>
+<P>
+<LI>The optional <I>attr</I> object is used to set condition variable
+    attributes.  There is only one attribute defined for condition variables:
+    process-shared, which allows the condition variable to be seen by
+    threads in other processes.   The attribute object, if used, must be 
+    of type <TT>pthread_condattr_t</TT> (may be specified as NULL to accept 
+    defaults).
+<P>
+    Note that not all implementations may provide the process-shared attribute.
+<P>
+<LI>The <TT>pthread_condattr_init()</TT> and
+    <TT>pthread_condattr_destroy()</TT> routines are used to create and
+    destroy condition variable attribute objects.
+<P>
+<LI><TT>pthread_cond_destroy()</TT> should be used to free a condition
+    variable that is no longer needed.
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=ConVarSignal>  <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Condition Variables</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Waiting and Signaling on Condition Variables</H2>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Routines:</SPAN>
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE><TT><B>
+<A HREF=man/pthread_cond_wait.txt TARGET=W43>
+pthread_cond_wait</A> (condition,mutex)
+<P>
+<A HREF=man/pthread_cond_signal.txt TARGET=W44>
+pthread_cond_signal</A> (condition)
+<P>
+<A HREF=man/pthread_cond_broadcast.txt TARGET=W45>
+pthread_cond_broadcast</A> (condition)
+</B></TT></TD></TR></TABLE>
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Usage:</SPAN>
+<UL>
+<P>
+<LI><TT>pthread_cond_wait()</TT> blocks the calling thread until the
+    specified <I>condition</I> is signalled. This routine should be called
+    while <I>mutex</I> is locked, and it will automatically release the
+    mutex while it waits.  
+    After signal is received and thread is awakened, <I>mutex</I> will be 
+    automatically locked for use by the thread. The programmer is then 
+    responsible for unlocking <I>mutex</I> when the thread is finished with it.
+<P>
+    <B>Recommendation:</B> Using a WHILE loop instead of an IF statement 
+    (see watch_count routine in example below) to check the waited for condition 
+     can help deal with several potential problems, such as:
+    <UL>
+    <LI>If several threads are waiting for the same wake up signal, they will
+        take turns acquiring the mutex, and any one of them can then modify the
+        condition they all waited for.
+    <LI>If the thread received the signal in error due to a program bug
+    <LI>The Pthreads library is permitted to issue spurious wake ups to a waiting  
+        thread without violating the standard. 
+    </UL>
+<P>
+<LI>The <TT>pthread_cond_signal()</TT> routine is used to signal (or wake up) 
+    another thread which is waiting on the condition variable.  It should
+    be called after <I>mutex</I> is locked, and must unlock <I>mutex</I> in
+    order for <TT>pthread_cond_wait()</TT> routine to complete.
+<P>
+<LI>The <TT>pthread_cond_broadcast()</TT> routine should be used instead of
+    <TT>pthread_cond_signal()</TT> if more than one thread is in a blocking 
+    wait state.
+<P>
+<LI>It is a logical error to call <TT>pthread_cond_signal()</TT> before
+    calling <TT>pthread_cond_wait()</TT>.
+<P>
+</UL>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+<TR VALIGN=top>
+<TD WIDTH=40><IMG SRC=../images/warning5.gif WIDTH=35 HEIGHT=35>
+<TD>Proper locking and unlocking of the associated mutex variable is essential
+    when using these routines.  For example: 
+    <UL>
+    <LI>Failing to lock the mutex before calling 
+        <TT>pthread_cond_wait()</TT> may cause it NOT to block.  
+    <P>
+    <LI>Failing to unlock the mutex after calling <TT>pthread_cond_signal()</TT>
+        may not allow a matching <TT>pthread_cond_wait()</TT> routine to 
+        complete (it will remain blocked).
+    </UL>
+</TD></TR></TABLE>
+
+<P><HR><P>
+
+<H2>Example: Using Condition Variables</H2>
+
+<UL>
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE>
+<IMG SRC=../images/page01.gif WIDTH=20 HEIGHT=22 ALIGN=top>
+<B><SPAN CLASS=heading3>Example Code - Using Condition Variables</SPAN></B>
+<UL>
+This simple example code demonstrates the use of several Pthread condition
+variable routines.  The main routine creates three threads.  Two of the
+threads perform work and update a "count" variable.  The third thread
+waits until the count variable reaches a specified value.
+</UL>
+<HR>
+<PRE>
+<FONT COLOR=red>#include &LT;pthread.h&GT;</FONT>
+#include &LT;stdio.h&GT;
+#include &LT;stdlib.h&GT;
+
+#define NUM_THREADS  3
+#define TCOUNT 10
+#define COUNT_LIMIT 12
+
+int     count = 0;
+int     thread_ids[3] = {0,1,2};
+<FONT COLOR=red>pthread_mutex_t count_mutex;</FONT>
+<FONT COLOR=red>pthread_cond_t count_threshold_cv;</FONT>
+
+void *inc_count(void *t) 
+{
+  int i;
+  long my_id = (long)t;
+
+  for (i=0; i&LT;TCOUNT; i++) {
+    <FONT COLOR=red>pthread_mutex_lock(&count_mutex);</FONT>
+    count++;
+
+    /* 
+    Check the value of count and signal waiting thread when condition is
+    reached.  Note that this occurs while mutex is locked. 
+    */
+    if (count == COUNT_LIMIT) {
+      <FONT COLOR=red>pthread_cond_signal(&count_threshold_cv);</FONT>
+      printf("inc_count(): thread %ld, count = %d  Threshold reached.\n", 
+             my_id, count);
+      }
+    printf("inc_count(): thread %ld, count = %d, unlocking mutex\n", 
+	   my_id, count);
+    <FONT COLOR=red>pthread_mutex_unlock(&count_mutex);</FONT>
+
+    /* Do some "work" so threads can alternate on mutex lock */
+    sleep(1);
+    }
+  <FONT COLOR=red>pthread_exit(NULL);</FONT>
+}
+
+void *watch_count(void *t) 
+{
+  long my_id = (long)t;
+
+  printf("Starting watch_count(): thread %ld\n", my_id);
+
+  /*
+  Lock mutex and wait for signal.  Note that the pthread_cond_wait 
+  routine will automatically and atomically unlock mutex while it waits. 
+  Also, note that if COUNT_LIMIT is reached before this routine is run by
+  the waiting thread, the loop will be skipped to prevent pthread_cond_wait
+  from never returning. 
+  */
+  <FONT COLOR=red>pthread_mutex_lock(&count_mutex);</FONT>
+  while (count&LT;COUNT_LIMIT) {
+    <FONT COLOR=red>pthread_cond_wait(&count_threshold_cv, &count_mutex);</FONT>
+    printf("watch_count(): thread %ld Condition signal received.\n", my_id);
+    count += 125;
+    printf("watch_count(): thread %ld count now = %d.\n", my_id, count);
+    }
+  <FONT COLOR=red>pthread_mutex_unlock(&count_mutex);</FONT>
+  <FONT COLOR=red>pthread_exit(NULL);</FONT>
+}
+
+int main (int argc, char *argv[])
+{
+  int i, rc;
+  long t1=1, t2=2, t3=3;
+  <FONT COLOR=red>pthread_t threads[3];</FONT>
+  <FONT COLOR=red>pthread_attr_t attr;</FONT>
+
+  /* Initialize mutex and condition variable objects */
+  <FONT COLOR=red>pthread_mutex_init(&count_mutex, NULL);</FONT>
+  <FONT COLOR=red>pthread_cond_init (&count_threshold_cv, NULL);</FONT>
+
+  /* For portability, explicitly create threads in a joinable state */
+  <FONT COLOR=red>pthread_attr_init(&attr);</FONT>
+  <FONT COLOR=red>pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);</FONT>
+  <FONT COLOR=red>pthread_create(&threads[0], &attr, watch_count, (void *)t1);</FONT>
+  <FONT COLOR=red>pthread_create(&threads[1], &attr, inc_count, (void *)t2);</FONT>
+  <FONT COLOR=red>pthread_create(&threads[2], &attr, inc_count, (void *)t3);</FONT>
+
+  /* Wait for all threads to complete */
+  for (i=0; i&LT;NUM_THREADS; i++) {
+    <FONT COLOR=red>pthread_join(threads[i], NULL);</FONT>
+  }
+  printf ("Main(): Waited on %d  threads. Done.\n", NUM_THREADS);
+
+  /* Clean up and exit */
+  <FONT COLOR=red>pthread_attr_destroy(&attr);</FONT>
+  <FONT COLOR=red>pthread_mutex_destroy(&count_mutex);</FONT>
+  <FONT COLOR=red>pthread_cond_destroy(&count_threshold_cv);</FONT>
+  <FONT COLOR=red>pthread_exit(NULL);</FONT>
+
+}
+</PRE>
+<A HREF=samples/condvar.c TARGET=W46>
+<IMG SRC=../images/source1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View source code'></A>
+<A HREF=samples/condvar.out TARGET=W47>
+<IMG SRC=../images/output1.gif WIDTH=65 HEIGHT=20 BORDER=0 
+ALT='View sample output'></A>        
+</TD></TR></TABLE>
+</UL>
+ 
+<!--------------------------------------------------------------------------->
+ 
+<A NAME=Tools> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Monitoring, Debugging and Performance Analysis Tools for Pthreads</SPAN>
+</TD></TR></TABLE>
+<P><BR>
+ 
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Monitoring and Debugging Pthreads:</SPAN>
+<UL>
+<P>
+<LI>Debuggers vary in their ability to handle Pthreads.  The TotalView debugger
+    is LC's recommended debugger for parallel programs. It is well suited for
+    both monitoring and debugging threaded programs.
+<P>
+<LI>An example screenshot from a TotalView session using a threaded code is
+    shown below.
+<OL>
+<LI>Stack Trace Pane: Displays the call stack of routines that the selected thread is executing.
+<LI>Status Bars: Show status information for the selected thread and its associated process.
+<LI>Stack Frame Pane: Shows a selected thread's stack variables, registers, etc. 
+<LI>Source Pane: Shows the source code for the selected thread.
+<LI>Root Window showing all threads
+<LI>Threads Pane: Shows threads associated with the selected process
+</OL>
+<P>
+    <IMG SRC=images/pthreadWindows.gif WIDTH=730 HEIGHT=803 BORDER=0
+    ALT='Example TotalView Pthread Debug Session'>
+<P>
+<LI>See the <A HREF=../totalview/index.html TARGET=_blank>TotalView Debugger 
+    tutorial</A> for details.
+<P>
+<LI>The Linux <B><TT>ps</TT></B> command provides several flags for viewing
+    thread information. Some examples are shown below. See the 
+    <A HREF=man/ps.txt TARGET=ps>man page</A> for details.
+<P>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=5 WIDTH=90%>
+<TR><TD BGCOLOR=#FOF5FE><PRE>
+% <FONT COLOR=red>ps -Lf </FONT>
+UID        PID  PPID   LWP  C NLWP STIME TTY          TIME CMD
+blaise   22529 28240 22529  0    5 11:31 pts/53   00:00:00 a.out
+blaise   22529 28240 22530 99    5 11:31 pts/53   00:01:24 a.out
+blaise   22529 28240 22531 99    5 11:31 pts/53   00:01:24 a.out
+blaise   22529 28240 22532 99    5 11:31 pts/53   00:01:24 a.out
+blaise   22529 28240 22533 99    5 11:31 pts/53   00:01:24 a.out
+
+% <FONT COLOR=red>ps -T </FONT>
+  PID  SPID TTY          TIME CMD
+22529 22529 pts/53   00:00:00 a.out
+22529 22530 pts/53   00:01:49 a.out
+22529 22531 pts/53   00:01:49 a.out
+22529 22532 pts/53   00:01:49 a.out
+22529 22533 pts/53   00:01:49 a.out
+
+% <FONT COLOR=red>ps -Lm </FONT>
+  PID   LWP TTY          TIME CMD
+22529     - pts/53   00:18:56 a.out
+    - 22529 -        00:00:00 -
+    - 22530 -        00:04:44 -
+    - 22531 -        00:04:44 -
+    - 22532 -        00:04:44 -
+    - 22533 -        00:04:44 -
+</PRE></TD></TR></TABLE>
+
+<P>
+<LI>LC's Linux clusters also provide the <B><TT>top</TT></B> command to monitor
+    processes on a node.  If used with the <B><TT>-H</TT></B> flag, 
+    the threads contained within a process will be visible.  An example
+    of the <B><TT>top -H</TT></B> command is shown below. The parent
+    process is PID 18010 which spawned three threads, shown as PIDs 18012,
+    18013 and 18014.
+<P>
+<IMG SRC=images/topH.gif WIDTH=653 HEIGHT=322 BORDER=1 ALT='top -H command'>
+</UL>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Performance Analysis Tools:</SPAN>
+<UL>
+<LI>There are a variety of performance analysis tools that can be used with
+    threaded programs.  Searching the web will turn up a wealth of information.
+<P>
+<LI>At LC, the list of supported computing tools can be found at:
+    <A HREF=https://computing.llnl.gov/code/content/software_tools.php
+    TARGET=_blank>computing.llnl.gov/code/content/software_tools.php</A>.
+<P>
+<LI>These tools vary significantly in their complexity, functionality and
+    learning curve.  Covering them in detail is beyond the scope of this
+    tutorial.
+<P>
+<LI>Some tools worth investigating, specifically for threaded codes, include:
+    <UL>
+    <LI>Open|SpeedShop
+    <LI>TAU
+    <LI>HPCToolkit
+    <LI>PAPI
+    <LI>Intel VTune Amplifier
+    <LI>ThreadSpotter
+    </UL>
+</UL>
+ 
+<!--------------------------------------------------------------------------->
+ 
+<A NAME=LLNL> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>LLNL Specific Information and Recommendations</SPAN></TD>
+</TD></TR></TABLE>
+<P><BR>
+
+This section describes details specific to Livermore Computing's systems.
+<P>
+ 
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Implementations:</SPAN>
+<UL>
+<P>
+<LI>All LC production systems include a Pthreads implementation
+    that follows draft 10 (final) of the POSIX standard. This is the 
+    preferred implementation.
+<P>
+<LI>Implementations differ in the maximum number of threads that a process
+    may create. They also differ in the default amount of thread stack space.
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Compiling:</SPAN>
+<UL>
+<P>
+<LI>LC maintains a number of compilers, and usually several
+    different versions of each - see the 
+    <A HREF=https://computing.llnl.gov/code/compilers.html
+    TARGET=comps>LC's Supported Compilers</A> web page.
+<P>
+<LI>The compiler commands described in the <A HREF=#Compiling>Compiling
+    Threaded Programs</A> section apply to LC systems. 
+</UL>
+<P>
+
+<IMG SRC=../images/arrowBullet.gif ALIGN=top HSPACE=3>
+<SPAN CLASS=heading3>Mixing MPI with Pthreads:</SPAN>
+<UL>
+<P>
+<LI>This is the primary motivation for using Pthreads at LC.
+<P>
+<LI>Design:
+    <UL>
+    <LI>Each MPI process typically creates and then manages N threads,
+        where N makes the best use of the available cores/node.
+    <LI>Finding the best value for N will vary with the platform and
+        your application's characteristics.
+    <LI>In general, there may be problems if multiple threads make MPI
+        calls. The program may fail or behave unexpectedly. If MPI
+        calls must be made from within a thread, they should be made
+        only by one thread. 
+    </UL>
+<P>
+<LI>Compiling:
+    <UL>
+    <LI>Use the appropriate MPI compile command for the platform and
+        language of choice
+    <LI>Be sure to include the required Pthreads flag as shown in the
+        <A HREF=#Compiling>Compiling
+        Threaded Programs</A> section.
+    </UL>
+<P>
+<LI>An example code that uses both MPI and Pthreads is available below.
+    The serial, threads-only, MPI-only and MPI-with-threads versions
+    demonstrate one possible progression.
+    <UL>
+    <LI><A HREF=samples/mpithreads_serial.c TARGET=W50>
+        Serial</A>
+    <LI><A HREF=samples/mpithreads_threads.c TARGET=W51>
+        Pthreads only</A>
+    <LI><A HREF=samples/mpithreads_mpi.c TARGET=W52>
+        MPI only </A>
+    <LI><A HREF=samples/mpithreads_both.c TARGET=W53>
+        MPI with pthreads</A>
+    <LI><A HREF=samples/mpithreads.makefile TARGET=W54>
+        makefile</A>
+    </UL>
+</UL>
+<P>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=NotCovered> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Topics Not Covered</SPAN></TD>
+</TD></TR></TABLE>
+<P><BR>
+
+Several features of the Pthreads API are not covered in this tutorial.
+These are listed below. See the
+<A HREF=#Routines>Pthread Library Routines Reference</A> section for more 
+information.
+<P>
+
+<UL>
+<LI>Thread Scheduling
+    <UL>
+    <LI>Implementations will differ on how threads are scheduled to run. In most
+        cases, the default mechanism is adequate.
+    <LI>The Pthreads API provides routines to explicitly set thread scheduling
+        policies and priorities which may override the default mechanisms.
+    <LI>The API does not require implementations to support these features.
+    </UL>
+<P>
+
+<LI>Keys: Thread-Specific Data
+    <UL>
+    <LI>As threads call and return from different routines, the local
+        data on a thread's stack comes and goes.
+    <LI>To preserve stack data you can usually pass it as an argument from
+        one routine to the next, or else store the data in a global variable
+        associated with a thread.
+    <LI>Pthreads provides another, possibly more convenient and versatile,
+        way of accomplishing this through <B><I>keys</I></B>. 
+    </UL>
+<P>
+<LI>Mutex Protocol Attributes and Mutex Priority Management for the 
+    handling of "priority inversion" problems.
+<P>
+<LI>Condition Variable Sharing - across processes
+<P>
+<LI>Thread Cancellation
+<P>
+<LI>Threads and Signals
+<P>
+<LI>Synchronization constructs - barriers and locks
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=Exercise2> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Pthread Exercise 2</SPAN></TD>
+</TD></TR></TABLE>
+<H2>Mutexes, Condition Variables and Hybrid MPI with Pthreads</H2>
+
+<DD>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=90%>
+<TR VALIGN=top><TD BGCOLOR=#FOF5FE HEIGHT=400>
+<B><U>Overview:</U>
+<UL>
+<LI>Login to the LC workshop cluster, if you are not already logged in
+<LI>Mutexes: review and run the provided example codes
+<LI>Condition variables: review and run the provided example codes
+<LI>Hybrid MPI with Pthreads: review and run the provided example codes
+</UL>
+<P>
+<IMG SRC=../images/point02.jpg WIDTH=100 HEIGTH=45 BORDER=0>
+<A HREF=exercise.html#Exercise2 TARGET=_blank>GO TO THE EXERCISE HERE</A>
+</B>
+
+</TD></TR></TABLE>
+</DD>
+
+<BR><BR><BR><BR>
+
+<P><HR><P>
+
+<FONT SIZE=+1><B>This completes the tutorial.</B></FONT> 
+<P>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>
+<TR VALIGN=top>
+<TD><A HREF=../evaluation/index.html TARGET=evalForm>
+    <IMG SRC=../images/evaluationForm.gif 
+    BORDER=0 ALT='Evaluation Form'></A> &nbsp; &nbsp; &nbsp;</TD>
+<TD>Please complete the online evaluation form - unless you are doing the exercise,
+    in which case please complete it at the end of the exercise.</TD>
+</TR>
+</TABLE>
+<P>
+<FONT SIZE=+1><B>Where would you like to go now?</B></FONT>
+<UL>
+<LI><A HREF=exercise.html>Exercise</A>
+<LI><A HREF=../agenda/index.html>Agenda</A>
+<LI><A HREF=#top>Back to the top</A>
+</UL>
+
+<!--------------------------------------------------------------------------->
+
+<A NAME=References> <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>References and More Information</SPAN></TD>
+</TD></TR></TABLE>
+<BR>
+
+<UL>
+<LI>Author: <A HREF=mailto:blaiseb@llnl.gov>Blaise Barney</A>, Livermore
+    Computing.
+<P>
+<LI>POSIX Standard: <A HREF=http://www.unix.org/version3/ieee_std.html>
+    www.unix.org/version3/ieee_std.html</A>
+<P>
+<LI>"Pthreads Programming". B. Nichols et al. O'Reilly and Associates.
+<P>
+<LI>"Threads Primer". B. Lewis and D. Berg. Prentice Hall
+<P>
+<LI>"Programming With POSIX Threads". D. Butenhof. Addison Wesley
+<P>
+<LI>"Programming With Threads". S. Kleiman et al. Prentice Hall
+</UL>
+<!--------------------------------------------------------------------------->
+
+<A NAME=AppendixA>  <BR><BR> </A>
+<TABLE BORDER=1 CELLPADDING=5 CELLSPACING=0 WIDTH=100%>
+<TR><TD BGCOLOR=#98ABCE>
+<SPAN class=heading1>Appendix A: Pthread Library Routines Reference</SPAN></TD>
+</TD></TR></TABLE>
+<BR>
+
+<UL>
+For convenience, an alphabetical list of Pthread routines, linked to their
+corresponding man page, is provided below.
+<P>
+<A HREF=man/pthread_atfork.txt>pthread_atfork</A>
+<BR><A HREF=man/pthread_attr_destroy.txt>pthread_attr_destroy</A>
+<BR><A HREF=man/pthread_attr_getdetachstate.txt>pthread_attr_getdetachstate</A>
+<BR><A HREF=man/pthread_attr_getguardsize.txt>pthread_attr_getguardsize</A>
+<BR><A HREF=man/pthread_attr_getinheritsched.txt>pthread_attr_getinheritsched</A>
+<BR><A HREF=man/pthread_attr_getschedparam.txt>pthread_attr_getschedparam</A>
+<BR><A HREF=man/pthread_attr_getschedpolicy.txt>pthread_attr_getschedpolicy</A>
+<BR><A HREF=man/pthread_attr_getscope.txt>pthread_attr_getscope</A>
+<BR><A HREF=man/pthread_attr_getstack.txt>pthread_attr_getstack</A>
+<BR><A HREF=man/pthread_attr_getstackaddr.txt>pthread_attr_getstackaddr</A>
+<BR><A HREF=man/pthread_attr_getstacksize.txt>pthread_attr_getstacksize</A>
+<BR><A HREF=man/pthread_attr_init.txt>pthread_attr_init</A>
+<BR><A HREF=man/pthread_attr_setdetachstate.txt>pthread_attr_setdetachstate</A>
+<BR><A HREF=man/pthread_attr_setguardsize.txt>pthread_attr_setguardsize</A>
+<BR><A HREF=man/pthread_attr_setinheritsched.txt>pthread_attr_setinheritsched</A>
+<BR><A HREF=man/pthread_attr_setschedparam.txt>pthread_attr_setschedparam</A>
+<BR><A HREF=man/pthread_attr_setschedpolicy.txt>pthread_attr_setschedpolicy</A>
+<BR><A HREF=man/pthread_attr_setscope.txt>pthread_attr_setscope</A>
+<BR><A HREF=man/pthread_attr_setstack.txt>pthread_attr_setstack</A>
+<BR><A HREF=man/pthread_attr_setstackaddr.txt>pthread_attr_setstackaddr</A>
+<BR><A HREF=man/pthread_attr_setstacksize.txt>pthread_attr_setstacksize</A>
+<BR><A HREF=man/pthread_barrier_destroy.txt>pthread_barrier_destroy</A>
+<BR><A HREF=man/pthread_barrier_init.txt>pthread_barrier_init</A>
+<BR><A HREF=man/pthread_barrier_wait.txt>pthread_barrier_wait</A>
+<BR><A HREF=man/pthread_barrierattr_destroy.txt>pthread_barrierattr_destroy</A>
+<BR><A HREF=man/pthread_barrierattr_getpshared.txt>pthread_barrierattr_getpshared</A>
+<BR><A HREF=man/pthread_barrierattr_init.txt>pthread_barrierattr_init</A>
+<BR><A HREF=man/pthread_barrierattr_setpshared.txt>pthread_barrierattr_setpshared</A>
+<BR><A HREF=man/pthread_cancel.txt>pthread_cancel</A>
+<BR><A HREF=man/pthread_cleanup_pop.txt>pthread_cleanup_pop</A>
+<BR><A HREF=man/pthread_cleanup_push.txt>pthread_cleanup_push</A>
+<BR><A HREF=man/pthread_cond_broadcast.txt>pthread_cond_broadcast</A>
+<BR><A HREF=man/pthread_cond_destroy.txt>pthread_cond_destroy</A>
+<BR><A HREF=man/pthread_cond_init.txt>pthread_cond_init</A>
+<BR><A HREF=man/pthread_cond_signal.txt>pthread_cond_signal</A>
+<BR><A HREF=man/pthread_cond_timedwait.txt>pthread_cond_timedwait</A>
+<BR><A HREF=man/pthread_cond_wait.txt>pthread_cond_wait</A>
+<BR><A HREF=man/pthread_condattr_destroy.txt>pthread_condattr_destroy</A>
+<BR><A HREF=man/pthread_condattr_getclock.txt>pthread_condattr_getclock</A>
+<BR><A HREF=man/pthread_condattr_getpshared.txt>pthread_condattr_getpshared</A>
+<BR><A HREF=man/pthread_condattr_init.txt>pthread_condattr_init</A>
+<BR><A HREF=man/pthread_condattr_setclock.txt>pthread_condattr_setclock</A>
+<BR><A HREF=man/pthread_condattr_setpshared.txt>pthread_condattr_setpshared</A>
+<BR><A HREF=man/pthread_create.txt>pthread_create</A>
+<BR><A HREF=man/pthread_detach.txt>pthread_detach</A>
+<BR><A HREF=man/pthread_equal.txt>pthread_equal</A>
+<BR><A HREF=man/pthread_exit.txt>pthread_exit</A>
+<BR><A HREF=man/pthread_getconcurrency.txt>pthread_getconcurrency</A>
+<BR><A HREF=man/pthread_getcpuclockid.txt>pthread_getcpuclockid</A>
+<BR><A HREF=man/pthread_getschedparam.txt>pthread_getschedparam</A>
+<BR><A HREF=man/pthread_getspecific.txt>pthread_getspecific</A>
+<BR><A HREF=man/pthread_join.txt>pthread_join</A>
+<BR><A HREF=man/pthread_key_create.txt>pthread_key_create</A>
+<BR><A HREF=man/pthread_key_delete.txt>pthread_key_delete</A>
+<BR><A HREF=man/pthread_kill.txt>pthread_kill</A>
+<BR><A HREF=man/pthread_mutex_destroy.txt>pthread_mutex_destroy</A>
+<BR><A HREF=man/pthread_mutex_getprioceiling.txt>pthread_mutex_getprioceiling</A>
+<BR><A HREF=man/pthread_mutex_init.txt>pthread_mutex_init</A>
+<BR><A HREF=man/pthread_mutex_lock.txt>pthread_mutex_lock</A>
+<BR><A HREF=man/pthread_mutex_setprioceiling.txt>pthread_mutex_setprioceiling</A>
+<BR><A HREF=man/pthread_mutex_timedlock.txt>pthread_mutex_timedlock</A>
+<BR><A HREF=man/pthread_mutex_trylock.txt>pthread_mutex_trylock</A>
+<BR><A HREF=man/pthread_mutex_unlock.txt>pthread_mutex_unlock</A>
+<BR><A HREF=man/pthread_mutexattr_destroy.txt>pthread_mutexattr_destroy</A>
+<BR><A HREF=man/pthread_mutexattr_getprioceiling.txt>pthread_mutexattr_getprioceiling</A>
+<BR><A HREF=man/pthread_mutexattr_getprotocol.txt>pthread_mutexattr_getprotocol</A>
+<BR><A HREF=man/pthread_mutexattr_getpshared.txt>pthread_mutexattr_getpshared</A>
+<BR><A HREF=man/pthread_mutexattr_gettype.txt>pthread_mutexattr_gettype</A>
+<BR><A HREF=man/pthread_mutexattr_init.txt>pthread_mutexattr_init</A>
+<BR><A HREF=man/pthread_mutexattr_setprioceiling.txt>pthread_mutexattr_setprioceiling</A>
+<BR><A HREF=man/pthread_mutexattr_setprotocol.txt>pthread_mutexattr_setprotocol</A>
+<BR><A HREF=man/pthread_mutexattr_setpshared.txt>pthread_mutexattr_setpshared</A>
+<BR><A HREF=man/pthread_mutexattr_settype.txt>pthread_mutexattr_settype</A>
+<BR><A HREF=man/pthread_once.txt>pthread_once</A>
+<BR><A HREF=man/pthread_rwlock_destroy.txt>pthread_rwlock_destroy</A>
+<BR><A HREF=man/pthread_rwlock_init.txt>pthread_rwlock_init</A>
+<BR><A HREF=man/pthread_rwlock_rdlock.txt>pthread_rwlock_rdlock</A>
+<BR><A HREF=man/pthread_rwlock_timedrdlock.txt>pthread_rwlock_timedrdlock</A>
+<BR><A HREF=man/pthread_rwlock_timedwrlock.txt>pthread_rwlock_timedwrlock</A>
+<BR><A HREF=man/pthread_rwlock_tryrdlock.txt>pthread_rwlock_tryrdlock</A>
+<BR><A HREF=man/pthread_rwlock_trywrlock.txt>pthread_rwlock_trywrlock</A>
+<BR><A HREF=man/pthread_rwlock_unlock.txt>pthread_rwlock_unlock</A>
+<BR><A HREF=man/pthread_rwlock_wrlock.txt>pthread_rwlock_wrlock</A>
+<BR><A HREF=man/pthread_rwlockattr_destroy.txt>pthread_rwlockattr_destroy</A>
+<BR><A HREF=man/pthread_rwlockattr_getpshared.txt>pthread_rwlockattr_getpshared</A>
+<BR><A HREF=man/pthread_rwlockattr_init.txt>pthread_rwlockattr_init</A>
+<BR><A HREF=man/pthread_rwlockattr_setpshared.txt>pthread_rwlockattr_setpshared</A>
+<BR><A HREF=man/pthread_self.txt>pthread_self</A>
+<BR><A HREF=man/pthread_setcancelstate.txt>pthread_setcancelstate</A>
+<BR><A HREF=man/pthread_setcanceltype.txt>pthread_setcanceltype</A>
+<BR><A HREF=man/pthread_setconcurrency.txt>pthread_setconcurrency</A>
+<BR><A HREF=man/pthread_setschedparam.txt>pthread_setschedparam</A>
+<BR><A HREF=man/pthread_setschedprio.txt>pthread_setschedprio</A>
+<BR><A HREF=man/pthread_setspecific.txt>pthread_setspecific</A>
+<BR><A HREF=man/pthread_sigmask.txt>pthread_sigmask</A>
+<BR><A HREF=man/pthread_spin_destroy.txt>pthread_spin_destroy</A>
+<BR><A HREF=man/pthread_spin_init.txt>pthread_spin_init</A>
+<BR><A HREF=man/pthread_spin_lock.txt>pthread_spin_lock</A>
+<BR><A HREF=man/pthread_spin_trylock.txt>pthread_spin_trylock</A>
+<BR><A HREF=man/pthread_spin_unlock.txt>pthread_spin_unlock</A>
+<BR><A HREF=man/pthread_testcancel.txt>pthread_testcancel</A>
+</UL>
+
+
+<!-------------------------------------------------------------------------->
+
+<SCRIPT LANGUAGE="JavaScript">PrintFooter("UCRL-MI-133316")</SCRIPT>
+
+<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+
+</BODY>
+</HTML>
+
+

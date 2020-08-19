@@ -1,0 +1,61 @@
+
+ Matrix size: 1440x1440
+ # of processors: 64
+
+slurmstepd: *** JOB 320893 ON prod2-0103 CANCELLED AT 2015-11-13T01:35:07 DUE TO TIME LIMIT ***
+[10:prod2-0103] unexpected disconnect completion event from [42:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 10
+[9:prod2-0103] unexpected disconnect completion event from [41:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 9
+
+=====================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   EXIT CODE: 15
+=   CLEANING UP REMAINING PROCESSES
+=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
+=====================================================================================
+[11:prod2-0103] unexpected disconnect completion event from [43:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 11
+[14:prod2-0103] unexpected disconnect completion event from [46:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 14
+[12:prod2-0103] unexpected disconnect completion event from [44:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 12
+[13:prod2-0103] unexpected disconnect completion event from [45:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 13
+[15:prod2-0103] unexpected disconnect completion event from [47:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 15
+[3:prod2-0103] unexpected disconnect completion event from [35:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+[4:prod2-0103] unexpected disconnect completion event from [36:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 4
+internal ABORT - process 3
+[5:prod2-0103] unexpected disconnect completion event from [37:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+[6:prod2-0103] unexpected disconnect completion event from [38:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 6
+[2:prod2-0103] unexpected disconnect completion event from [34:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 5
+[7:prod2-0103] unexpected disconnect completion event from [39:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 7
+[0:prod2-0103] unexpected disconnect completion event from [32:prod2-0105]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 2
+internal ABORT - process 0
+[8:prod2-0103] unexpected disconnect completion event from [24:prod2-0104]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 8
+[1:prod2-0103] unexpected disconnect completion event from [17:prod2-0104]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 1
+APPLICATION TERMINATED WITH THE EXIT STRING: Terminated (signal 15)

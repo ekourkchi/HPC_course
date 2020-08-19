@@ -1,0 +1,604 @@
+<?xml version='1.0'?>
+<!DOCTYPE platform SYSTEM "http://simgrid.gforge.inria.fr/simgrid.dtd">
+<platform version="3">
+  <process host="host-0.hawaii.edu" function="0"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="0"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-1.hawaii.edu" function="1"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="1"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-2.hawaii.edu" function="2"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="2"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-3.hawaii.edu" function="3"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="3"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-4.hawaii.edu" function="4"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="4"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-5.hawaii.edu" function="5"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="5"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-6.hawaii.edu" function="6"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="6"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-7.hawaii.edu" function="7"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="7"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-8.hawaii.edu" function="8"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="8"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-9.hawaii.edu" function="9"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="9"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-10.hawaii.edu" function="10"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="10"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-11.hawaii.edu" function="11"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="11"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-12.hawaii.edu" function="12"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="12"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-13.hawaii.edu" function="13"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="13"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-14.hawaii.edu" function="14"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="14"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-15.hawaii.edu" function="15"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="15"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-16.hawaii.edu" function="16"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="16"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-17.hawaii.edu" function="17"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="17"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-18.hawaii.edu" function="18"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="18"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-19.hawaii.edu" function="19"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="19"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-20.hawaii.edu" function="20"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="20"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-21.hawaii.edu" function="21"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="21"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-22.hawaii.edu" function="22"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="22"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-23.hawaii.edu" function="23"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="23"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-24.hawaii.edu" function="24"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="24"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-25.hawaii.edu" function="25"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="25"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-26.hawaii.edu" function="26"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="26"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-27.hawaii.edu" function="27"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="27"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-28.hawaii.edu" function="28"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="28"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-29.hawaii.edu" function="29"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="29"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-30.hawaii.edu" function="30"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="30"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-31.hawaii.edu" function="31"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="31"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-32.hawaii.edu" function="32"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="32"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-33.hawaii.edu" function="33"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="33"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-34.hawaii.edu" function="34"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="34"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-35.hawaii.edu" function="35"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="35"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-36.hawaii.edu" function="36"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="36"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-37.hawaii.edu" function="37"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="37"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-38.hawaii.edu" function="38"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="38"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-39.hawaii.edu" function="39"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="39"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-40.hawaii.edu" function="40"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="40"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-41.hawaii.edu" function="41"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="41"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-42.hawaii.edu" function="42"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="42"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-43.hawaii.edu" function="43"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="43"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-44.hawaii.edu" function="44"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="44"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-45.hawaii.edu" function="45"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="45"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-46.hawaii.edu" function="46"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="46"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-47.hawaii.edu" function="47"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="47"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-48.hawaii.edu" function="48"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="48"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-49.hawaii.edu" function="49"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="49"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-50.hawaii.edu" function="50"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="50"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-51.hawaii.edu" function="51"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="51"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-52.hawaii.edu" function="52"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="52"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-53.hawaii.edu" function="53"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="53"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-54.hawaii.edu" function="54"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="54"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-55.hawaii.edu" function="55"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="55"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-56.hawaii.edu" function="56"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="56"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-57.hawaii.edu" function="57"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="57"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-58.hawaii.edu" function="58"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="58"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-59.hawaii.edu" function="59"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="59"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-60.hawaii.edu" function="60"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="60"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-61.hawaii.edu" function="61"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="61"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-62.hawaii.edu" function="62"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="62"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-63.hawaii.edu" function="63"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="63"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-64.hawaii.edu" function="64"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="64"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-65.hawaii.edu" function="65"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="65"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-66.hawaii.edu" function="66"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="66"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-67.hawaii.edu" function="67"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="67"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-68.hawaii.edu" function="68"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="68"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-69.hawaii.edu" function="69"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="69"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-70.hawaii.edu" function="70"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="70"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-71.hawaii.edu" function="71"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="71"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-72.hawaii.edu" function="72"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="72"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-73.hawaii.edu" function="73"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="73"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-74.hawaii.edu" function="74"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="74"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-75.hawaii.edu" function="75"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="75"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-76.hawaii.edu" function="76"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="76"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-77.hawaii.edu" function="77"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="77"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-78.hawaii.edu" function="78"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="78"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-79.hawaii.edu" function="79"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="79"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-80.hawaii.edu" function="80"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="80"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-81.hawaii.edu" function="81"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="81"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-82.hawaii.edu" function="82"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="82"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-83.hawaii.edu" function="83"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="83"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-84.hawaii.edu" function="84"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="84"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-85.hawaii.edu" function="85"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="85"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-86.hawaii.edu" function="86"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="86"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-87.hawaii.edu" function="87"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="87"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-88.hawaii.edu" function="88"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="88"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-89.hawaii.edu" function="89"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="89"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-90.hawaii.edu" function="90"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="90"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-91.hawaii.edu" function="91"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="91"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-92.hawaii.edu" function="92"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="92"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-93.hawaii.edu" function="93"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="93"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-94.hawaii.edu" function="94"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="94"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-95.hawaii.edu" function="95"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="95"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-96.hawaii.edu" function="96"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="96"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-97.hawaii.edu" function="97"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="97"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-98.hawaii.edu" function="98"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="98"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+  <process host="host-99.hawaii.edu" function="99"> <!-- function name used only for logging -->
+    <argument value="1"/> <!-- instance -->
+    <argument value="99"/> <!-- rank -->
+    <argument value="-c"/>
+    <argument value="200000"/>
+  </process>
+</platform>

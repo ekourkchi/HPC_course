@@ -1,0 +1,15 @@
+
+ Matrix size: 9600x9600
+ # of processors: 64
+
+prod2-0110:8d1c:75812700: 24584165 us(24584165 us!!!): dapl_cma_active: CM ROUTE ERROR: -> DST 10.12.7.249 retry (15)..
+prod2-0110:8d12:cb513700: 25326403 us(25326403 us!!!): dapl_cma_active: CM ROUTE ERROR: -> DST 10.12.7.249 retry (15)..
+
+ checksum:		 40760141856768000000.000000
+ Analytical Sum:	 40760141856768000000.000000 
+ ** OK ** The Multiplication sounds to be fine. 
+
+ Computation + Communication time (sec): 44.269
+ Computation time (sec): 41.727
+ Communication time (sec): 2.542
+

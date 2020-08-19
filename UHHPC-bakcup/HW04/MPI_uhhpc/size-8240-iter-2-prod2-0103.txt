@@ -1,0 +1,29 @@
+
+ Matrix size: 8240x8240
+ # of processors: 64
+
+prod2-0104:2b984:95e95700: 48498400 us(48498400 us!!!): DTO completion ERR: status 12, op OP_RDMA_READ, vendor_err 0x0 - 0.0.0.0
+[9:prod2-0103] unexpected disconnect completion event from [17:prod2-0104]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 9
+[17:prod2-0104][../../dapl_poll_rc.c:1364] Intel MPI fatal error: ofa-v2-ib0 DTO operation posted for [9:prod2-0103] completed with error. status=0x8. cookie=0x40009
+Assertion failed in file ../../dapl_poll_rc.c at line 1366: 0
+internal ABORT - process 17
+[1:prod2-0103] unexpected disconnect completion event from [17:prod2-0104]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 1
+[41:prod2-0105] unexpected disconnect completion event from [9:prod2-0103]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 41
+[49:prod2-0106] unexpected disconnect completion event from [17:prod2-0104]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 49
+[25:prod2-0104] unexpected disconnect completion event from [9:prod2-0103]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 25
+[33:prod2-0105] unexpected disconnect completion event from [17:prod2-0104]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 33
+[57:prod2-0106] unexpected disconnect completion event from [9:prod2-0103]
+Assertion failed in file ../../dapl_conn_rc.c at line 1179: 0
+internal ABORT - process 57

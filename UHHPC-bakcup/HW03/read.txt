@@ -1,0 +1,29 @@
+ Hi all,
+
+ 
+
+A student just realized that although the assignment says that we send out 10^8 bytes, but bcast_skeleton.c file uses 10^7 bytes. I was playing around with data size at the time when I designed the assignment and I got my wires crossed.   So it's supposed to be 10^8 bytes ( it's been fixed on the Web site).  Just go into bcast_skeleton.c and add a 0 in case you've already downloaded it.
+
+ 
+
+NOW, some of you are running on a virtual machine because you're running Windows (if you have a Linux or a Mac OS X partition, just install SimGrid directly on this).  Depending on your VM configuration, you may run into problems when running simgrid simulations at scale.  One option is to re-install a larger VM (more RAM, etc), but it may not solve anything. In this case, and if you really don't want to install a Linux partition, then you'll have to "scale down" the simulation.  The first thing to do is to try fewer processes. For instance, the assignment says 100, and perhaps you can run only up to 80.  Simple mention in what you turn in that you have scaled things down.   Scaling the data size down is another option (e.g., use 10^7), but that may have all kinds of effects. That's fine, but when you talk to your peers, your results will definitely be different. 
+
+ 
+
+Let me know if you have questions about the above.  If really, really things don't work for you in the VM (simulations may be long), talk to me and I could create a temporary account for you on some machine we have.
+
+ 
+
+cheers
+
+
+
+ Hi all,
+
+ 
+
+One student pointed out this morning that my "install SimGrid" instruction are very Ubuntu-ish.   But in fact, SimGrid can be installed directly on Mac OS X  (provided you have something like MacPorts or Homebrew to install dependencies, etc).   I always run SimGrid directly on my Mac, and of course it would work better than on a VirtualBox in terms of speed (and perhaps accuracy).  So, if you have a Mac OS X machine, install SimGrid directly. If you have any issues installing SimGrid, come see me and don't waste time on this.
+
+ 
+
+cheers

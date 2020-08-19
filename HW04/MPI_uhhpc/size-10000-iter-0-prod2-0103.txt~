@@ -1,0 +1,15 @@
+
+ Matrix size: 10000x10000
+ # of processors: 64
+
+prod2-0106:261d4:d3492700: 16552386 us(16552386 us!!!): dapl_cma_active: CM ROUTE ERROR: -> DST 10.12.7.245 retry (15)..
+prod2-0106:261c8:24831700: 22815533 us(22815533 us!!!): dapl_cma_active: CM ROUTE ERROR: -> DST 10.12.7.245 retry (15)..
+
+ checksum:		 49990000500000014336.000000
+ Analytical Sum:	 49990000499999997952.000000 
+ Error: Try to find the bug !!! 
+
+ Computation + Communication time (sec): 50.606
+ Computation time (sec): 45.903
+ Communication time (sec): 4.703
+

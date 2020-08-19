@@ -1,0 +1,13 @@
+
+ Matrix size: 4080x4080
+ # of processors: 64
+
+
+ checksum:		 565012302564096000.000000
+ Analytical Sum:	 565012302564096000.000000 
+ ** OK ** The Multiplication sounds to be fine. 
+
+ Computation + Communication time (sec): 3.602
+ Computation time (sec): 3.204
+ Communication time (sec): 0.398
+

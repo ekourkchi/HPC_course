@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct _th_args {
+  int *array;
+  int n;
+  int inf_index;
+} th_args; 
+
+void *sort_array(void *);
+int int_compare(const void*, const void*);
+
+int main(int argc, char **argv) {
+
+  int i,j;
+  int array_size;
+  int num_threads;
+  int *array1,*array2;
+  struct timeval start, end;
+  float t_seq, t_par, speedup;
+  
+  // Parse command-line arguments
+  if (argc != 3) {
+    fprintf(stderr,"Usage: %s <array size> <num threads>\n",argv[0]);
+    exit(1);
+  }
+
+  if ((sscanf(argv[1],"%d",&array_size) != 1) ||
+      (sscanf(argv[2],"%d",&num_threads) != 1)) {
+    fprintf(stderr,"Invalid command-line arguments\n");
+    exit(1);
+  }
+
+  // Allocate arrays
+  if (((array1 = (int *)malloc(array_size*sizeof(int))) == NULL) ||
+      ((array2 = (int *)malloc(array_size*sizeof(int))) == NULL)) {
+    perror("malloc");
+    exit(1);
+  }
+
+  // Fill array with random numbers
+  for (i=0; i < array_size; i++)   {
+    array1[i] = rand() % 100;
+    array2[i] = array1[i];
+  }
+
+  ////////////////////////////////////////
+  //         SEQUENTIAL SORT (array1)   //
+  ////////////////////////////////////////
+  gettimeofday(&start,NULL);
+  qsort(array1, array_size, sizeof(int), int_compare);
+  gettimeofday(&end,NULL);
+  t_seq = (end.tv_sec*1000000.0 + end.tv_usec -
+	   start.tv_sec*1000000.0 - start.tv_usec) / 1000000.0;
+  
+  ///////////////////////////////////////
+  //          PARALLEL SORT (array2)   //
+  ///////////////////////////////////////
+
+  gettimeofday(&start,NULL);
+
+  // Allocate pthread arguments
+  th_args thread_arguments[num_threads];
+  
+  // Compute work allocation
+  int *tmp_ptr = array2;
+  for (i=0; i < num_threads; i++) {
+    thread_arguments[i].n = array_size / num_threads + (array_size % num_threads > i ? 1 : 0);
+    thread_arguments[i].array = tmp_ptr;
+    tmp_ptr += thread_arguments[i].n;
+    thread_arguments[i].inf_index = 0;
+  }
+
+  // Create worker threads
+  pthread_t thread_ids[num_threads];
+  for (i=0; i < num_threads; i++) {
+    pthread_create(&(thread_ids[i]), NULL, sort_array, &(thread_arguments[i]));
+  }
+
+  // Wait for worker threads
+  for (i=0; i < num_threads; i++) {
+    pthread_join(thread_ids[i], NULL);
+  }
+
+  // Allocate result set
+  int *tmp_array = (int *)malloc(array_size*sizeof(int));
+
+  // Collect the results
+  for (i=0; i < array_size; i++) {
+    int min = -1;
+    int winner;
+    for (j=0; j < num_threads; j++) {
+      if (thread_arguments[j].inf_index >= thread_arguments[j].n)
+        continue;
+      if ((min < 0) || (min > thread_arguments[j].array[thread_arguments[j].inf_index])) {
+        min = thread_arguments[j].array[thread_arguments[j].inf_index];
+	winner = j;
+      }
+    }
+    tmp_array[i] = min;
+    (thread_arguments[winner].inf_index)++;
+  }
+
+  // Overwrite the array (after all we're doing "in place" :))
+  memcpy(array2, tmp_array, array_size*sizeof(int));
+  free(tmp_array);
+
+  gettimeofday(&end,NULL);
+  t_par = (end.tv_sec*1000000.0 + end.tv_usec -
+	   start.tv_sec*1000000.0 - start.tv_usec) / 1000000.0;
+
+  // Double check that the sorting was correct
+  for (i=0; i < array_size; i++) {
+    if (array1[i] != array2[i]) {
+      fprintf(stderr,"Incorrect parallel sort!!\n");
+      exit(1);
+    }
+  }
+ 
+  fprintf(stdout,"Speedup: %.2f / %.2f = %.2f\n",t_seq, t_par, t_seq / t_par);
+  exit(0);
+}
+
+// sort_array function
+void *sort_array(void *args) {
+  int *array = ((th_args *)args)->array;
+  int n = ((th_args *)args)->n;
+
+  qsort(array, n, sizeof(int), int_compare);
+  return NULL;
+}
+
+int int_compare(const void *a, const void*b) {
+  return (*((int *)a) - *((int *)b));
+}
+
+

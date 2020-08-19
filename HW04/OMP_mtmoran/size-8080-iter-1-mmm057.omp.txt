@@ -1,0 +1,13 @@
+
+ Matrix size: 8080x8080
+ # of processors: 4
+
+
+ checksum:		 17215486610570500096.000000
+ Analytical Sum:	 17215486610570496000.000000 
+ Error: Try to find the bug !!! 
+
+ Computation + Communication time (sec): 11.085
+ Computation time (sec): 10.624
+ Communication time (sec): 0.460
+

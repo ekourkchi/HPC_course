@@ -1,0 +1,569 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us" >
+<head id="Head1"><title>
+	Exascale Challenges | U.S. DOE Office of Science (SC)
+</title><meta id="PageDescription" name="description" content="" /><meta id="PageKeywords" name="keywords" content="" /><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!--
+	<link rel="stylesheet" type="text/css" href="/styles/reset.css" /><link rel="stylesheet" type="text/css" href="/styles/layout.css" /><link rel="stylesheet" type="text/css" href="/styles/editor.css" /><link rel="stylesheet" type="text/css" href="/styles/content.css" /><link rel="stylesheet" type="text/css" href="/styles/snippets.css" />
+    -->
+	<link rel="stylesheet" type="text/css" href="/styles/sc_css_combined.css" /><link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+	<!--
+ 	<script type="text/javascript" src="/scripts/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="/scripts/mediaplayer/swfobject.js"></script>
+	<script type="text/javascript" src="/scripts/jquery.combobox.js"></script>
+	<script type="text/javascript" src="/scripts/jquery.superfish.js"></script>
+	<script type="text/javascript" src="/scripts/jquery.colorbox-min.js"></script>
+	<script type="text/javascript" src="/scripts/jquery.tablesorter.min.js"></script>
+	<script type="text/javascript" src="/scripts/main.js"></script>
+	-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script>if (!window.jQuery) { document.write('<script src="/scripts/jquery-1.11.1.min.js"><\/script>'); }</script>	
+    <script type="text/javascript" src="/scripts/sc_js_combined.js"></script>
+
+<!--
+    <script type="text/javascript" src="https://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAARrC_Bmem0akNftFeJGk_7BRv3A42tRTvx0mw_UwdvldrjHlXMRQwNSDh8Kjo9k0hJyKDAUcJmX4zLQ"></script>
+    <script type="text/javascript" src="https://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/release/src/markermanager.js"></script>
+    <script type="text/javascript" src="https://www.google.com/uds/api?file=uds.js&amp;v=1.0"></script>
+    <script type="text/javascript" src="https://www.google.com/uds/solutions/localsearch/gmlocalsearch.js"></script>
+    <style type="text/css">@import url("https://www.google.com/uds/css/gsearch.css"); @import url("https://www.google.com/uds/solutions/localsearch/gmlocalsearch.css");</style>
+-->
+	<!--[if lt IE 7]>
+		<script type="text/javascript" src="/scripts/DD_belatedPNG_0.0.8a-min.js"></script>
+	<![endif]-->
+	
+                <script type="text/javascript">
+                  var _gaq = _gaq || [];
+                  _gaq.push(['_setAccount', 'UA-10968513-2']);
+                  _gaq.push(['_trackPageview']);
+                  (function () {
+                    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                  })();
+                </script>
+            </head>
+<body>
+    <form name="form1" method="post" action="/ascr/research/scidac/exascale-challenges/" id="form1">
+<div>
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwULLTE0OTc4MDI4OTMPZBYEAgEPZBYEAgEPFgIeB2NvbnRlbnRlZAICDxYCHwBlZAIDEGRkFgQCCQ8WAh4FY2xhc3MFK2NvbnRlbnQtYm9keSBnZW5lcmFsZGV0YWlscGFnZS1jb250ZW50LWJvZHkWAgIBD2QWAmYPZBYCZg9kFgICBA9kFgJmD2QWAmYPZBYCZg9kFgICAg9kFgJmD2QWAgIBDxYCHwEFIXBhZ2UtdG9vbHMgcGFnZS10b29scy1ub3N1YnNjcmliZRYIZg8PFgIeC05hdmlnYXRlVXJsBS4vYXNjci9yZXNlYXJjaC9zY2lkYWMvZXhhc2NhbGUtY2hhbGxlbmdlcy8/cD0xZGQCAQ8WAh4Fc3R5bGUFEmJvcmRlci1yaWdodDpub25lO2QCAg8PFgIeB1Zpc2libGVoZGQCAw8PFgIfBGhkZAILD2QWAmYPZBYCZg9kFgRmDw8WAh8EaGRkAgIPFgIfBGgWBAIBDxYCHgRocmVmBTYvYXNjci9yZXNlYXJjaC9zY2lkYWMvZXhhc2NhbGUtY2hhbGxlbmdlcy8/bW9iaWxlPXRydWVkAgMPFgIfBQU3L2FzY3IvcmVzZWFyY2gvc2NpZGFjL2V4YXNjYWxlLWNoYWxsZW5nZXMvP2Rlc2t0b3A9dHJ1ZWRkUsOWjE/NFwomRlo1AwPvM+4fImw=" />
+</div>
+
+<div>
+
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEWAgKduJG3AgLk7r6TBm3u1NRG6xwcZEmdKHxorRP+3OZE" />
+</div>
+	<div id="firefox" class="firefox firefox40">
+	<!--[if gte IE 9]> 
+		<div id="ie9andup" class="ie ie9"> 
+	<![endif]-->
+	<!--[if IE 8]> 
+		<div id="ie8only" class="ie ie8"> 
+	<![endif]-->
+	<!--[if IE 7]> 
+		<div id="ie7only" class="ie ie7"> 
+	<![endif]-->
+	<!--[if IE 6]>
+		<div id="ie6only" class="ie ie6">
+	<![endif]-->
+	<!--[if lt IE 6]>
+		<div id="ie5andbelow" class="ie ie5">
+	<![endif]-->
+	
+	<div class="container">
+		<div class="header">
+			<div class="header-menu">
+				<ul class="header-menu-primary">
+  <li class="header-menu-item header-menu-first">
+    <a class="header-menu-title " href="/">SC Home</a>
+  </li>
+  <li class="header-menu-item">
+    <a class="header-menu-title " href="/about/organization/">Organization</a>
+  </li>
+  <li class="header-menu-item">
+    <a class="header-menu-title " href="/about/jobs/">Jobs</a>
+  </li>
+  <li class="header-menu-item header-menu-last">
+    <a class="header-menu-title " href="/about/contact/">Contact</a>
+  </li>
+</ul>
+<ul class="header-menu-secondary">
+  <li class="header-menu-item header-menu-first header-menu-last">
+    <a class="header-menu-title " href="http://www.energy.gov">DOE Home »</a>
+  </li>
+</ul>
+			</div>
+			<h2 class="header-logo"><a class="header-logo-link" name="top" href="/" title="U.S. DEPARTMENT OF ENERGY | Office of Science">U.S. DEPARTMENT OF ENERGY | Office of Science</a></h2>
+            <!-- <div class="header-more-search"><a href="/more-search-tools/">more search tools &raquo;</a></div> -->
+			<div class="header-search">
+				
+<label for="headersearch_0_tbSearchBox" style="display:none;">Search</label>
+<span class="search-box-container"><input name="query" type="text" id="headersearch_0_tbSearchBox" class="search-box" title="Search SC Website" value="" /></span>
+<label for="ddlSearch" style="display:none;">Section</label>
+<select name="cat" id="ddlSearch" class="search-combobox" tabindex="-1">
+	<option value="All">SC Site Search</option>
+	<!-- <option value="Funding Opportunities">Funding Opportunities</option> -->
+	<!-- <option value="News">News</option> -->
+	<option value="DOE Phonebook">DOE Phonebook</option>
+	<option value="DOE Site Search">DOE Site Search</option>
+	<!-- <option value="Award Search">Award Search</option> -->
+	<!-- <option value="BER Abstracts">BER Abstracts</option> -->
+	<option value="Ntl. Library of Energy">Ntl. Library of Energy</option>
+	<option value="DOE RD Results">DOE R&amp;D Results</option>
+	<option value="US RD Results">US Gov. R&amp;D Results</option>
+	<option value="WW RD Results">Worldwide R&amp;D Results</option>
+</select>
+<input type="submit" name="headersearch_0$btnGo" value="GO" id="headersearch_0_btnGo" class="search-submit" title="Submit Search" />
+
+			</div>
+		</div>
+		<div class="primary-nav">
+			<div class="primary-nav-wrapper">
+				<ul class="sf-menu">
+  <li class="nav-item nav-first nav-item-selected nav-item-1">
+    <span class="nav-title-left">
+      <span class="nav-title-right"><a href="/programs/" class="nav-title">Programs</a></span>
+    </span>
+    <ul class="sf-submenu">
+      <li class="sf-submenu-item sf-submenu-first
+                         sf-submenu-item-selected
+                        ">
+        <a class="sf-submenu-item-title" href="/ascr/">Advanced Scientific Computing Research<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="/bes/">Basic Energy Sciences<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="/ber/">Biological and Environmental Research<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="/fes/">Fusion Energy Sciences<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="/hep/">High Energy Physics<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="/np/">Nuclear Physics<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="/wdts/">Workforce Development for Teachers and Scientists<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item sf-submenu-last-top
+					  ">
+        <a class="sf-submenu-item-title" href="/sbir/">Small Business Innovation Research and Small Business Technology Transfer<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item sf-submenu-last
+												">
+        <a class="sf-submenu-item-title" href="/opa/">Project Assessment<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+    </ul>
+  </li>
+  <li class="nav-item nav-item-2">
+    <span class="nav-title-left">
+      <span class="nav-title-right"><a href="/laboratories/" class="nav-title">Laboratories</a></span>
+    </span>
+    <ul class="sf-submenu">
+      <li class="sf-submenu-item sf-submenu-first
+                        "><a href="/laboratories/ames-laboratory/" class="sf-submenu-item-title">Ames Laboratory<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/laboratories/argonne-national-laboratory/" class="sf-submenu-item-title">Argonne National Laboratory<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/laboratories/brookhaven-national-laboratory/" class="sf-submenu-item-title">Brookhaven National Laboratory<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/laboratories/fermi-national-accelerator-laboratory/" class="sf-submenu-item-title">Fermi National Accelerator Laboratory<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/laboratories/lawrence-berkeley-national-laboratory/" class="sf-submenu-item-title">Lawrence Berkeley National Laboratory<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/laboratories/oak-ridge-national-laboratory/" class="sf-submenu-item-title">Oak Ridge National Laboratory<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/laboratories/pacific-northwest-national-laboratory/" class="sf-submenu-item-title">Pacific Northwest National Laboratory<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/laboratories/princeton-plasma-physics-laboratory/" class="sf-submenu-item-title">Princeton Plasma Physics Laboratory<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/laboratories/slac-national-accelerator-laboratory/" class="sf-submenu-item-title">SLAC National Accelerator Laboratory<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item sf-submenu-last-top
+					  "><a href="/laboratories/thomas-jefferson-national-accelerator-facility/" class="sf-submenu-item-title">Thomas Jefferson National Accelerator Facility<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="/ssp/">Safety and Security Policy<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="/lp/">Laboratory Policy<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="/opm/">Operations Program Management<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item sf-submenu-last
+												"><a href="/laboratories/highlights/" class="sf-submenu-item-title">Science Highlights<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+    </ul>
+  </li>
+  <li class="nav-item nav-item-3">
+    <span class="nav-title-left">
+      <span class="nav-title-right"><a href="/user-facilities/" class="nav-title">User Facilities</a></span>
+    </span>
+    <ul class="sf-submenu">
+      <li class="sf-submenu-item sf-submenu-first
+                        "><a href="/user-facilities/user-facilities-at-a-glance/" class="sf-submenu-item-title">User Facilities at a Glance<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/user-facilities/user-resources/" class="sf-submenu-item-title">User Resources<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/user-facilities/user-statistics/" class="sf-submenu-item-title">User Statistics<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/user-facilities/policies-and-processes/" class="sf-submenu-item-title">Policies and Processes<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/user-facilities/highlights/" class="sf-submenu-item-title">Science Highlights<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item sf-submenu-last
+                        "><a href="/user-facilities/frequently-asked-questions/" class="sf-submenu-item-title">Frequently Asked Questions<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+    </ul>
+  </li>
+  <li class="nav-item nav-item-4">
+    <span class="nav-title-left">
+      <span class="nav-title-right"><a href="/universities/" class="nav-title">Universities</a></span>
+    </span>
+    <ul class="sf-submenu">
+      <li class="sf-submenu-item sf-submenu-first
+                        "><a href="/universities/interactive-grants-map/" class="sf-submenu-item-title">Interactive Grants Map<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/universities/sc-in-your-state/" class="sf-submenu-item-title">SC In Your State<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/universities/highlights/" class="sf-submenu-item-title">Science Highlights<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item sf-submenu-last
+                        "><a href="/universities/university-research/" class="sf-submenu-item-title">University Research News<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+    </ul>
+  </li>
+  <li class="nav-item nav-item-5">
+    <span class="nav-title-left">
+      <span class="nav-title-right"><a href="/funding-opportunities/" class="nav-title">Funding Opportunities</a></span>
+    </span>
+    <ul class="sf-submenu">
+      <li class="sf-submenu-item sf-submenu-first
+                        ">
+        <a class="sf-submenu-item-title" href="/grants/">Grants &amp; Contracts Support<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="https://pamspublic.science.energy.gov/WebPAMSExternal/interface/awards/AwardSearchExternal.aspx">Award Search / Public Abstracts<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item"><a href="/funding-opportunities/find-funding/" class="sf-submenu-item-title">Find Funding<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="/early-career/">Early Career Research Program<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item"><a href="/funding-opportunities/digital-data-management/" class="sf-submenu-item-title">Statement on Digital Data Management<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item sf-submenu-last
+                        "><a href="/funding-opportunities/acknowledgements/" class="sf-submenu-item-title">Acknowledgements of Federal Support<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+    </ul>
+  </li>
+  <li class="nav-item nav-item-6">
+    <span class="nav-title-left">
+      <span class="nav-title-right"><a href="/news/" class="nav-title">News</a></span>
+    </span>
+    <ul class="sf-submenu">
+      <li class="sf-submenu-item sf-submenu-first
+                        "><a href="/news/featured-articles/" class="sf-submenu-item-title">Featured Articles<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/news/science-headlines/" class="sf-submenu-item-title">Science Headlines<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/news/highlights/" class="sf-submenu-item-title">Science Highlights<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/news/presentations-and-testimony/" class="sf-submenu-item-title">Presentations &amp; Testimony<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/news/archives/" class="sf-submenu-item-title">News Archives<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item sf-submenu-last
+                        ">
+        <a class="sf-submenu-item-title" href="/comms/">Communications and Public Affairs<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+    </ul>
+  </li>
+  <li class="nav-item nav-last nav-item-7">
+    <span class="nav-title-left">
+      <span class="nav-title-right"><a href="/about/" class="nav-title">About</a></span>
+    </span>
+    <ul class="sf-submenu">
+      <li class="sf-submenu-item sf-submenu-first
+                        "><a href="/about/organization/" class="sf-submenu-item-title">Organization<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item">
+        <a class="sf-submenu-item-title" href="/budget/">Budget<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a>
+      </li>
+      <li class="sf-submenu-item"><a href="/about/field-offices/" class="sf-submenu-item-title">Field Offices<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/about/federal-advisory-committees/" class="sf-submenu-item-title">Federal Advisory Committees<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/about/history/" class="sf-submenu-item-title">History<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/about/sti/" class="sf-submenu-item-title">Scientific and Technical Information<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/about/honors-and-awards/" class="sf-submenu-item-title">Honors &amp; Awards<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/about/jobs/" class="sf-submenu-item-title">Jobs<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item"><a href="/about/resources/" class="sf-submenu-item-title">Brochures, Logos, &amp; Information Resources<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+      <li class="sf-submenu-item sf-submenu-last
+                        "><a href="/about/contact/" class="sf-submenu-item-title">Contact<img src="/styles/images/dot_clear.gif" alt="" border="0"></img></a></li>
+    </ul>
+  </li>
+</ul>
+			</div>
+		</div>
+			<div class="clear"></div>
+		<div id="divContentBody" class="content-body generaldetailpage-content-body">
+			
+
+<div class="breadcrumbs"><div class="breadcrumbs">
+  <span class="breadcrumb-prefix">You are here: </span><a href="/" class="breadcrumb-link">SC Home</a> <span class="secondary-nav-delim">»</span> <a href="/programs/" class="breadcrumb-link">Programs</a> <span class="secondary-nav-delim">»</span> <a href="/ascr/" class="breadcrumb-link">ASCR Home</a> <span class="secondary-nav-delim">»</span> <a href="/ascr/research/" class="breadcrumb-link">Research</a> <span class="secondary-nav-delim">»</span> <a href="/ascr/research/scidac/" class="breadcrumb-link">Scientific Discovery through Advanced Computing <strong>(SciDAC)</strong></a> <span class="secondary-nav-delim">»</span> <span class="breadcrumb-active">Exascale Challenges</span></div></div>
+<div class="page-header"><p class="primary-title">Advanced Scientific Computing Research (ASCR)</p>
+<div class="clear"></div></div>
+
+<div class="main-sidebar">
+	<ul class="secondary-nav">
+  <li class="secondary-nav-item nav-level-1 secondary-nav-first
+									"><a href="/ascr/" class="secondary-nav-title">ASCR Home</a></li>
+  <li class="secondary-nav-item nav-level-1 secondary-nav-first
+									"><a href="/ascr/about/" class="secondary-nav-title">About</a></li>
+  <li class="secondary-nav-item nav-level-1 secondary-nav-item-active
+									"><a href="/ascr/research/" class="secondary-nav-title">Research</a></li>
+  <li class="secondary-nav-item nav-level-1 secondary-nav-item-active
+											 secondary-nav-parent">
+    <ul class="tertiary-nav">
+      <li class="tertiary-nav-item nav-level-2 tertiary-nav-first
+									"><a href="/ascr/research/applied-mathematics/" class="tertiary-nav-title">Applied Mathematics</a></li>
+      <li class="tertiary-nav-item nav-level-2"><a href="/ascr/research/computer-science/" class="tertiary-nav-title">Computer Science</a></li>
+      <li class="tertiary-nav-item nav-level-2"><a href="/ascr/research/next-generation-networking/" class="tertiary-nav-title">Next Generation Networking</a></li>
+      <li class="tertiary-nav-item nav-level-2 tertiary-nav-item-active
+									"><a href="/ascr/research/scidac/" class="tertiary-nav-title">Scientific Discovery through Advanced Computing <strong>(SciDAC)</strong></a></li>
+      <li class="tertiary-nav-item nav-level-2 tertiary-nav-item-active
+											 tertiary-nav-parent">
+        <ul class="quaternary-nav">
+          <li class="quaternary-nav-item nav-level-3 quaternary-nav-first
+									"><a href="/ascr/research/scidac/co-design/" class="quaternary-nav-title">Co-Design</a></li>
+          <li class="quaternary-nav-item nav-level-3"><a href="/ascr/research/scidac/scidac-institutes/" class="quaternary-nav-title">SciDAC Institutes</a></li>
+        </ul>
+      </li>
+      <li class="tertiary-nav-item nav-level-2"><a href="/ascr/research/sbir/" class="tertiary-nav-title">ASCR SBIR-STTR</a></li>
+    </ul>
+  </li>
+  <li class="secondary-nav-item nav-level-1"><a href="/ascr/facilities/" class="secondary-nav-title">Facilities</a></li>
+  <li class="secondary-nav-item nav-level-1"><a href="/ascr/highlights/" class="secondary-nav-title">Science Highlights</a></li>
+  <li class="secondary-nav-item nav-level-1"><a href="/ascr/benefits-of-ascr/" class="secondary-nav-title">Benefits of ASCR</a></li>
+  <li class="secondary-nav-item nav-level-1"><a href="/ascr/funding-opportunities/" class="secondary-nav-title">Funding Opportunities</a></li>
+  <li class="secondary-nav-item nav-level-1">
+    <a class="secondary-nav-title" href="/ascr/ascac/">Advanced Scientific Computing Advisory Committee (ASCAC)</a>
+  </li>
+  <li class="secondary-nav-item nav-level-1 secondary-nav-last
+									"><a href="/ascr/community-resources/" class="secondary-nav-title">Community Resources</a></li>
+</ul>
+	<div class="contact-info-container">
+  <h3 class="contact-info-header">Contact Information</h3>
+  <div class="contact-info">
+    <span class="contact-info-name">Advanced Scientific Computing Research</span>
+    <span class="contact-info-address">U.S. Department of Energy <br/> SC-21/Germantown Building <br/> 1000 Independence Ave., SW</span>
+    <span class="contact-info-city">Washington, 
+          DC 20585</span>
+    <span class="contact-info-phone">P: (301) 903-7486</span>
+    <span class="contact-info-fax">F: 
+          (301) 903-4846</span>
+    <span class="contact-info-email">
+          E: <a class="contact-info-email" href="mailto:sc.ascr@science.doe.gov" title="sc.ascr@science.doe.gov">
+            Email Us
+          </a></span>
+    <a class="contact-info-info" href="/ascr/about/staff/">
+          More Information »
+        </a>
+  </div>
+</div>
+</div>
+<div class="main-content">
+	
+<div class="main-content-column-container">
+<div class="main-content-column main-content-column-full">
+	<h1 class="subpage-title">Scientific Discovery through Advanced Computing <strong>(SciDAC)</strong></h1>
+<h2 class="subpage-subtitle">Exascale Challenges</h2><div id="contentcontainer_0_maincontent_0_maincontentcolumn_2_pagetoolscont" class="page-tools page-tools-nosubscribe">
+    <a id="contentcontainer_0_maincontent_0_maincontentcolumn_2_hlPrint" title="Print" class="page-tool page-tool-print" rel="nofollow" href="/ascr/research/scidac/exascale-challenges/?p=1" target="_blank">Print</a><div id="contentcontainer_0_maincontent_0_maincontentcolumn_2_sizecont" class="page-tool page-tool-textsize" style="border-right:none;">Text Size: <a id="sizedn" title="Reduce text size" class="textsizelink" href="#">A</a> <a id="sizerg" title="Normal text size" class="textsizelink" href="#">A</a> <a id="sizeup" title="Increase text size" class="textsizelink" href="#">A</a></div>
+        <!-- <a id="emailthislink" title="Email" class="page-tool page-tool-email" href="#share-email">Email Page</a> -->
+        
+    <div id="addthisdiv">
+        <a id="feedbacklink" title="Feedback" href="/feedback?survey=1&Found=1&URL=http://science.energy.gov/ascr/research/scidac/exascale-challenges/" class="page-tool page-tool-feedback addthis_button">Feedback</a><a id="addthislink" title="Share Page" href="#share-bookmark" class="page-tool page-tool-share addthis_button"><span class="page-tool-share-text">Share Page</span></a>
+    </div>
+</div><div class="managed-content">
+		<h2 class="align-center">The Challenges of Exascale</h2>
+
+<p>The emerging exascale computing architecture will not be simply 1000 x today’s petascale architecture. All proposed exascale computer systems designs will share some of the following challenges:</p>
+<ul>
+  <li> Processor architecture is still unknown.</li>
+  <li>System power is the primary constraint for the exascale system: simply scaling up from today’s requirements for a petaflop computer, the exaflop computer in 2020 would require 200 MW, which is untenable. The target is 20-40 MW in 2020 for 1 exaflop. </li>
+  <li>Memory bandwidth and capacity are not keeping pace with the increase in flops: technology trends against a constant or increasing memory per core.  Although the memory per flop may be acceptable to applications, memory per processor will fall dramatically, thus rendering some of the current scaling approaches useless</li>
+  <li>Clock frequencies are expected to decrease to conserve power; as a result, the number of processing units on a single chip will have to increase – this means the exascale architecture will likely be high-concurrency – billion-way concurrency is expected. </li>
+  <li>Cost of data movement, both in energy consumed and in performance, is not expected to improve as much as that of floating point operations , thus algorithms need to minimize data movement, not flops</li>
+  <li>Programming model will be necessary: heroic compilers will not be able to hide the level of concurrency from applications</li>
+  <li>The I/O system at all levels – chip to memory, memory to I/O node, I/O node to disk—will be much harder to manage, as I/O bandwidth is unlikely to keep pace with machine speed</li>
+  <li>Reliability and resiliency will be critical at the scale of billion-way concurrency: “silent errors,” caused by  the failure of components and manufacturing variability, will more drastically affect the results of computations on exascale computers than today’s petascale computers</li>
+</ul>
+<p>These challenges represent a change in the computing cost model, from expensive flops coupled with almost free data movement, to free flops coupled with expensive data movement.</p></div>
+    
+   	<div class="last-modified">Last modified: 3/15/2013 5:35:31 PM</div>
+
+
+
+    
+    <div class="share-bookmark"><a name="share-bookmark"></a><b>Share Page</b>
+        <div id="addthismenu_nojs">
+		<ul class="sf-submenu addthismenu_nojs">
+            <!--
+			<li class="sf-submenu-item sf-submenu-first"><a href="http://digg.com/submit?phase=2&amp;title=Exascale+Challenges&amp;url=http://science.energy.gov/ascr/research/scidac/exascale-challenges/" class="sf-submenu-item-title addthislink external-link"><img src="/styles/images/social/digg.png" alt="Share with Digg" />Digg<img src="/styles/images/mime-types/external-small.png" alt="External link" class="external-link-img-bookmark" border="0" /></a></li>
+			<li class="sf-submenu-item"><a href="http://del.icio.us/post?title=Exascale+Challenges&amp;url1=http://science.energy.gov/ascr/research/scidac/exascale-challenges/" class="sf-submenu-item-title addthislink external-link"><img src="/styles/images/social/delicious.png" alt="Share with Del.icio.us" />Del.icio.us<img src="/styles/images/mime-types/external-small.png" alt="External link" class="external-link-img-bookmark" border="0" /></a></li>
+            -->
+			<li class="sf-submenu-item sf-submenu-first"><a href="http://www.facebook.com/share.php?u=http://science.energy.gov/ascr/research/scidac/exascale-challenges/" class="sf-submenu-item-title addthislink external-link"><img src="/styles/images/social/facebook.png" alt="Share with Facebook" />Facebook<img src="/styles/images/mime-types/external-small.png" alt="External link" class="external-link-img-bookmark" border="0" /></a></li>
+			<li class="sf-submenu-item"><a href="https://twitter.com/share?url=http://science.energy.gov/ascr/research/scidac/exascale-challenges/&amp;text=Exascale+Challenges" class="sf-submenu-item-title addthislink external-link"><img src="/styles/images/social/twitter.png" alt="Share with Twitter" />Twitter<img src="/styles/images/mime-types/external-small.png" alt="External link" class="external-link-img-bookmark" border="0" /></a></li>
+			<li class="sf-submenu-item sf-submenu-last"><a href="http://www.google.com/bookmarks/mark?op=edit&amp;title=Exascale+Challenges&amp;bkmk=http://science.energy.gov/ascr/research/scidac/exascale-challenges/" class="sf-submenu-item-title addthislink external-link"><img src="/styles/images/social/google.png" alt="Share with Google Bookkmarks" />Google Bookmarks<img src="/styles/images/mime-types/external-small.png" alt="External link" class="external-link-img-bookmark" border="0" /></a></li>
+		</ul>
+		<div class="clearfix"></div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+    <div class="share-email"><a name="share-email"></a><b>Email a Friend</b>
+        <div id="emailthismenu_nojs">
+		<ul class="sf-submenu addthismenu_nojs">
+			<li class="sf-submenu-item sf-submenu-first sf-submenu-last">
+                <label for="share-email-address">Email link to: </label><input type="text" size="32" name="share-email-address" id="share-email-address" /> <input type="button" value="send" style="height:24px;"/>
+			</li>
+		</ul>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+
+<div class="secondary-sidebar" style="display:none;" >
+    <div class="secondary-sidebar-inner">
+	
+	</div>
+</div>
+
+<div class="clearfix"></div>
+</div>
+
+
+	
+</div>
+			<div class="clear"></div>
+		</div>
+		<div class="footer">
+			<div class="footer-separator"></div>
+			
+<div class="footer-prefix"><a href="/" class="sc-title">Office of Science</a><br/>
+U.S. Department of Energy<br/>
+1000 Independence Ave., SW<br/>
+Washington, DC 20585<br/>
+(202) 586-5430<br/>
+<div class="footer-social"><a href="/leaving-office-of-science/?external_url=https%3a%2f%2ftwitter.com%2fdoescience&amp;external_title=" class="footer-social-icon external-link"><img width="30" height="30" alt="Twitter Icon" src="/~/media/_/images/social/twitter-30px.png"></img></a><a href="/leaving-office-of-science/?external_url=https%3a%2f%2fwww.youtube.com%2fuser%2fdoescience&amp;external_title=" class="footer-social-icon external-link"><img width="30" height="30" alt="YouTube Icon" src="/~/media/_/images/social/youtube-30px.png"></img></a><a href="/rss/" class="footer-social-icon"><img width="30" height="30" alt="Feed Icon" src="/~/media/_/images/social/feed-30px.png"></img></a></div></div>
+<ul class="footer-nav footer-primary-nav">
+  <li class="footer-nav-item footer-nav-first"><a href="/">SC Home</a></li>
+  <li class="footer-nav-item"><a href="/about/jobs/">Jobs</a></li>
+  <li class="footer-nav-item"><a href="/about/contact/">Contact</a></li>
+  <li class="footer-nav-item"><a href="/isc/foia/how-to-submit-a-foia-request/">FOIA Requests</a></li>
+  <li class="footer-nav-item"><a href="/web-policies/">Web Policies</a></li>
+  <li class="footer-nav-item footer-nav-last"><a href="/site-map/">Site Map</a></li>
+</ul>
+<div class="footer-suffix">
+  <em>
+		<p>The Office of Science (SC) is the single largest supporter of basic research in the physical sciences in the United States.</p>
+</em>
+</div>
+<ul class="footer-nav footer-secondary-nav">
+  <li class="footer-secondary-nav-a">
+    <ul class="footer-secondary-nav-links">
+      <li class="
+								footer-secondary-nav-link
+								footer-secondary-nav-link-first">
+        <a href="http://www.energy.gov/about-us">About Energy.gov</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="http://www.energy.gov/phonebook">Phonebook</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="http://energy.gov/about-us/web-policies">Web Policies</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="http://energy.gov/about-us/web-policies/privacy">Privacy</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="http://energy.gov/diversity/services/protecting-civil-rights/no-fear-act">No Fear Act</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="/leaving-office-of-science/?external_url=https%3a%2f%2fwww.osc.gov%2fPages%2fDOW.aspx&amp;external_title=Whistleblower+Protection" class="external-link">Whistleblower Protection<img src='/styles/images/mime-types/external-small.png' alt='External link' class='external-link-img' border='0'></img></a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="http://energy.gov/cio/information-quality">Information Quality</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="http://energy.gov/open-government">Open Gov</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								footer-secondary-nav-link-last">
+        <a href="http://energy.gov/cio/accessibility-standard-statement">Accessibility</a>
+      </li>
+    </ul>
+  </li>
+  <li class="footer-secondary-nav-b">
+    <ul class="footer-secondary-nav-links">
+      <li class="
+								footer-secondary-nav-link
+								footer-secondary-nav-link-first">
+        <a href="http://energy.gov/">Energy Department</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="http://www.energy.gov/jobs/jobs">Careers & Internships</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="http://energy.gov/budget-performance">Budget & Performance</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="https://www.directives.doe.gov">Directives, Delegations & Requirements</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="http://energy.gov/management/office-management/operational-management/freedom-information-act">FOIA</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="http://energy.gov/ig/office-inspector-general">Inspector General</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="http://energy.gov/cio/office-chief-information-officer/services/guidance/privacy">Privacy Program</a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								footer-secondary-nav-link-last">
+        <a href="http://energy.gov/osdbu/office-small-and-disadvantaged-business-utilization">Small Business</a>
+      </li>
+    </ul>
+  </li>
+  <li class="footer-secondary-nav-c">
+    <ul class="footer-secondary-nav-links">
+      <li class="
+								footer-secondary-nav-link
+								footer-secondary-nav-link-first">
+        <a href="/leaving-office-of-science/?external_url=http%3a%2f%2fwww.usa.gov%2f&amp;external_title=Federal+Government" class="external-link">Federal Government<img src='/styles/images/mime-types/external-small.png' alt='External link' class='external-link-img' border='0'></img></a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								">
+        <a href="/leaving-office-of-science/?external_url=http%3a%2f%2fwww.whitehouse.gov%2f&amp;external_title=The+White+House" class="external-link">The White House<img src='/styles/images/mime-types/external-small.png' alt='External link' class='external-link-img' border='0'></img></a>
+      </li>
+      <li class="
+								footer-secondary-nav-link
+								footer-secondary-nav-link-last">
+        <a href="/leaving-office-of-science/?external_url=http%3a%2f%2fwww.usa.gov%2f&amp;external_title=USA.gov" class="external-link">USA.gov<img src='/styles/images/mime-types/external-small.png' alt='External link' class='external-link-img' border='0'></img></a>
+      </li>
+    </ul>
+  </li>
+</ul>
+<div class="clear footer-bottom-pad"></div>
+		</div>
+	</div>
+
+	<!--[if IE]>
+		</div>
+	<![endif]-->
+	</div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,16 @@
+#!/bin/sh
+#SBATCH -J hello.intel
+#SBATCH -t 98:00:00
+#SBATCH -N 2
+#SBATCH --tasks-per-node=20
+
+cd $SLURM_SUBMIT_DIR
+
+export OMP_NUM_THREADS=1
+
+export I_MPI_FABRICS=tmi
+export I_MPI_PMI_LIBRARY=/opt/local/slurm/default/lib64/libpmi.so
+
+#srun --mem_bind=verbose,local --cpu_bind=verbose,rank -n 40 --hint=nomultithread ./hello_mpi.intel >> hello_mpi.intel.out 2>&1
+srun -n 40 ./hello_mpi.intel > hello_mpi.intel.out 2>&1
+

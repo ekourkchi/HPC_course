@@ -1,0 +1,6 @@
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: got SIGCONT
+slurmstepd: *** STEP 320590.0 ON prod2-0103 CANCELLED AT 2015-11-13T01:00:40 ***
+slurmstepd: *** JOB 320590 ON prod2-0103 CANCELLED AT 2015-11-13T01:00:40 ***
+srun: forcing job termination
+APPLICATION TERMINATED WITH THE EXIT STRING: Terminated (signal 15)
